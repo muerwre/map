@@ -68,6 +68,8 @@
     </div>
     <div id="editor_left_plank">
       <div class="bar" onclick="show_user();"><div class="btn btn-user btn-fa"></div></div>
+      
+
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
           <div class="routing_tip_text">
