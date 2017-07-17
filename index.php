@@ -68,9 +68,6 @@
     </div>
     <div id="editor_left_plank">
       <div class="bar" onclick="show_user();"><div class="btn btn-user btn-fa"></div></div>
-      <div class="sep"></div>
-      <div class="bar" onclick="get_gpx();"><div class="btn btn-import" ></div><div class="bar_text">GPX</div></div>
-
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
           <div class="routing_tip_text">
@@ -100,6 +97,8 @@
     </div>
     <div id="left_plank" class="active">
       <div class="bar" onclick="enable_editor();"><div class="btn btn-router" ></div><div class="bar_text">Редактор</div></div>
+      <div class="sep"></div>
+      <div class="bar" onclick="get_gpx();"><div class="btn btn-import" ></div><div class="bar_text">GPX</div></div>
     </div>
     <div id="plank">
         <div class="sub_plank relative" id="plank_hello" onclick="toggle_none();">

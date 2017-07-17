@@ -1643,7 +1643,9 @@ function enable_editor(){
         l.editor.enable();
         l.editor.skipMiddleMarkers = true;
     })
-    $('#plank').addClass('active');
+    if(parseInt($(window).width()) >= 600){
+        $('#plank').addClass('active');
+    }
     $('#editor_left_plank').addClass('active');
     check_token();
     //can_i_store = true;
