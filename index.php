@@ -60,7 +60,14 @@
     <div id="logo_composer">
     </div>
     <div id="left_plank" class="active">
+      <div class="bar" onclick="show_user();"><div class="btn btn-user" ></div></div>
+      <div class="sep"></div>
       <div class="bar" onclick="enable_editor();"><div class="btn btn-import" ></div><div class="bar_text">Редактор</div></div>
+
+      <div class="sub_plank active" id="sub_plank_user">
+        ddd<br>ddd<br>
+      </div>
+
     </div>
     <div id="plank">
         <div class="sub_plank relative" id="plank_hello" onclick="toggle_none();">
@@ -84,9 +91,6 @@
         <div class="sub_plank_buttons button_group">
           <a class="button button-danger" onclick="toggle_route();">ОТМЕНА</a><a class="button button" onclick="drop_route();">УДАЛИТЬ</a>
         </div>
-    </div>
-    <div class="sub_plank sub_plank_full" id="sub_plank_chat">
-      zzz
     </div>
     <div class="sub_plank sub_plank_full" id="sub_plank_shot_size">
         <div class="routing_tip" style="display:table;width:100%">
