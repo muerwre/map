@@ -1,0 +1,9 @@
+Array
+(
+    [readyState] => 4
+    [responseText] => 1{"success":true,"random_url":"ekoAIpPSO6YF","role":"primary","routes":[{"id":"RSxrXTLSdxfqE","created":"17 \u0438\u044e\u043b\u044f 2017 \u0432 15:48"}]}
+    [status] => 200
+    [statusText] => OK
+    [url] => /engine/auth.php
+    [function] => check_token
+)

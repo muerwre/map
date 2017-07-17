@@ -496,6 +496,7 @@ function remote_store_data(force){
                     $('#sub_plank_remote_store').removeClass('error recheck storing renaming overwriting').addClass('success');
                     $('#store_name').val(data.name);
                     update_store_url();
+                    check_token();
                 }else{
                     console.log('panic!');
                     $('#sub_plank_remote_store').removeClass('error recheck success storing renaming overwriting');
@@ -534,7 +535,8 @@ function report_xhr_error(a,b){
 function gen_guest_token(){
     $.get('/engine/auth.php',{action:'gen_guest_token'},
         function(data){
-            set_token(data.id,data.token);
+            set_token(data.id,data.token,data.role);
+            console.log('puuz: ',data)
             if($('#store_name').val().length===0 && typeof(data.random_url) !== 'undefined'){
                 $('#store_name').val(data.random_url);
                 update_store_url();
@@ -549,7 +551,8 @@ function gen_guest_token(){
 
 function check_token(){
     //console.log('checking token');
-     var userdata = get_token();
+    var userdata = get_token(),
+        shown_routes;
     //$.get('engine/auth.php',{action:'check_token', 'id': userdata.id, 'token': userdata.token},'json');   
     if( typeof(userdata.id) === 'undefined' || !userdata.id || typeof(userdata.token) === 'undefined' || !userdata.token){
         gen_guest_token();
@@ -560,9 +563,28 @@ function check_token(){
                 if(!data.success){
                     gen_guest_token();
                 }else{
+                    prepare_user_menu();
                     if($('#store_name').val().length===0 && typeof(data.random_url) !== 'undefined'){
                         $('#store_name').val(data.random_url);
                         update_store_url();
+                    }
+                    //console.log(data.routes_count);
+                    
+                    // Заполняем менюшку со списком роутов
+                    $('#menu_user_route_count').text(data.routes_count);
+                    if(data.routes_count > 0){
+                        $('#menu_user_routes_item').addClass('not_empty');
+                        $('#menu_user_route_count').addClass('tag-primary');
+                        $('#user_route_list').html('');
+                        shown_routes = Math.floor((parseInt($(window).height())-200)/45);
+                        $('#user_route_list').css('max-height',shown_routes*45);
+
+                        $.each(data.routes,function(a,b){
+                            $('#user_route_list').append('<div class="menu-item" onclick="editor_load(\''+b.id+'\');"><b>'+b.id+'</b><br><small class="gray">'+b.created+'</small></div>');
+                        });
+                        if(shown_routes < $('#user_route_list .menu-item').length || data.routes.length < data.routes_count){
+                            $('#user_route_more').show();
+                        }
                     }
                     //console.log('token ok');
                 }
@@ -574,15 +596,18 @@ function check_token(){
     }
 }
 
-function set_token(id,token){
+function set_token(id,token,role){
     if(store){
         localStorage.setItem("user_id", id);
         localStorage.setItem("user_token", token );
+        localStorage.setItem("user_role", role );
     }else{
         var expire = new Date(new Date().getTime() + 38600 * 365000);
         document.cookie = 'user_id='+id+'; path=/; expires='+expire.toUTCString();
         document.cookie = 'user_token='+token+'; path=/; expires='+expire.toUTCString();
+        document.cookie = 'user_role='+role+'; path=/; expires='+expire.toUTCString();
     }
+    prepare_user_menu();
 }
 
 function get_token(){
@@ -590,11 +615,13 @@ function get_token(){
     if(store){
         id = localStorage.getItem("user_id");
         token = localStorage.getItem("user_token");
+        role = localStorage.getItem("user_role");
     }else{
         id = get_cookie("user_id");
         token = get_cookie("user_token");
+        role = get_cookie("user_role");
     }
-    return ({'id': id, 'token': token});
+    return ({'id': id, 'token': token, 'role': role});
 }
 
 function get_cookie(name) {
@@ -1459,6 +1486,7 @@ function publish_overlay() {
 
 function prepare_map() {
     'use strict';
+    check_token();
     // Эта функция создаёт саму карту и наносит на неё маршруты в самом начале работы
     $('#map').css('width', '100%').css('height', '100%');
     // создаём объект с картой
@@ -1593,7 +1621,7 @@ function prepare_map() {
 }
 
 function enable_editor(){
-    if(location.hash !== '#editor'){ location.hash = 'editor'; return true;}
+    if(location.hash !== '#editor'){ location.hash = 'editor'; return true; }
     $('#left_plank').removeClass('active');
     if(poly.getLatLngs().length<=0 && Object.keys(stickers.objects).length<=0 && Object.keys(point_array.point_to_id).length<=0){
         local_recover_data();
@@ -1616,6 +1644,7 @@ function enable_editor(){
         l.editor.skipMiddleMarkers = true;
     })
     $('#plank').addClass('active');
+    $('#editor_left_plank').addClass('active');
     check_token();
     //can_i_store = true;
     update_overlays();
@@ -1636,6 +1665,7 @@ function disable_editor(){
     update_overlays();
     poly.editor.disable();
     $('#plank').removeClass('active');
+    $('#editor_left_plank').removeClass('active');
     can_i_edit = false;
     $.each(stickers.objects, function(a,b){
         b.disableEdit();
@@ -1652,7 +1682,7 @@ function createButton(label, container, cls) {
     btn.innerHTML = label;
     return btn;
 }
-function  update_store_url(e){
+function update_store_url(e){
     var val = translit($('#store_name').val().replace(/[^A-Za-z0-9А-Яа-яЁё\-\_\(\)]/ig,'_').substr(0,48)),
         tag = '<span class="gray">http://map.vault48.org/#map?</span>'+val,
         url = 'http://map.vault48.org/#map?'+val;
@@ -1666,6 +1696,7 @@ function  update_store_url(e){
 }
 
 function cool_thanks(){
+    $('#store_helper').show();
     location.hash='map?'+previous_store_name;
     toggle_none();
 }
@@ -1944,7 +1975,7 @@ function local_recover_data(){
             });
         }
         
-        console.log('stickers',localStorage.getItem("stickers"))
+        //console.log('stickers',localStorage.getItem("stickers"))
         try {
             storedStickers = JSON.parse(localStorage.getItem("stickers"));
         } catch(e) {
@@ -2775,9 +2806,43 @@ function make_bigger_shot(size){
     }, 400);
 }
 
+function prepare_user_menu(){
+    var token = get_token();
+    if(token.role === 'guest'){
+        $('.btn-user').addClass('btn-user-warning');
+        $('#menu_user_name').html(token.id.substr(0,16).replace('guest:','<span class="text text-warning">guest:</span>'));
+        $('#menu_user_role').html('временный аккаунт');
+    }else{
 
+    }
+    $('#sub_plank_user').addClass('loaded');
+    //console.log(token);
+}
+
+function show_user_routes(){
+    if($('#menu_user_routes_item').hasClass('not_empty')){
+        $('#menu_user_routes_item').toggleClass('active');
+    }else{
+        $('#menu_user_routes_item').removeClass('active');
+    }
+}
 function show_user(){
     $('#sub_plank_user').toggleClass('active');
+}
+
+function editor_load(name){
+    enable_editor();
+    remote_load_data(name);
+    //console.log('editor_load: '+name);
+}
+
+function get_gpx(){
+    var latlngs = poly.getLatLngs(),
+        route = [];
+    $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); }); 
+    if(route.length > 0){
+        window.open('/engine/auth.php?action=get_gpx&name='+$('#store_name').val()+'&route='+JSON.stringify(route));
+    }
 }
 
 function transliterate(engToRus) {

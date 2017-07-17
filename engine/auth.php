@@ -18,8 +18,10 @@ if($action == 'gen_guest_token'){
 		if(!mysqli_fetch_assoc(mysqli_query($link,"SELECT * FROM `tokens` WHERE id='$id'"))){
 			//echo 'not found!';
 			mysqli_query($link,"INSERT INTO `tokens` VALUES (NULL,'$id','$token',".time().",'guest','".json_encode(['ip' =>mysqli_escape_string($link,$_SERVER['REMOTE_ADDR']), 'agent' => mysqli_escape_string($link,$_SERVER['HTTP_USER_AGENT'])])."')");
+
 			$d=0;
 			while($d<=3000){
+				// генерируем заранее такое имя карты, чтобы его не было в базе
 				$d+=1;
 				$name = gen_sequence(12);
 				if(!mysqli_fetch_assoc(mysqli_query($link,"SELECT * FROM `routes` WHERE name='$name'"))){
@@ -30,15 +32,31 @@ if($action == 'gen_guest_token'){
 		}
 	}
 
-	echo json_encode(['success'=>true,'id'=> $id, 'token' => $token, 'random_url' => $name]);
+	echo json_encode(['success'=>true,'id'=> $id, 'token' => $token, 'random_url' => $name, 'role' => 'guest']);
 
 }elseif($action == 'check_token'){
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
 	$result=mysqli_query($link,"SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
-	if(mysqli_fetch_assoc($result)){
+	if($user = mysqli_fetch_assoc($result)){
+		//print_r($user);
+		// Грузим карты для данного пользователя
+		
+		$routes = array();
+		$query = mysqli_query($link,"SELECT * FROM `routes` WHERE id='".$user['id']."' ORDER BY created DESC");
+		//print_r(mysqli_fetch_assoc($query));
+		//echo $query->num_rows;
+		$i = 0;
+		while($result = mysqli_fetch_assoc($query)){
+			$routes[] = array('id' => $result['name'], 'created' => date('j',$result['created']).' '.monthy(date('n',$result['created'])).date(' Y в H:i',$result['created']));
+			if($i>=19){ break; }
+			$i++;
+		}
+		//print_r($routes);
+		//echo "SELECT * FROM `routes` WHERE id='".$user['id']."' ORDER BY created DESC LIMIT 0,20";
 		$c=0;
 		while($c<=3000){
+			// генерируем заранее такое имя карты, чтобы его не было в базе
 			$c+=1;
 			$name = gen_sequence(12);
 			if(!mysqli_fetch_assoc(mysqli_query($link,"SELECT * FROM `routes` WHERE name='$name'"))){
@@ -46,7 +64,7 @@ if($action == 'gen_guest_token'){
 			}
 		}
 		//$name='bfga';
-		echo json_encode(['success'=>true, 'random_url'=>$name]);
+		echo json_encode(['success'=>true, 'random_url'=>$name, 'role' => 'primary', 'routes' => $routes, 'routes_count' => $query->num_rows]);
 	}else{
 		oops("query=SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
 	}
@@ -65,7 +83,6 @@ if($action == 'gen_guest_token'){
 		//
 	}
 }elseif($action == 'store'){
-
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
 	$name = isset($_REQUEST['name']) ? $_REQUEST['name'] : null;
@@ -121,6 +138,28 @@ if($action == 'gen_guest_token'){
 	echo json_encode(['success' => true, 'name' => $name, 'force'=>$force, 'data' => $_REQUEST, 'description' => 'Отлично! Ваш маршрут сохранён. Поделитесь ссылкой с друзьями, приятной покатушки!']);
 }elseif($action=='fetch_msgs'){
 
+}elseif($action=='get_gpx'){
+	$route = json_decode($_GET['route']);
+	//print_r($route);
+	if(!isset($route) or sizeof($route)<=0){
+		oops('Слишком короткий трэк');
+	}else{
+		if (isset($_GET['name']) && strlen($_GET['name'])>0) {
+			$name = substr($_GET['name'], 0, 64);
+		}else{
+			$name = 'Маршрут-'.date('j').'-'.monthy(date('n')).date('-Y-H:i');
+		}
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/gpx');
+    	header('Content-Type: application/gpx+xml');
+    	header('Content-Disposition: attachment; filename='.$name.'.gpx');
+		echo "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<gpx>\n<rte>\n<name>HBC</name>\n";
+		foreach($route as $key=>$var){
+			//print_r($var);
+			echo "<rtept lat=\"".$var->lat."\" lon=\"".$var->lng."\"><name>".$key."</name><sym>8198</sym></rtept>\n";
+		}
+		echo "</rte>\n</gpx>";
+	}
 }
 mysqli_close($link);
 ?>

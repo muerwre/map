@@ -21,6 +21,13 @@ $mysql = [
 
 $randoms = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
+
+function monthy($mon){
+    $arr = ['января','февраля','марта','апреля','мая','июня','июля','августа',
+            'сентября','октября','ноября','декабря'];
+    return $arr[$mon-1];
+}
+
 function gen_sequence($length=16,$prefix=''){
     global $randoms;
     $ret = '';

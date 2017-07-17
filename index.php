@@ -26,7 +26,7 @@
     <!--link type="text/css" rel="stylesheet" media="all" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" /-->
     <link type="text/css" rel="stylesheet" media="all" href="/css/style.css?v=4.0.<?=rand(0,65535);?>" />
     <link type="text/css" rel="stylesheet" media="all" href="/css/cropper.min.css" />
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.css" />
+    <link rel="stylesheet" type="text/css" href="/css/font-awesome.css?d" />
     <link rel="stylesheet" type="text/css" href="/css/fonts.css" />
     <link rel="stylesheet" type="text/css" href="/css/leaflet-routing-machine.css" />
 
@@ -34,6 +34,13 @@
     <meta property="og:image" content="/bigicon.png?wdewrweeddz" />
 </head>
 <body>
+    <div id="store_helper">
+      <b>Скопируйте адрес карты, чтобы поделиться ею.</b>
+      <div class="single"></div>
+      <small class="gray">Любой пользователь сможет посмотреть вашу карту, но редактировать можете только вы.</small>
+      <div class="single"></div>
+      <div class="button button-primary pull-right" onclick="$('#store_helper').hide();"><span class="fa fa-check"></span> Понятно</div>
+    </div>
     <div id="image_cropper">
       <div class="shader">
         <div class="sk-folding-cube">
@@ -59,15 +66,40 @@
     </div-->
     <div id="logo_composer">
     </div>
-    <div id="left_plank" class="active">
-      <div class="bar" onclick="show_user();"><div class="btn btn-user" ></div></div>
+    <div id="editor_left_plank">
+      <div class="bar" onclick="show_user();"><div class="btn btn-user btn-fa"></div></div>
       <div class="sep"></div>
-      <div class="bar" onclick="enable_editor();"><div class="btn btn-import" ></div><div class="bar_text">Редактор</div></div>
+      <div class="bar" onclick="get_gpx();"><div class="btn btn-import" ></div><div class="bar_text">GPX</div></div>
 
-      <div class="sub_plank active" id="sub_plank_user">
-        ddd<br>ddd<br>
+      <div class="sub_plank" id="sub_plank_user">
+        <div class="routing_tip" style="display:table;width:100%">
+          <div class="routing_tip_text">
+            <div>
+              <i class="fa fa-user-o fa-2x pull-left"></i>
+              <b id="menu_user_name">██████████</b><br>
+              <small id="menu_user_role">■■■■■■■ ■</small>
+            </div>
+            <div class="single"></div>
+            <div class="menu-item" onclick="show_user_routes();" id="menu_user_routes_item">
+              Сохранённые карты<span class="tag pull-right" id="menu_user_route_count">0</span>
+              <div class="sub_menu" id="menu_user_routes">
+                <div id="user_route_list">
+                </div>
+                <div id="user_route_more">Показать все маршруты</div>
+              </div>
+            </div>
+            <div class="single"></div>
+            <small class="gray">Чтобы иметь возможность редактировать карты с другого устройства, войдите или зарегистрируйтесь</small>
+            <div class="single"></div>
+            <div class="button_group pull-right">
+              <div class="button">Регистрация</div><div class="button button-primary">Войти</div>
+            </div>
+          </div>
+        </div>
       </div>
-
+    </div>
+    <div id="left_plank" class="active">
+      <div class="bar" onclick="enable_editor();"><div class="btn btn-router" ></div><div class="bar_text">Редактор</div></div>
     </div>
     <div id="plank">
         <div class="sub_plank relative" id="plank_hello" onclick="toggle_none();">
@@ -143,7 +175,7 @@
         </div>
         <div class="routing_tip routing_tip_setb">
           <div class="routing_tip_text">
-            Продолжаем маршрут. Укажите следующую точку маршрута.
+            Продолжаем маршрут. Укажите следующую точку.
             <div class="small gray">Чтобы начать заново, сначала удалите маршрут.</div>
           </div>
           <div class="routing_tip_btns">
@@ -152,7 +184,7 @@
         </div>
         <div class="routing_tip routing_tip_routing">
           <div class="routing_tip_text">
-            Щелчок добавляет следующую точку маршрута.
+            Щелчок добавляет следующую точку.
             <div class="gray small">Потяните за пунктирную линию, чтобы исправить участок.</div>
             <!--div class="small gray">Маршрут строится с учётом светофоров и знаков, запрещающих поворот.</div-->
           </div>
@@ -186,7 +218,7 @@
             </div>
           </div>
       </div>
-      <div class="sub_plank active" id="sub_plank_select_logo">
+      <div class="sub_plank" id="sub_plank_select_logo">
         <div class="logo_select_list">
         </div>
       </div>
@@ -239,8 +271,8 @@
         </div-->
       </div>
       <div id="bar-1" class="bar">
-        <div class="editor-title grid-30">РЕДАКТОР</div>
-          <div class="btn btn-import" onclick="toggle_routing();"><span>Автоматическое построение маршрута <b>Q</b></span></div>
+        <!--div class="editor-title grid-30">РЕДАКТОР</div-->
+          <div class="btn btn-router" onclick="toggle_routing();"><span>Автоматическое построение маршрута <b>Q</b></span></div>
           <div class="btn btn-poly"><span>Ручное редактирование маршрута <b>W</b></span></div>
         <div class="btn btn-point"><span>Пояснительные выноски <b>E</b></span></div>
         <div class="btn btn-sticker"><span>Места&nbsp;и стикеры <b>R</b>&nbsp;&nbsp;&nbsp;или<b>Shift</b></span></div>
