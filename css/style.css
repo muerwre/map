@@ -1671,7 +1671,7 @@ div#sub_plank_select_logo {
 }
 
 #sub_plank_user {
-  max-width: 270px;
+  width: 270px;
 }
 
 .text-warning {
