@@ -340,7 +340,7 @@ div.col-6 {
     margin-top: -10px !important;
 }
 #left_plank {
-    position: fixed;cursor: pointer;
+    position: fixed;cursor: pointer;font-size:0px;
     z-index: 10000;
     width: 600px;
     height: 48px;
