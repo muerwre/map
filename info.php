@@ -1,0 +1,5 @@
+zzz
+<?php
+phpinfo();
+?>
+sss
