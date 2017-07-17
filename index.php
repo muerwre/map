@@ -174,7 +174,7 @@
         </div-->
           <div class="routing_tip" style="display:block;">
             <div class="routing_tip_text" style="width: 100%;">
-              Кажется, всё готово!в
+              Кажется, всё готово!
               <div class="small gray">Обрежьте изображение и выберите логотип.</div>
             </div>
             <div class="routing_tip_btns" style="padding-left: 10px;">
