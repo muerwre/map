@@ -90,10 +90,10 @@
             </div>
             <div class="single"></div>
             <small class="gray">Чтобы иметь возможность редактировать карты с другого устройства, войдите или зарегистрируйтесь</small>
-            <div class="single"></div>
+            <!--div class="single"></div>
             <div class="button_group pull-right">
               <div class="button">Регистрация</div><div class="button button-primary">Войти</div>
-            </div>
+            </div-->
           </div>
         </div>
       </div>
