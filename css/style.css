@@ -1575,10 +1575,11 @@ a#store_address_url span {
 
 #plank_hello {
   width:97%;padding: 0px 15px;box-sizing: border-box;
-      padding: 0 15px 40px 180px;
-      font-size: 0.9em;
-      color: #fff;  background: linear-gradient(68deg,#94054b,#0b0b28);
-      cursor:pointer;
+  padding: 0 15px 40px 180px;
+  font-size: 0.9em;
+  color: #fff;  background: linear-gradient(68deg,#94054b,#0b0b28);
+  cursor:pointer;
+  font-size: 16px;
 }
 
 #plank_hello h2 {
@@ -1801,6 +1802,9 @@ div#sub_plank_select_logo {
   background: #333;
   z-index: 1;
   width: 90%;
+  margin-top: -50px;
+}
+#editor_left_slide.not_empty .editor_left_slide_empty {
   display: none;
 }
 #menu_user_route_count {

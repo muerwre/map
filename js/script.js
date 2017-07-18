@@ -571,11 +571,13 @@ function check_token(){
                     //console.log(data.routes_count);
                     
                     // Заполняем менюшку со списком роутов
-                    $('#menu_user_route_count').text(data.routes_count);
+                    
                     if(data.routes_count > 0){
                         $('#menu_user_routes_item').addClass('not_empty');
                         //$('#menu_user_route_count').addClass('tag-primary');
+                        $('#menu_user_route_count').text(data.routes_count);
                         $('#user_route_list').html('');
+                        $('#editor_left_slide').addClass('not_empty');
                         //shown_routes = Math.floor((parseInt($(window).height())-200)/45);
                         //$('#user_route_list').css('max-height',shown_routes*45);
 
@@ -585,6 +587,9 @@ function check_token(){
                         if(shown_routes < $('#user_route_list .menu-item').length || data.routes.length < data.routes_count){
                             $('#user_route_more').show();
                         }
+                    }else{
+                        $('#menu_user_route_count').text('');
+                        $('#editor_left_slide').removeClass('not_empty');
                     }
                     //console.log('token ok');
                 }
