@@ -748,13 +748,14 @@ function toggle_route(state) {
 
 function drop_route() {
     'use strict';
+    clear_router();
   // удаляет маршрут
     if (poly) {
         poly.remove();
         poly = map.editTools.startPolyline(); // начинаем новую полилинию
         poly.setStyle({color: '#ff3333', weight: '5'});
         poly.editor.disable();
-        update_overlays();
+        
         if(mode==='route'){
             toggle_none();
             toggle_route();
@@ -764,6 +765,7 @@ function drop_route() {
         //mode = 'none';
         toggle_none();
         $('#text_route_length').text('0 км');
+        update_overlays();
     }
 }
 
@@ -904,7 +906,7 @@ function key_up(e){
 function key_down(e) {
     'use strict';
         var fix;
-        console.log(e.keyCode);
+        //console.log(e.keyCode);
     if(can_i_edit){
         if (( $(e.target).is('input') || $(e.target).is('textarea') ) && (e.keyCode !== 27 && e.keyCode !== 13)) { return; }
         if(e.shiftKey && mode == 'none'){
@@ -938,6 +940,8 @@ function key_down(e) {
                 drop_route();
                 drop_stickers();
                 drop_points();
+                clear_router();
+                update_overlays();
             } else {
                 toggle_route_drop();
             }
