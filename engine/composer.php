@@ -220,7 +220,7 @@ if($stickers && sizeof($stickers) > 0){
             $im->drawImage($dr);  
             $dr->destroy();
         }
-        $wm = new Imagick();
+        $wm = new Imagick(); 
         $wm->setBackgroundColor(new ImagickPixel('transparent')); 
         $wm->readImage("../misc/stickers/stickers.svg");
         $wm->cropImage(72,72,$sticker['x'],0); 
