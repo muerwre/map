@@ -412,6 +412,10 @@ div.col-6 {
   font-size: 17px;
   text-align:left;
 }
+#editor_left_plank .sub_plank {
+  right: auto;
+  left: 10px;
+}
 .sub_plank_text {
   float:left;
   padding: 16px 0px 0px 18px;
