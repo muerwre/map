@@ -49,7 +49,7 @@ if($action == 'gen_guest_token'){
 		$i = 0;
 		while($result = mysqli_fetch_assoc($query)){
 			$routes[] = array('id' => $result['name'], 'created' => date('j',$result['created']).' '.monthy(date('n',$result['created'])).date(' Y в H:i',$result['created']));
-			if($i>=19){ break; }
+			if($i>=199){ break; }
 			$i++;
 		}
 		//print_r($routes);
