@@ -574,10 +574,10 @@ function check_token(){
                     $('#menu_user_route_count').text(data.routes_count);
                     if(data.routes_count > 0){
                         $('#menu_user_routes_item').addClass('not_empty');
-                        $('#menu_user_route_count').addClass('tag-primary');
+                        //$('#menu_user_route_count').addClass('tag-primary');
                         $('#user_route_list').html('');
-                        shown_routes = Math.floor((parseInt($(window).height())-200)/45);
-                        $('#user_route_list').css('max-height',shown_routes*45);
+                        //shown_routes = Math.floor((parseInt($(window).height())-200)/45);
+                        //$('#user_route_list').css('max-height',shown_routes*45);
 
                         $.each(data.routes,function(a,b){
                             $('#user_route_list').append('<div class="menu-item" onclick="editor_load(\''+b.id+'\');"><b>'+b.id+'</b><br><small class="gray">'+b.created+'</small></div>');
@@ -856,6 +856,7 @@ function toggle_none() {
     $('#image_cropper').hide();
     $('#logo_composer').removeClass('active');
     $('#map').removeClass('cross');
+    $('#editor_left_slide').removeClass('active');
 }
 
 function toggle_map() {

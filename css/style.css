@@ -342,7 +342,6 @@ div.col-6 {
 #left_plank {
     position: fixed;cursor: pointer;font-size:0px;
     z-index: 10000;
-    width: 600px;
     height: 48px;
     border-radius: 4px;
     bottom: 10px;
@@ -359,7 +358,6 @@ div.col-6 {
     font-size: 0px;
     position: fixed;cursor: pointer;
     z-index: 10000;
-    width: 600px;
     height: 48px;
     border-radius: 4px;
     bottom: 10px;
@@ -874,6 +872,7 @@ b.key {
   padding: 12px 0px 0px 12px;
   box-sizing: border-box;
   font-size: 24px;
+  background: none;
 }
 
 .btn-user-warning::after {
@@ -1716,26 +1715,21 @@ div#sub_plank_select_logo {
 #user_route_list {
   width: 270px;
   overflow: hidden;
+  width:100%;height:100%;
+  font-family: 'RalewayMedium';
+  color: white;
+  padding: 10px 0px 90px 0px;
+  overflow-y: auto;
+  box-sizing:border-box;
 }
 #user_route_list .menu-item {
   border-bottom: none;
+  padding-left: 10px;
+  cursor: pointer;
 }
-
-.menu-item .sub_menu {
-  display: none;
+#user_route_list .menu-item:hover {
+  background: rgba(255,255,255,0.1);
 }
-.menu-item.active .sub_menu {
-  display: block;
-}
-
-#menu_user_routes {
-  bottom: -40px;
-}
-
-#menu_user_routes div { opacity: 0.3; }
-#menu_user_routes div:nth-child(1) { opacity: 1; }
-#menu_user_routes div:nth-child(2) { opacity: 0.7; }
-#menu_user_routes div:nth-child(3) { opacity: 0.5; }
 #store_helper {
   display: none;
   position: absolute;
@@ -1759,7 +1753,53 @@ div#sub_plank_select_logo {
   position: absolute;top: -10px;left: 10px;
 }
 
-#user_route_more {
-  text-align: center;padding: 10px 10px 5px;    border-top: 1px solid #333;
-  display: none;
+#editor_left_slide {
+  transform: translateX(-348px);
+  width: 300px;
+  height: 100%;
+  background: #333;
+  position: absolute;left:0px;bottom:0px;
+  z-index:2000;
+  box-sizing: border-box;
+  transition: transform 500ms;
+}
+
+#editor_left_slide.active {
+  transform: translateX(0px);
+
+}
+#editor_left_slide::after {
+  content: ' ';
+  position:absolute;bottom:0px;left:0px;
+  width:285px;height:90px;
+  background: linear-gradient(transparent ,#333 70%);
+}
+
+#menu_user_route_count {
+    font-size: 10px;
+    text-align: center;
+    font-family: 'RalewayBold';
+    position: absolute;
+    right: 16px;
+    bottom: 19px;
+    padding: 0px;
+    /* border-radius: 10px; */
+    font-style: normal;
+    width: 18px;
+    text-align: center;
+    user-select: none;
+}
+
+.editor_left_slide_close {
+  cursor: pointer;
+  position: absolute;
+  right: -48px;
+  bottom: 10px;
+  width: 48px;
+  height: 48px;
+  background: #ff3344;
+  border-radius: 0 3px 3px 0;
+  color: white;
+  box-sizing: border-box;
+  padding: 8px 0 0 11px;
 }

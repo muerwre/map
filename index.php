@@ -66,10 +66,19 @@
     </div-->
     <div id="logo_composer">
     </div>
+    <div id="editor_left_slide">
+      <div class="editor_left_slide_close"><i class="fa fa-close fa-2x" onclick="$('#editor_left_slide').removeClass('active');"></i></div>
+      <div id="user_route_list">
+      </div>
+    </div>
     <div id="editor_left_plank">
-      <div class="bar" onclick="show_user();"><div class="btn btn-user btn-fa"></div></div>
-      
 
+      <div class="bar" onclick="show_user();"><div class="btn btn-user btn-fa"></div></div>
+      <div class="sep"></div>
+      <div class="bar" onclick="$('#editor_left_slide').toggleClass('active');"><div class="btn btn-fa"><i class="fa fa-folder-o"></i><i id="menu_user_route_count">0</i></div></div>
+      <!--div class="sep"></div>
+      <div class="bar" onclick="show_left_slide();"><div class="btn btn-fa"><i class="fa fa-comments"></i></div></div-->
+     
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
           <div class="routing_tip_text">
@@ -78,24 +87,10 @@
               <b id="menu_user_name">██████████</b><br>
               <small id="menu_user_role">■■■■■■■ ■</small>
             </div>
-            <div class="single"></div>
-            <div class="menu-item" onclick="show_user_routes();" id="menu_user_routes_item">
-              Сохранённые карты<span class="tag pull-right" id="menu_user_route_count">0</span>
-              <div class="sub_menu" id="menu_user_routes">
-                <div id="user_route_list">
-                </div>
-                <div id="user_route_more">Показать все маршруты</div>
-              </div>
-            </div>
-            <!--div class="single"></div>
-            <small class="gray">Чтобы иметь возможность редактировать карты с другого устройства, войдите или зарегистрируйтесь</small-->
-            <!--div class="single"></div>
-            <div class="button_group pull-right">
-              <div class="button">Регистрация</div><div class="button button-primary">Войти</div>
-            </div-->
           </div>
         </div>
       </div>
+
     </div>
     <div id="left_plank" class="active">
       <div class="bar" onclick="enable_editor();"><div class="btn btn-router" ></div><div class="bar_text">Редактор</div></div>
