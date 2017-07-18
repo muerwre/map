@@ -400,10 +400,10 @@ div.col-6 {
   background: #111;
   width: auto;
   min-height: 48px;
-  border-radius: 4px 4px 0 0;
+  border-radius: 4px 4px 0 4px;
   position: absolute;
   bottom:38px;padding-bottom: 10px;
-  left: 10px;z-index:1;
+  right: 4px;z-index:1;
   transform: scaleY(0);
   transform-origin:  50% 100%;
   transition: all 250ms;
@@ -1776,6 +1776,7 @@ div#sub_plank_select_logo {
   transform: translateX(0px);
 
 }
+
 #editor_left_slide::after {
   content: ' ';
   position:absolute;bottom:0px;left:0px;
@@ -1783,6 +1784,21 @@ div#sub_plank_select_logo {
   background: linear-gradient(transparent ,#333 70%);
 }
 
+.editor_left_slide_empty {
+  font-family: 'RalewayRegular';
+  color: white;
+  text-align: center;
+  font-size: 0.9em;
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  padding: 10px;
+  box-sizing: border-box;
+  background: #333;
+  z-index: 1;
+  width: 90%;
+  display: none;
+}
 #menu_user_route_count {
     font-size: 10px;
     text-align: center;

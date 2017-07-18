@@ -68,6 +68,9 @@
     </div>
     <div id="editor_left_slide">
       <div class="editor_left_slide_close"><i class="fa fa-close fa-2x" onclick="$('#editor_left_slide').removeClass('active');"></i></div>
+      <div class="editor_left_slide_empty">
+        <b>Здесь будет список сохранённых вами карт.<b><br><span class="gray">Пока что он пуст.</span>
+      </div>
       <div id="user_route_list">
       </div>
     </div>
@@ -166,7 +169,7 @@
             <div class="small gray">Путь прокладывается с учётом светофоров и поворотов на перекрёстках.</div>
           </div>
           <div class="routing_tip_btns">
-            <a class="button button-danger" onclick="toggle_none();">Отмена</a>
+            <a class="button button-danger" onclick="clear_router();toggle_none();">Отмена</a>
           </div>
         </div>
         <div class="routing_tip routing_tip_setb">
@@ -175,7 +178,7 @@
             <div class="small gray">Чтобы начать заново, сначала удалите маршрут.</div>
           </div>
           <div class="routing_tip_btns">
-            <a class="button button-danger" onclick="toggle_none();">Отмена</a>
+            <a class="button button-danger" onclick="clear_router();toggle_none();">Отмена</a>
           </div>
         </div>
         <div class="routing_tip routing_tip_routing">
@@ -185,7 +188,7 @@
             <!--div class="small gray">Маршрут строится с учётом светофоров и знаков, запрещающих поворот.</div-->
           </div>
           <div class="routing_tip_btns button_group">
-            <a class="button button" onclick="toggle_none();">Отмена</a><a class="button button-primary" onclick="apply_route();">Применить</a>
+            <a class="button button" onclick="clear_router();toggle_none();">Отмена</a><a class="button button-primary" onclick="apply_route();">Применить</a>
           </div>
         </div>
       </div>

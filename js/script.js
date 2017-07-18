@@ -453,7 +453,7 @@ function local_store_data(){
 
 function remote_store_data(force){
     if (true) {
-        $('#sub_plank_remote_store').removeClass('success renaming overwriting').addClass('storing');
+        $('#sub_plank_remote_store').removeClass('success error renaming overwriting').addClass('storing');
         var userdata = get_token(),
             latlngs = poly.getLatLngs(),
             route = [],
@@ -708,8 +708,11 @@ function btn_toggle(id) {
 
 function route_state(state) {
     'use strict';
+
     // Жёстко включает или выключает режим прокладывания маршрута
     if (state === 'active') {
+        console.log('poly activated');
+        clear_router();
         btn_toggle('.btn-poly');
         $('.sub_plank').removeClass('active');
         $('#sub_plank_route').addClass('active');
@@ -797,7 +800,7 @@ function point_state(state) {
 
 function toggle_stickers(){
     'use strict';
-    clear_router();
+    //clear_router();
     $('.sub_plank').removeClass('active');
     if (mode === 'sticker') {
         $('#sub_plank_stickers').addClass('active');
@@ -849,7 +852,7 @@ function toggle_none() {
     mode = "none";
     point_state('off');
     route_state('off');
-    clear_router();
+    //clear_router();
     $('.sub_plank').removeClass('active');
     $('#crop_image').cropper('destroy');
     $('.crop_canvas').removeClass('active');
@@ -901,7 +904,7 @@ function key_up(e){
 function key_down(e) {
     'use strict';
         var fix;
-        console.log(e.keyCode)
+        console.log(e.keyCode);
     if(can_i_edit){
         if (( $(e.target).is('input') || $(e.target).is('textarea') ) && (e.keyCode !== 27 && e.keyCode !== 13)) { return; }
         if(e.shiftKey && mode == 'none'){
@@ -924,6 +927,8 @@ function key_down(e) {
                 if(mode=='routing' && router.A && router.B && e.keyCode === 13){
                     apply_route();
                 }else{
+                    $('#store_helper').hide();
+                    clear_router();
                     toggle_none();   // esc
                 }
             }
@@ -984,6 +989,10 @@ function key_down(e) {
             }
         } else {
         //console.log(e.keyCode);
+        }
+    }else{
+        if (e.keyCode === 27) {
+            $('#store_helper').hide();
         }
     }
 }
@@ -1536,29 +1545,6 @@ function prepare_map() {
                 } else if (mode === 'sticker' || ( mode === 'sticker_dialog' && sticker_style)) {
                     add_sticker(e.latlng);
                 } else if (mode === 'routing') {
-                    /*
-                    var container = L.DomUtil.create('div','router_popup'),
-                        startBtn = createButton('отсюда', container, 'routing-button-a'),
-                        destBtn = createButton('сюда', container, 'routing-button-b');
-                        //console.log(e.latlng);
-                        L.DomEvent.on(startBtn, 'click', function() {
-                            //control.spliceWaypoints(0, 1, e.latlng);
-                            map.closePopup();
-                            router.A = e.latlng;
-                            update_router();
-                        });
-                        L.DomEvent.on(destBtn, 'click', function() {
-                            //control.spliceWaypoints(0, 1, e.latlng);
-                            map.closePopup();
-                            router.B = e.latlng;
-                            update_router();
-                        });
-
-                    L.popup()
-                        .setContent(container)
-                        .setLatLng(e.latlng)
-                        .openOn(map);
-                    */
                     update_router(e);
                 }else{
                     //console.log(sticker_style,mode);
@@ -1716,7 +1702,7 @@ function toggle_routing(){
         toggle_none();
         $('#map').addClass('cross');
         mode='routing';
-        router.A = router.B = null;
+        //router.A = router.B = null;
         update_router();
         $('#sub_plank_routing_machine').addClass('active');
     }
@@ -1757,11 +1743,14 @@ function another_simplify(latlngs){
 }
 */
 function update_router(e){
+    console.log('update router');
     if(typeof(poly) !== 'undefined' && poly && poly.getLatLngs().length > 0){
+        console.log('pos1');
         // Если маршрут нарисован, продолжаем его.
         latlngs = poly.getLatLngs();
         //console.log('Продолжаем полигон');
         if(router.A){
+            console.log('A only');
             // Если мы уже задали первую точку
             // проверка на router.B? Да, стоит
             if(typeof(e) !== 'undefined' && typeof(e.latlng) !== 'undefined'){
@@ -1784,6 +1773,7 @@ function update_router(e){
                 console.log('Ничего не делаем');
             }*/
         }else{
+            console.log('not not b');
             $('#sub_plank_routing_tip').attr('class','setb');
             //console.log('Устанавливаем начальную точку');
             router.A = latlngs[ latlngs.length - 1];
@@ -1791,8 +1781,10 @@ function update_router(e){
             create_router();
         }
     }else{
+        console.log('pos2',router.A,router.B);
         // Если нет, то ставим первую или вторую точку
         //console.log('Строим с нуля');
+
         if(router.A && !router.B && typeof(e) !== 'undefined' && typeof(e.latlng) !== 'undefined'){
             $('#sub_plank_routing_tip').attr('class','routing');
             //console.log('Ставим конечную точку',e.latlng);
@@ -1812,13 +1804,18 @@ function update_router(e){
                 waypoints.push(new L.Routing.Waypoint(e.latlng));
                 router.object.setWaypoints(waypoints);
             }else{
-                $('#sub_plank_routing_tip').attr('class','seta');
+                if(router.A && router.B){
+                    $('#sub_plank_routing_tip').attr('class','routing');
+                }else{
+                    $('#sub_plank_routing_tip').attr('class','seta');
+                }
             }
         }
     }
 }
 
 function create_router(){
+    console.log('create router called',router.A,router.B);
     if(!router.object){
         router.object=L.Routing.control({
                                 serviceUrl: 'http://vault48.org:5000/route/v1',
@@ -1857,6 +1854,8 @@ function create_router(){
 }
 
 function clear_router(){
+    //throw "Error2";
+    console.log('clear router');
     if(typeof(router.object) !== 'undefined' && router.object){
         router.object.spliceWaypoints(0,65535);
         router.A = router.B = router.object = null;
@@ -2051,6 +2050,8 @@ function remote_load_data(name){
                             }
                         });
                         map.fitBounds( poly.getBounds() );
+                        $('#store_name').val(name);
+                        update_store_url();
                         //setTimeout(function(){  }, 5000);
                         //update_overlays();
                         
