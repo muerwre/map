@@ -2854,7 +2854,23 @@ function get_gpx(){
         route = [];
     $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); }); 
     if(route.length > 0){
-        window.open('/engine/auth.php?action=get_gpx&name='+$('#store_name').val()+'&route='+JSON.stringify(route));
+        //window.open('/engine/auth.php?action=get_gpx&name='+$('#store_name').val()+'&route='+JSON.stringify(route));
+        $.post('/engine/auth.php',
+            {   'action': 'put_gpx', 
+                'name': $('#store_name').val(),
+                'route': route 
+                },
+            function(data){
+                console.log(data);
+
+                if(data.success && data.result_id){
+                    window.open('/engine/auth.php?action=get_gpx&name='+$('#store_name').val()+'&result_id='+data.result_id);
+                }
+            },'json').fail(
+                function(a,b,c){
+                    report_xhr_error(a,'put_gpx');
+                }
+            );
     }
 }
 

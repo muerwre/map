@@ -119,7 +119,7 @@ if($action == 'gen_guest_token'){
 		//print_r($user);
 		//echo 'id:'.$_REQUEST['token'];
 		//print_r($_REQUEST['route']);
-		echo json_encode(['success' => false, 'data' => $_REQUEST, 'description' => 'У вас возникли проблемы с авторизацией. Попробуйте ещё раз.', 'mode' => 'recheck']);exit;
+		echo json_encode(['success' => false, 'data' => $_REQUEST, 'description' => 'У вас возникли проблемы с авторизацией. Попробуйте ещё раз.'.$id.'/'.$token.'/'.$user, 'mode' => 'recheck']);exit;
 	}
 
 	if($row=mysqli_fetch_assoc(mysqli_query($link,"SELECT * FROM routes LEFT JOIN tokens ON routes.id = tokens.id WHERE routes.name = '$name';"))){
@@ -138,28 +138,41 @@ if($action == 'gen_guest_token'){
 	echo json_encode(['success' => true, 'name' => $name, 'force'=>$force, 'data' => $_REQUEST, 'description' => 'Отлично! Ваш маршрут сохранён. Поделитесь ссылкой с друзьями, приятной покатушки!']);
 }elseif($action=='fetch_msgs'){
 
-}elseif($action=='get_gpx'){
-	$route = json_decode($_GET['route']);
+}elseif($action=='put_gpx'){
+	$route = $_REQUEST['route'];
 	//print_r($route);
 	if(!isset($route) or sizeof($route)<=0){
 		oops('Слишком короткий трэк');
 	}else{
-		if (isset($_GET['name']) && strlen($_GET['name'])>0) {
-			$name = substr($_GET['name'], 0, 64);
-		}else{
-			$name = 'Маршрут-'.date('j').'-'.monthy(date('n')).date('-Y-H:i');
-		}
-		header('Content-Description: File Transfer');
-		header('Content-Type: application/gpx');
-    	header('Content-Type: application/gpx+xml');
-    	header('Content-Disposition: attachment; filename='.$name.'.gpx');
-		echo "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<gpx>\n<rte>\n<name>HBC</name>\n";
+		$raw = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<gpx>\n\t<rte>\n\t\t<name>HBC</name>\n";
 		foreach($route as $key=>$var){
 			//print_r($var);
-			echo "<rtept lat=\"".$var->lat."\" lon=\"".$var->lng."\"><name>".$key."</name><sym>8198</sym></rtept>\n";
+			$raw.= "\t\t\t<rtept lat=\"".$var['lat']."\" lon=\"".$var['lng']."\"><name>".$key."</name><sym>8198</sym></rtept>\n";
 		}
-		echo "</rte>\n</gpx>";
+		$raw.= "\t</rte>\n</gpx>";
+		$rand_pattern=time()+rand(0,65535);
+		while(file_exists($result_prefix.urlencode($rand_pattern).".gpx")){
+			$rand_pattern=time()+rand(65535);
+		}	
+		if(!file_put_contents($result_prefix.urlencode($rand_pattern).".gpx", $raw)){
+			oops('Ошибка сохранения готового изображения');
+		}
+		echo json_encode(array('success'=>true,'result_id'=>urlencode($rand_pattern)));
 	}
+}elseif($action=='get_gpx'){
+	if (isset($_REQUEST['name']) && strlen($_REQUEST['name'])>0) {
+		$name = substr($_REQUEST['name'], 0, 64);
+	}else{
+		$name = 'Маршрут-'.date('j').'-'.monthy(date('n')).date('-Y-H:i');
+	}
+	if(!is_numeric($_REQUEST['result_id'])){
+		oops('Possibly hack attempt');
+	}
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/gpx');
+	header('Content-Type: application/gpx+xml');
+	header('Content-Disposition: attachment; filename='.$name.'.gpx');
+	echo file_get_contents($result_prefix.$_REQUEST['result_id'].".gpx");
 }
 mysqli_close($link);
 ?>

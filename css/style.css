@@ -1785,8 +1785,10 @@ div#sub_plank_select_logo {
 #editor_left_slide::after {
   content: ' ';
   position:absolute;bottom:0px;left:0px;
-  width:285px;height:90px;
-  background: linear-gradient(transparent ,#333 70%);
+  width:285px;height:190px;
+  background: linear-gradient(transparent ,#333 90%);
+  touch-action: initial;
+  pointer-events: none;
 }
 
 .editor_left_slide_empty {
