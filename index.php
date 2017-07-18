@@ -31,7 +31,8 @@
     <link rel="stylesheet" type="text/css" href="/css/leaflet-routing-machine.css" />
 
     <link rel="shortcut icon" href="/favicon.png?wd" type="image/png">
-    <meta property="og:image" content="/bigicon.png?wdewrweeddz" />
+    <meta property="og:image" content="/misc/vk_preview.png" />
+    <meta content="/misc/vk_preview.png">
 </head>
 <body>
     <div id="store_helper">

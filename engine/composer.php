@@ -190,35 +190,36 @@ if($stickers && sizeof($stickers) > 0){
         $rad = 50;
         $x = cos((float) $sticker['ang'])*$rad-30+30;
         $y = sin((float) $sticker['ang'])*$rad-30+30;
+        if(mb_strlen($sticker['text'])>0){
+            $dr = new ImagickDraw();
 
-        $dr = new ImagickDraw();
+            //echo '<b>'.$sticker['text'].'</b><br><pre>';print_r($metrics);echo '</pre>';
+            $dr->setFont('RalewayBold.ttf');
+            $dr->setFontSize(12);
+            $dr->setStrokeColor('#ffffff00');
+            $dr->setFillColor('#333333ff');
+            $metrics = $im->queryFontMetrics($dr, $sticker['text']);
 
-        //echo '<b>'.$sticker['text'].'</b><br><pre>';print_r($metrics);echo '</pre>';
-        $dr->setFont('RalewayBold.ttf');
-        $dr->setFontSize(12);
-        $dr->setStrokeColor('#ffffff00');
-        $dr->setFillColor('#333333ff');
-        $metrics = $im->queryFontMetrics($dr, $sticker['text']);
-
-        if($x > -20){
-            $dr->roundRectangle(
-                    $sticker['latlng']['x']+$x-8,
-                    $sticker['latlng']['y']+$y-$metrics['textHeight']/2-15,
-                    $sticker['latlng']['x']+$x+$metrics['textWidth']+56,
-                    $sticker['latlng']['y']+$y+$metrics['textHeight']/2+12, 2, 2);
-            $dr->setFillColor('#ffffffff');
-            $dr->annotation($sticker['latlng']['x']+$x+36,$sticker['latlng']['y']-$metrics['textHeight']/2+$y+3+8, $sticker['text']);
-        } else {
-            $dr->roundRectangle(
-                    $sticker['latlng']['x']+$x-$metrics['textWidth']-66,
-                    $sticker['latlng']['y']+$y-$metrics['textHeight']/2-15,
-                    $sticker['latlng']['x']+$x-8,
-                    $sticker['latlng']['y']+$y+$metrics['textHeight']/2+12, 2, 2);
-            $dr->setFillColor('#ffffffff');
-            $dr->annotation($sticker['latlng']['x']+$x-$metrics['textWidth']-46,$sticker['latlng']['y']-$metrics['textHeight']/2+$y+3+8, $sticker['text']);
+            if($x > -20){
+                $dr->roundRectangle(
+                        $sticker['latlng']['x']+$x-8,
+                        $sticker['latlng']['y']+$y-$metrics['textHeight']/2-15,
+                        $sticker['latlng']['x']+$x+$metrics['textWidth']+56,
+                        $sticker['latlng']['y']+$y+$metrics['textHeight']/2+12, 2, 2);
+                $dr->setFillColor('#ffffffff');
+                $dr->annotation($sticker['latlng']['x']+$x+36,$sticker['latlng']['y']-$metrics['textHeight']/2+$y+3+8, $sticker['text']);
+            } else {
+                $dr->roundRectangle(
+                        $sticker['latlng']['x']+$x-$metrics['textWidth']-66,
+                        $sticker['latlng']['y']+$y-$metrics['textHeight']/2-15,
+                        $sticker['latlng']['x']+$x-8,
+                        $sticker['latlng']['y']+$y+$metrics['textHeight']/2+12, 2, 2);
+                $dr->setFillColor('#ffffffff');
+                $dr->annotation($sticker['latlng']['x']+$x-$metrics['textWidth']-46,$sticker['latlng']['y']-$metrics['textHeight']/2+$y+3+8, $sticker['text']);
+            }
+            $im->drawImage($dr);  
+            $dr->destroy();
         }
-        $im->drawImage($dr);  
-        $dr->destroy();
         $wm = new Imagick();
         $wm->setBackgroundColor(new ImagickPixel('transparent')); 
         $wm->readImage("../misc/stickers/stickers.svg");
