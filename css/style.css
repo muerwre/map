@@ -1727,7 +1727,6 @@ div#sub_plank_select_logo {
   padding-left: 10px;
   cursor: pointer;
 }
-<<<<<<< HEAD
 
 .menu-item .fa {
     font-size: 22px;
@@ -1736,8 +1735,6 @@ div#sub_plank_select_logo {
     color: #18aae1;
 }
 
-=======
->>>>>>> 45b9b1f8fe269f68718d3b242cb139b1188d9722
 #user_route_list .menu-item:hover {
   background: rgba(255,255,255,0.1);
 }
