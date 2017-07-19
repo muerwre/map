@@ -497,7 +497,7 @@ function remote_store_data(force){
                 'force': force,
                 'map_style': current_map_style},
             function(data){
-                console.log(data);
+                //console.log(data);
                 if(data.success){
                     if(typeof(data.description) !== 'undefined' && data.description){
                         $('#store_status').text(data.description);
@@ -507,7 +507,7 @@ function remote_store_data(force){
                     update_store_url();
                     check_token();
                 }else{
-                    console.log('panic!');
+                    //console.log('panic!');
                     $('#sub_plank_remote_store').removeClass('error recheck success storing renaming overwriting');
                     if(typeof(data.description) !== 'undefined' && data.description){
                         $('#store_status').text(data.description);
@@ -598,16 +598,33 @@ function check_token(){
                     
                     if(data.routes_count > 0){
                         $('#menu_user_routes_item').addClass('not_empty');
-                        //$('#menu_user_route_count').addClass('tag-primary');
+
                         $('#menu_user_route_count').text(data.routes_count);
                         $('#user_route_list').html('');
                         $('#editor_left_slide').addClass('not_empty');
-                        //shown_routes = Math.floor((parseInt($(window).height())-200)/45);
-                        //$('#user_route_list').css('max-height',shown_routes*45);
 
                         $.each(data.routes,function(a,b){
-                            $('#user_route_list').append('<div class="menu-item" onclick="editor_load(\''+b.id+'\');"><i class="fa fa-file"></i><b>'+b.id+'</b><br><small class="gray">'+b.created+'</small></div>');
+                            $('#user_route_list').append('<div class="menu-item route_item" data-route="'+b.id+'"><a></a><div class="fa fa-trash-o route_list_delete"></div><i class="fa fa-file"></i><b>'+b.id+'</b><br><small class="gray">'+b.created+'</small></div>');
                         });
+
+                        $('.route_list_delete').bind('click', function(e){
+
+                            var parent = $(e.target).parent();
+
+                            if(!parent.hasClass('confirm')){
+                                parent.addClass('confirm');
+                            }else{
+                                remote_drop_route(parent.data('route'));
+                                parent.remove();
+                                //console.log(parent.data('route'));
+                            }
+                            
+                        });
+                        $('.route_item a').bind('click', function(e){
+                            var parent = $(e.target).parent();                            
+                            editor_load(parent.data('route'));
+                        })
+
                         if(shown_routes < $('#user_route_list .menu-item').length || data.routes.length < data.routes_count){
                             $('#user_route_more').show();
                         }
@@ -740,7 +757,7 @@ function route_state(state) {
 
     // Жёстко включает или выключает режим прокладывания маршрута
     if (state === 'active') {
-        console.log('poly activated');
+        //console.log('poly activated');
         clear_router();
         btn_toggle('.btn-poly');
         $('.sub_plank').removeClass('active');
@@ -1126,8 +1143,8 @@ function make_a_shot(callback) {
         }
     }
     //console.log(tiles.raw);
-    console.log('callaback is ', callback)
-  image_prefetcher(callback);
+    //console.log('callaback is ', callback)
+    image_prefetcher(callback);
 }
 
 function image_prefetcher(callback) {
@@ -1641,7 +1658,10 @@ function prepare_map() {
 }
 
 function enable_editor(){
+    $('body').addClass('is_editing');// Чтобы сдвигать в редакторе логотип выше
+
     if(location.hash !== '#editor'){ location.hash = 'editor'; return true; }
+
     $('#left_plank').removeClass('active');
     if(poly.getLatLngs().length<=0 && Object.keys(stickers.objects).length<=0 && Object.keys(point_array.point_to_id).length<=0){
         local_recover_data();
@@ -1654,7 +1674,7 @@ function enable_editor(){
         $('#sticker_'+stickers.layer_to_object[b._leaflet_id]).addClass('sticker_editable');
     });
     $.each(point_array.vectors.getLayers(), function(a,b){
-        console.log('pnt '+b._leaflet_id);
+        //console.log('pnt '+b._leaflet_id);
         // Убираем средний маркер
         l = point_array.vectors.getLayer(b._leaflet_id);
         l.enableEdit();
@@ -1682,6 +1702,7 @@ function enable_editor(){
 }
 
 function disable_editor(){
+    $('body').removeClass('is_editing'); // Чтобы сдвигать в редакторе логотип выше
     $('#left_plank').addClass('active');
     toggle_none();
     update_overlays();
@@ -1718,7 +1739,11 @@ function update_store_url(e){
 }
 
 function cool_thanks(){
-    $('#store_helper').show();
+    if (typeof(get_cookie('hide_store_helper')) === 'undefined') {
+        $('#store_helper').show();
+        expire = new Date(new Date().getTime() + 38600 * 365000);
+        document.cookie = 'hide_store_helper=1; path=/; expires='+expire.toUTCString();
+    }
     location.hash='map?'+previous_store_name;
     toggle_none();
 }
@@ -1776,14 +1801,14 @@ function another_simplify(latlngs){
 }
 */
 function update_router(e){
-    console.log('update router');
+    //console.log('update router');
     if(typeof(poly) !== 'undefined' && poly && poly.getLatLngs().length > 0){
-        console.log('pos1');
+        //console.log('pos1');
         // Если маршрут нарисован, продолжаем его.
         latlngs = poly.getLatLngs();
         //console.log('Продолжаем полигон');
         if(router.A){
-            console.log('A only');
+            //console.log('A only');
             // Если мы уже задали первую точку
             // проверка на router.B? Да, стоит
             if(typeof(e) !== 'undefined' && typeof(e.latlng) !== 'undefined'){
@@ -1806,7 +1831,7 @@ function update_router(e){
                 console.log('Ничего не делаем');
             }*/
         }else{
-            console.log('not not b');
+            //console.log('not not b');
             $('#sub_plank_routing_tip').attr('class','setb');
             //console.log('Устанавливаем начальную точку');
             router.A = latlngs[ latlngs.length - 1];
@@ -1814,7 +1839,7 @@ function update_router(e){
             create_router();
         }
     }else{
-        console.log('pos2',router.A,router.B);
+        //console.log('pos2',router.A,router.B);
         // Если нет, то ставим первую или вторую точку
         //console.log('Строим с нуля');
 
@@ -1848,7 +1873,7 @@ function update_router(e){
 }
 
 function create_router(){
-    console.log('create router called',router.A,router.B);
+    //console.log('create router called',router.A,router.B);
     if(!router.object){
         router.object=L.Routing.control({
                                 serviceUrl: 'http://vault48.org:5000/route/v1',
@@ -1888,7 +1913,7 @@ function create_router(){
 
 function clear_router(){
     //throw "Error2";
-    console.log('clear router');
+    //console.log('clear router');
     if(typeof(router.object) !== 'undefined' && router.object){
         router.object.spliceWaypoints(0,65535);
         router.A = router.B = router.object = null;
@@ -2118,7 +2143,7 @@ function remote_load_data(name){
                         });
                     }
 
-                    console.log(data.data);
+                    //console.log(data.data);
                     if(typeof( data.data.map_style) !== 'undefined' && current_map_style !== data.data.map_style){
                         if(typeof(map_list[data.data.map_style])){
                             change_map(data.data.map_style);
@@ -2899,7 +2924,7 @@ function do_login(input_data){
         oauth_window.close();
     }
     oauth_window = null;
-    console.log('moving forces');
+    //console.log('moving forces');
     $.get('/engine/auth.php',
     {   'action': 'move_data', 
         'old_id': old_data.id,
@@ -2921,6 +2946,23 @@ function do_logout(){
     $('#sub_plank_user').removeClass('active');
     set_token(null,null,null);
     gen_guest_token();
+}
+
+function remote_drop_route(route_id){
+    token = get_token();
+    $.get('/engine/auth.php',
+        {   'action': 'drop_route', 
+            'id': token.id,
+            'token': token.token,
+            'route': route_id
+            },
+        function(data){ 
+            check_token();       
+        },'json').fail(
+            function(a,b,c){
+                report_xhr_error(a,'drop_route');
+            }
+        );    
 }
 
 function transliterate(engToRus) {

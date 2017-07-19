@@ -608,13 +608,17 @@ a.button {color: white;text-decoration: none;}
   right: 0px;
   bottom: 0px;
   z-index: 1001;
-      width: 100%;
-    height: 100%;
-    touch-action: initial;
-    pointer-events: none;
-    background-repeat: no-repeat;
+  width: 100%;
+  height: 100%;
+  touch-action: initial;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  transition: bottom 500ms,opacity 500ms;
 }
 
+.is_editing #logo_composer {
+  bottom: 58px;opacity: 0.5;
+}
 #logo_select_btn {
   z-index: 200;
   position: absolute;
@@ -1742,13 +1746,42 @@ div#sub_plank_select_logo {
   border-bottom: none;
   padding-left: 10px;
   cursor: pointer;
+  position: relative;
 }
+
 
 .menu-item .fa {
     font-size: 22px;
     float: left;
     padding: 6px 10px 0 0;
     color: #18aae1;
+}
+
+.menu-item .fa.route_list_delete {
+  position: absolute;right: 10px;top:6px;
+  font-size: 24px;color: #999;
+}
+
+.route_item a {
+  width: 240px;
+  z-index: 2000;
+}
+
+.menu-item .fa.route_list_delete:hover {
+  color: #ff3344;
+}
+
+.route_item.confirm {
+  color: #ff3344;
+}
+.route_item.confirm::after {
+  content: 'Ещё раз, чтобы удалить';
+  font-size: smaller;
+  color: #ff3344;
+}
+
+.route_item.confirm small {
+  display:none;
 }
 
 #user_route_list .menu-item:hover {
@@ -1851,7 +1884,8 @@ div#sub_plank_select_logo {
   border-radius: 0 3px 3px 0;
   color: white;
   box-sizing: border-box;
-  padding: 8px 0 0 11px;
+  padding: 10px 0 0 13px;
+  font-size:24px;
 }
 
 .oauth_page {

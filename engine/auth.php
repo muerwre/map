@@ -197,6 +197,20 @@ if($action == 'gen_guest_token'){
 	
 	echo json_encode(['success'=>true, 'message'=>"Freed {$old_user_id} to {$new_user_id}", 'debug'=>"UPDATE `routes` SET id = '{$new_user_id}' WHERE id='{$old_user_id}'"]);
 
+}elseif($action=='drop_route'){
+
+	$id = isset($_GET['id']) ? mysqli_escape_string($link, $_GET['id']) : null;
+	$token = isset($_GET['token']) ? mysqli_escape_string($link, $_GET['token']) : null;
+	$route_name = isset($_GET['route']) ? mysqli_escape_string($link, $_GET['route']) : null;
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
+
+	$query = mysqli_query($link,"DELETE FROM `routes` WHERE id='{$result['id']}' AND name='{$route_name}'");
+
+	echo json_encode(['success' => true, 'debug' => "DELETE FROM `routes` WHERE id='{$result['id']}' AND name='{$route_name}'"]);
 }
 mysqli_close($link);
 ?>

@@ -68,9 +68,9 @@
     <div id="logo_composer">
     </div>
     <div id="editor_left_slide">
-      <div class="editor_left_slide_close"><i class="fa fa-close fa-2x" onclick="$('#editor_left_slide').removeClass('active');"></i></div>
+      <div class="editor_left_slide_close" onclick="$('#editor_left_slide').removeClass('active');">✕</div>
       <div class="editor_left_slide_empty">
-        <b>Здесь будет список сохранённых вами карт.<b><br><span class="gray">Пока что он пуст.</span>
+        <b>Здесь будет список сохранённых вами карт.</b><br><span class="gray">Пока что он пуст.</span>
       </div>
       <div id="user_route_list">
       </div>
