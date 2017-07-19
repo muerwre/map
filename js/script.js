@@ -595,12 +595,14 @@ function check_token(){
                     
                     
                     // Заполняем менюшку со списком роутов
+                    $('#user_route_list').html('');
+                    $('#menu_user_route_count').hide();
                     
                     if(data.routes_count > 0){
                         $('#menu_user_routes_item').addClass('not_empty');
 
-                        $('#menu_user_route_count').text(data.routes_count);
-                        $('#user_route_list').html('');
+                        $('#menu_user_route_count').show().text(data.routes_count);
+                        
                         $('#editor_left_slide').addClass('not_empty');
 
                         $.each(data.routes,function(a,b){
