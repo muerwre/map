@@ -1882,6 +1882,7 @@ div#sub_plank_select_logo {
   border-radius: 4px;
   background-size: cover;
   float:left;
+  box-shadow: inset rgba(255,255,255,0.2) 1px 1px, inset rgba(0,0,0,0.5) -1px -1px;
 }
 
 .bar_user_name {

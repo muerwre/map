@@ -86,7 +86,7 @@
         <div class="bar" onclick="show_user();">
           <div class="bar_user_avatar field_user_avatar"></div>
           <div class="bar_user_name">
-            <div class="field_user_id text-primary"></div>
+            <div class="field_user_id"></div>
             <div class="field_user_name small gray"></div>
           </div>
         </div>
@@ -100,9 +100,9 @@
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
           <div class="routing_tip_text">
-            <div class="small gray">Вы - авторизованный пользователь, а значит, ваши маршруты всегда будут с вами.</div>
+            <div><div class="button button-danger pull-right" onclick="do_logout();">Выход</div><span class="small gray">Вы авторизованы и ваши маршруты в безопасности.</span></div>
             <div class="single"></div>
-            <div class="button button-danger pull-right" onclick="do_logout();">Выход</div>
+            
           </div>
         </div>
       </div>

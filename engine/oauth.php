@@ -92,20 +92,36 @@
 					<? } ?>
 				<? } elseif ($error) { ?>
 
-					<? $error_text = "VK ERROR: ".$error." / reason: ".$error_reason." / description: ".$error_description; ?>
-					Упс! Кажется, произошла ошибка.
-					<div class="single"></div>
+					<? $error_text = "VK ERROR: ".$_GET['error']." / reason: ".$_GET['error_reason']." / description: ".$error_description;
+						if($_GET['error_reason']=='user_denied'){ ?>
+							<b>Вы отказались войти.</b>
+							<div class="single"></div>
 
-					<div class="small gray" style="word-wrap: break-word;">
-						Информация для разработчика:<br>
-						<? echo base64_encode($error_text); ?>
-					</div>
-					<div class="single"></div>
-					<div class="pull-right">						
-						<a onclick="window.close();" class="button button-empty">Отмена</a>
-						<a href="https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri={$_SERVER['HTTP_HOST']}&response_type=code" class="button button-primary "><i class="fa fa-vk"></i>&nbsp;|&nbsp;Попытаться ещё раз</a>
-					</div>
-					<div class="clr"></div>
+							<div class="small" style="word-wrap: break-word;">
+								<p>Возможно, вы боитесь, что мы получим доступ к вашему аккаунту Вконтакте, но это не так. Всё, что мы получим от сервера в ответе: ваше имя, фамилию и фотографию.</p>
+								<p class="gray">Мы никому их не покажем, а просто будем показывать вам в редакторе, чтобы было красиво.</p>								
+							</div>
+							<div class="single"></div>
+							<div class="pull-right">						
+								<a onclick="window.close();" class="button button-empty">Отмена</a>
+								<a href="https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://<?=$_SERVER['HTTP_HOST'];?>/engine/oauth.php&response_type=code" class="button button-primary "><i class="fa fa-vk"></i>&nbsp;|&nbsp;Попытаться ещё раз</a>
+							</div>
+							<div class="clr"></div>
+						<? }else{ ?>
+							Упс! Кажется, произошла ошибка.
+							<div class="single"></div>
+
+							<div class="small gray" style="word-wrap: break-word;">
+								Информация для разработчика:<br>
+								<? echo base64_encode($error_text); ?>
+							</div>
+							<div class="single"></div>
+							<div class="pull-right">						
+								<a onclick="window.close();" class="button button-empty">Отмена</a>
+								<a href="https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=<?=$_SERVER['HTTP_HOST'];?>&response_type=code" class="button button-primary "><i class="fa fa-vk"></i>&nbsp;|&nbsp;Попытаться ещё раз</a>
+							</div>
+							<div class="clr"></div>
+						<? } ?>
 					<?
 					//file_put_contents('../logs/'.date('Y-m-d H:i:s.').'txt', $error_text");
 					?>
