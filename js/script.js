@@ -2041,7 +2041,8 @@ function remote_load_data(name){
        if (name) {
         var storedRoute, storedPoints, storedStickers, routeLatLngs, i;
         can_i_load = false;
-        console.log('loading!');
+        //console.log('loading!');
+        //console.log(can_i_store);
         $.get('/engine/auth.php',
             {'name': decodeURI(name), 'action': 'load'},
             function(data){
@@ -2054,8 +2055,7 @@ function remote_load_data(name){
 
                     if( typeof(data.data.logo) !== 'undefined' && typeof(logos[data.data.logo]) !==  'undefined'){
                         current_logo = data.data.logo;
-                    }else{
-                        
+                    }else{                        
                         current_logo = 'default';  
                     } 
                     //console.log('setting logo');
@@ -2128,9 +2128,10 @@ function remote_load_data(name){
                     }else{
 
                     }
+                    if(can_i_edit){ can_i_store = true; }
                     update_overlays();
-
                     set_logo(current_logo);
+
                 }
             }, 'json').fail(
                 function(a,b,c){

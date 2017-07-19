@@ -1823,7 +1823,7 @@ div#sub_plank_select_logo {
 #menu_user_route_count {
     font-size: 10px;
     text-align: center;
-    font-family: 'RalewayBold';
+    font-family: Roboto, Helvetica, Sans-serif;
     position: absolute;
     right: 7px;
     bottom: 7px;
@@ -1836,6 +1836,7 @@ div#sub_plank_select_logo {
     background: #333;
     border: 2px solid #fff;
     border-radius: 10px;
+    font-weight: bold;
     /* color: #565656; */
 }
 
