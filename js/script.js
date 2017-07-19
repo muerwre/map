@@ -2889,7 +2889,7 @@ function open_oauth_frame(host){
     var width = parseInt($(window).width()),
         height = parseInt($(window).height());
         oauth_window = window.open("https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://" + host + "/engine/oauth.php&response_type=code", "socialPopupWindow",
-                "location=no,width=700,height=270,scrollbars=no,top="+(height-270)/2+",left="+(width-700)/2+",resizable=no");
+                "location=no,width=700,height=370,scrollbars=no,top="+(height-370)/2+",left="+(width-700)/2+",resizable=no");
 }
 
 function do_login(input_data){

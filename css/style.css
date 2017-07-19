@@ -737,7 +737,7 @@ a.button {color: white;text-decoration: none;}
 .btn:active {
   transform: scale(1.1);
 }
-.btn span, .btn.active:hover span {
+.btn span, .btn.active:hover span, .bar_text span {
     position: absolute;
     bottom: 58px;
     color: white;
@@ -755,16 +755,16 @@ a.button {color: white;text-decoration: none;}
     /* color: #fff; */
     font-family: 'RalewayMedium';
     font-size: 13px;
-    white-space: nowrap;
+    white-space: nowrap;font-weight: normal;text-transform: none;
 }
-.btn span::before {
+.btn span::before, .bar_text span::before {
     content: ' ';
     position:absolute;bottom:-15px;left:10px;
     width: 0;
-height: 0;
-border-style: solid;
-border-width: 15px 15px 0 15px;
-border-color: #111 transparent transparent transparent;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 15px 0 15px;
+    border-color: #111 transparent transparent transparent;
 }
 .btn span b, b.key {
     color: white;
@@ -787,7 +787,7 @@ b.key {
     margin-top: 0px;
     float: none;
 }
-.btn:hover span {
+.btn:hover span, .bar_text:hover span {
     transform: scaleY(1);
 }
 

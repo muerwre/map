@@ -78,7 +78,7 @@
     <div id="editor_left_plank">
 
       <span id="user_login_unauthorized">
-        <div class="bar" onclick="open_oauth_frame('<?=$_SERVER['HTTP_HOST'];?>');"><div class="btn btn-user btn-fa"></div><div class="bar_text">ВОЙТИ</div></div>
+        <div class="bar" onclick="open_oauth_frame('<?=$_SERVER['HTTP_HOST'];?>');"><div class="btn btn-user btn-fa"><span>Войдите чере вконтакте, <br>чтобы ваши маршруты <br>всегда были с вами.</span></div><div class="bar_text"><span>Войдите чере вконтакте, <br>чтобы ваши маршруты <br>всегда были с вами.</span>ВОЙТИ</div></div>
         <div class="sep"></div>
       </span>
 
