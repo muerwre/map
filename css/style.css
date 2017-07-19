@@ -1753,7 +1753,7 @@ div#sub_plank_select_logo {
 .menu-item .fa {
     font-size: 22px;
     float: left;
-    padding: 6px 10px 0 0;
+    padding: 5px 8px 5px 7px;
     color: #18aae1;
 }
 
@@ -1761,7 +1761,11 @@ div#sub_plank_select_logo {
   position: absolute;right: 10px;top:6px;
   font-size: 24px;color: #999;
 }
-
+.route_item.confirm .fa.route_list_delete {
+    color: #333 !important;
+    background: #ff3344;
+    border-radius: 20px;
+}
 .route_item a {
   width: 240px;
   z-index: 2000;
