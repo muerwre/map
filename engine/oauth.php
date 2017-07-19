@@ -1,3 +1,4 @@
+
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -19,7 +20,7 @@
 				?>
 				<? if ($code) {?>					
 
-					<?	$response = json_decode(file_get_contents("https://oauth.vk.com/access_token?client_id=5987644&redirect_uri=http://alpha-map.vault48.org/engine/oauth.php&client_secret=Z71DsxoMF7PS9kayLuks&code=" . $code));
+					<?	$response = json_decode(file_get_contents("https://oauth.vk.com/access_token?client_id=5987644&redirect_uri=http://{$_SERVER['HTTP_HOST']}/engine/oauth.php&client_secret=Z71DsxoMF7PS9kayLuks&code=" . $code));
 
 						$login_data = json_decode(file_get_contents("https://api.vk.com/method/users.get?user_ids={$response->user_id}&fields=photo,has_photo&v=5.67&access_token={$response->access_token}"))->response;
 						//print_r($response);
@@ -102,7 +103,7 @@
 					<div class="single"></div>
 					<div class="pull-right">						
 						<a onclick="window.close();" class="button button-empty">Отмена</a>
-						<a href="https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://alpha-map.vault48.org/engine/oauth.php&response_type=code" class="button button-primary "><i class="fa fa-vk"></i>&nbsp;|&nbsp;Попытаться ещё раз</a>
+						<a href="https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri={$_SERVER['HTTP_HOST']}&response_type=code" class="button button-primary "><i class="fa fa-vk"></i>&nbsp;|&nbsp;Попытаться ещё раз</a>
 					</div>
 					<div class="clr"></div>
 					<?

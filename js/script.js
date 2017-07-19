@@ -636,7 +636,7 @@ function set_token(id,token,role){
         document.cookie = 'user_token='+token+'; path=/; expires='+expire.toUTCString();
         document.cookie = 'user_role='+role+'; path=/; expires='+expire.toUTCString();
     }
-    prepare_user_menu();
+    //prepare_user_menu();
 }
 
 function get_token(){
@@ -2885,10 +2885,10 @@ function get_gpx(){
     }
 }
 
-function open_oauth_iframe(){
+function open_oauth_frame(host){
     var width = parseInt($(window).width()),
         height = parseInt($(window).height());
-        oauth_window = window.open("https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://alpha-map.vault48.org/engine/oauth.php&response_type=code", "socialPopupWindow",
+        oauth_window = window.open("https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://" + host + "/engine/oauth.php&response_type=code", "socialPopupWindow",
                 "location=no,width=700,height=270,scrollbars=no,top="+(height-270)/2+",left="+(width-700)/2+",resizable=no");
 }
 
