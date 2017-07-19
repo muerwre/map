@@ -1825,14 +1825,18 @@ div#sub_plank_select_logo {
     text-align: center;
     font-family: 'RalewayBold';
     position: absolute;
-    right: 16px;
-    bottom: 19px;
-    padding: 0px;
+    right: 7px;
+    bottom: 7px;
+    padding: 1px 3px 0px;
     /* border-radius: 10px; */
     font-style: normal;
-    width: 18px;
+    /* width: 18px; */
     text-align: center;
     user-select: none;
+    background: #333;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    /* color: #565656; */
 }
 
 .editor_left_slide_close {
