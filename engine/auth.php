@@ -37,11 +37,12 @@ if($action == 'gen_guest_token'){
 }elseif($action == 'check_token'){
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
-	$result=mysqli_query($link,"SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
+	$result= mysqli_query($link,"SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
 	if($user = mysqli_fetch_assoc($result)){
 		//print_r($user);
 		// Грузим карты для данного пользователя
-		
+		$role = $user['role'];
+		$userdata = json_decode($user['data']);
 		$routes = array();
 		$query = mysqli_query($link,"SELECT * FROM `routes` WHERE id='".$user['id']."' ORDER BY created DESC");
 		//print_r(mysqli_fetch_assoc($query));
@@ -64,7 +65,7 @@ if($action == 'gen_guest_token'){
 			}
 		}
 		//$name='bfga';
-		echo json_encode(['success'=>true, 'random_url'=>$name, 'role' => 'primary', 'routes' => $routes, 'routes_count' => $query->num_rows]);
+		echo json_encode(['success'=>true, 'random_url'=>$name, 'role' => $user['role'], 'routes' => $routes, 'routes_count' => $query->num_rows, 'userdata' => $userdata]);
 	}else{
 		oops("query=SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
 	}
@@ -173,6 +174,29 @@ if($action == 'gen_guest_token'){
 	header('Content-Type: application/gpx+xml');
 	header('Content-Disposition: attachment; filename='.$name.'.gpx');
 	echo file_get_contents($result_prefix.$_REQUEST['result_id'].".gpx");
+}elseif($action=='move_data'){
+	// При логине двигает имеющиеся маршруты пользователя в авторизованный аккаунт
+
+	$old_id = isset($_GET['old_id']) ? mysqli_escape_string($link, $_GET['old_id']) : null;
+	$old_token = isset($_GET['old_token']) ? mysqli_escape_string($link, $_GET['old_token']) : null;
+	
+	$new_id = isset($_GET['new_id']) ? mysqli_escape_string($link, $_GET['new_id']) : null;
+	$new_token = isset($_GET['new_token']) ? mysqli_escape_string($link, $_GET['new_token']) : null;
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$old_id}' AND token='{$old_token}'");
+	if (!$query->num_rows) { oops('Гостевой токен не найден'); }
+	$result = mysqli_fetch_assoc($query);
+	$old_user_id = $result['id'];
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$new_id}' AND token='{$new_token}'");
+	if (!$query->num_rows) { oops('Авторизованный токен не найден'); }
+	$result = mysqli_fetch_assoc($query);
+	$new_user_id = $result['id'];
+
+	mysqli_query($link,"UPDATE `routes` SET id = '{$new_user_id}' WHERE id='{$old_user_id}'");
+	
+	echo json_encode(['success'=>true, 'message'=>"Freed {$old_user_id} to {$new_user_id}", 'debug'=>"UPDATE `routes` SET id = '{$new_user_id}' WHERE id='{$old_user_id}'"]);
+
 }
 mysqli_close($link);
 ?>

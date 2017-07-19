@@ -14,57 +14,62 @@
 /*global L, $, jQuery, alert, middle_latlng, findDistance,console */
 
 var map, poly, point_btn, map_layer, mode, map_layer, is_dragged, 
-    dgis, map_list, current_logo, current_zoom, can_i_store = false, 
-    can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false;
+    dgis, current_logo, current_zoom, can_i_store = false, 
+    can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false,
 // В этой штуке мы храним точки и выноски, их связки и всё такое
-var point_array = {
-    points: L.layerGroup(),
-    vectors: L.layerGroup(),
-    handles: L.layerGroup(),
-    //vector_array: {},
-    //points_array: {},
-    pairs: {},
-    point_to_id: {},
-    id_to_point: {},
-    savedata: {}
-};
-var logos = {
-    'default': ['Без логотипа', '/misc/nologo.png?ww', 'bottom-right'],
-    'nvs': ['НВС', '/misc/lgo.png', 'bottom-right'],  
-    'pinmix': ['Пин-Микс', '/misc/pin-mix.png', 'top-right'],
-    'jolly': ['Пин-Микс + JW', '/misc/jw.png', 'top-right'],
-    'pedals' : ['Усталые Педальки', '/misc/pedals.png',  'bottom-right'], 
-    'rider': ['Райдер', '/misc/rider.png', 'bottom-right'],
-    'rider_evening': ['Вечерние городские', '/misc/rider_evening.png', 'top-right'],
-    'fas': ['Алкоспорт', '/misc/fas.png', 'bottom-right'],
-};
-var points = L.layerGroup();
-var km_marks = L.layerGroup();
-var pnt_id = 0;
-var store = false;
-var force_stop = false;
-var mode = "none";
-var current_map_style = 'default';
-// эти нужны для отмены
-var Z = 90, redo_latlng, redoBuffer = [];
+    point_array = {
+        points: L.layerGroup(),
+        vectors: L.layerGroup(),
+        handles: L.layerGroup(),
+        //vector_array: {},
+        //points_array: {},
+        pairs: {},
+        point_to_id: {},
+        id_to_point: {},
+        savedata: {}
+    },
+    logos = {
+        'default': ['Без логотипа', '/misc/nologo.png?ww', 'bottom-right'],
+        'nvs': ['НВС', '/misc/lgo.png', 'bottom-right'],  
+        'pinmix': ['Пин-Микс', '/misc/pin-mix.png', 'top-right'],
+        'jolly': ['Пин-Микс + JW', '/misc/jw.png', 'top-right'],
+        'pedals' : ['Усталые Педальки', '/misc/pedals.png',  'bottom-right'], 
+        'rider': ['Райдер', '/misc/rider.png', 'bottom-right'],
+        'rider_evening': ['Вечерние городские', '/misc/rider_evening.png', 'top-right'],
+        'fas': ['Алкоспорт', '/misc/fas.png', 'bottom-right'],
+    },
+    points = L.layerGroup(),
+    km_marks = L.layerGroup(),
+    pnt_id = 0,
+    store = false,
+    force_stop = false,
+    mode = "none",
+    current_map_style = 'default',
+    // эти нужны для отмены
+    Z = 90, redo_latlng, redoBuffer = [],
+    // Это для загрузки тайлов
+    tiles = {'raw': [], 'loaded': []}, 
+    tile_max_iterations = 400, 
+    tile_max_flows = 12, 
+    tile_iteration = 0, 
+    tile_iterator, 
+    original_bounds, 
+    original_shift,
 
-// Это для загрузки тайлов
-var tiles = {'raw': [], 'loaded': []}, tile_max_iterations = 400, tile_max_flows = 12, tile_iteration = 0, tile_iterator, original_bounds, original_shift;
+    // Стили карт
+    map_list = {
+        'watercolor': 'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
+        'darq': 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'default': 'https://tile1.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1',
+        'osm': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'hot': 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+        'blank': 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+        'sat': 'http://mt0.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
+        'ymap': 'https://vec03.maps.yandex.net/tiles?l=map&v=17.04.16-0&x={x}&y={y}&z={z}&scale=1&lang=ru_RU'
+    },
 
-// стили карт
-map_list = {
-    'watercolor': 'http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg',
-    'darq': 'http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-    'default': 'https://tile1.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1',
-    'osm': 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    'hot': 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-    'blank': 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-    'sat': 'http://mt0.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
-    'ymap': 'https://vec03.maps.yandex.net/tiles?l=map&v=17.04.16-0&x={x}&y={y}&z={z}&scale=1&lang=ru_RU'
-};
-
-// Стикеры
-var stickers = {
+    // Стикеры
+    stickers = {
         'objects': {},
         'layers': L.layerGroup(),
         'savedata': {},
@@ -106,16 +111,20 @@ var stickers = {
     },
     sticker_style,
     active_sticker,
-    sticker_id = 0;
+    sticker_id = 0,
 
-// Роутер 
-var router = {A: null, B:null, object: null, coordinates: null};
+    // Роутер 
+    router = {A: null, B:null, object: null, coordinates: null},
 
-// Сохранение
-var phrases = [ 'Карта! Твоё время пришло!','Она живая! Живаааяяя!','Я сотворил монстра!','Время явить тебя миру!',
+    // Сохранение
+    phrases = [ 'Карта! Твоё время пришло!','Она живая! Живаааяяя!','Я сотворил монстра!','Время явить тебя миру!',
                 'Май карта из рэди!', 'Это было легко!', 'Вот она, только руку протяни', 'Ого! Время публиковать!',
                 'Это должны видеть все!', 'Итак, вот оно. Публикация.', 'Поздравляем. Вот и оно.','Эта карта прекрасна!',
-                'Вперёд, Могучие Рэйнджеры!']
+                'Вперёд, Могучие Рэйнджеры!'],
+
+    // Всё, что нужно для oauth
+    oauth_window;
+
 function test_get_tiles(){
     var w  = $('#map').width(),h = $('#map').height(),
         sw = latlng_to_tile(map.getBounds()._southWest),
@@ -536,12 +545,13 @@ function gen_guest_token(){
     $.get('/engine/auth.php',{action:'gen_guest_token'},
         function(data){
             set_token(data.id,data.token,data.role);
-            console.log('puuz: ',data)
-            if($('#store_name').val().length===0 && typeof(data.random_url) !== 'undefined'){
+            //console.log('puuz: ',data)
+            if($('#store_name').val().length === 0 && typeof(data.random_url) !== 'undefined'){
                 $('#store_name').val(data.random_url);
-                update_store_url();
+                update_store_url();                
             }
-            console.log(data.random_url);
+            check_token();
+            //console.log(data.random_url);
         }, 'json').fail(
                 function(a,b,c){
                     report_xhr_error(a,'gen_guest_token');
@@ -550,6 +560,7 @@ function gen_guest_token(){
 }
 
 function check_token(){
+
     //console.log('checking token');
     var userdata = get_token(),
         shown_routes;
@@ -563,12 +574,25 @@ function check_token(){
                 if(!data.success){
                     gen_guest_token();
                 }else{
-                    prepare_user_menu();
+
                     if($('#store_name').val().length===0 && typeof(data.random_url) !== 'undefined'){
                         $('#store_name').val(data.random_url);
                         update_store_url();
                     }
-                    //console.log(data.routes_count);
+                    if(data.role == 'guest'){
+                        $('#user_login_logged').hide();
+                        $('#user_login_unauthorized').show();
+                    }else{
+                        if(data.userdata.photo){
+                            $('.field_user_avatar').css('background-image', 'url(\'' + data.userdata.photo + '\')');
+                        }
+                        $('.field_user_id').html('<span class="fa fa-vk"></span> <b>' + userdata.id.replace('vk:','') + '</b>');
+                        $('.field_user_name').text(data.userdata.name);
+                        $('#user_login_unauthorized').hide();
+                        $('#user_login_logged').show();
+                        
+                    }
+                    
                     
                     // Заполняем менюшку со списком роутов
                     
@@ -2819,19 +2843,6 @@ function make_bigger_shot(size){
     }, 400);
 }
 
-function prepare_user_menu(){
-    var token = get_token();
-    if(token.role === 'guest'){
-        $('.btn-user').addClass('btn-user-warning');
-        $('#menu_user_name').html(token.id.substr(0,16).replace('guest:','<span class="text text-warning">guest:</span>'));
-        $('#menu_user_role').html('временный аккаунт');
-    }else{
-
-    }
-    $('#sub_plank_user').addClass('loaded');
-    //console.log(token);
-}
-
 function show_user_routes(){
     if($('#menu_user_routes_item').hasClass('not_empty')){
         $('#menu_user_routes_item').toggleClass('active');
@@ -2872,6 +2883,43 @@ function get_gpx(){
                 }
             );
     }
+}
+
+function open_oauth_iframe(){
+    var width = parseInt($(window).width()),
+        height = parseInt($(window).height());
+        oauth_window = window.open("https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://alpha-map.vault48.org/engine/oauth.php&response_type=code", "socialPopupWindow",
+                "location=no,width=700,height=270,scrollbars=no,top="+(height-270)/2+",left="+(width-700)/2+",resizable=no");
+}
+
+function do_login(input_data){
+    old_data = get_token();
+    if(oauth_window){
+        oauth_window.close();
+    }
+    oauth_window = null;
+    console.log('moving forces');
+    $.get('/engine/auth.php',
+    {   'action': 'move_data', 
+        'old_id': old_data.id,
+        'old_token': old_data.token,
+        'new_id': input_data.id,
+        'new_token': input_data.token
+        },
+    function(data){
+        set_token(input_data.id, input_data.token, 'vk');
+        check_token();
+    },'json').fail(
+        function(a,b,c){
+            report_xhr_error(a,'move_data');
+        }
+    );       
+}
+
+function do_logout(){
+    $('#sub_plank_user').removeClass('active');
+    set_token(null,null,null);
+    gen_guest_token();
 }
 
 function transliterate(engToRus) {

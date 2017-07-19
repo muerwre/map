@@ -1,0 +1,9 @@
+Array
+(
+    [readyState] => 4
+    [responseText] => 
+    [status] => 500
+    [statusText] => Internal Server Error
+    [url] => /engine/auth.php
+    [function] => check_token
+)

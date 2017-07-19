@@ -1,0 +1,1 @@
+VK ERROR: access_denied / reason: user_denied / description: User denied your request

@@ -77,8 +77,22 @@
     </div>
     <div id="editor_left_plank">
 
-      <div class="bar" onclick="show_user();"><div class="btn btn-user btn-fa"></div></div>
-      <div class="sep"></div>
+      <span id="user_login_unauthorized">
+        <div class="bar" onclick="open_oauth_iframe();"><div class="btn btn-user btn-fa"></div><div class="bar_text">ВОЙТИ</div></div>
+        <div class="sep"></div>
+      </span>
+
+      <span id="user_login_logged" class="hidden">
+        <div class="bar" onclick="show_user();">
+          <div class="bar_user_avatar field_user_avatar"></div>
+          <div class="bar_user_name">
+            <div class="field_user_id text-primary"></div>
+            <div class="field_user_name small gray"></div>
+          </div>
+        </div>
+        <div class="sep"></div>
+      </span>
+      
       <div class="bar" onclick="$('#editor_left_slide').toggleClass('active');"><div class="btn btn-fa"><i class="fa fa-folder-o"></i><i id="menu_user_route_count">0</i></div></div>
       <!--div class="sep"></div>
       <div class="bar" onclick="show_left_slide();"><div class="btn btn-fa"><i class="fa fa-comments"></i></div></div-->
@@ -86,11 +100,9 @@
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
           <div class="routing_tip_text">
-            <div>
-              <i class="fa fa-user-o fa-2x pull-left"></i>
-              <b id="menu_user_name">██████████</b><br>
-              <small id="menu_user_role">■■■■■■■ ■</small>
-            </div>
+            <div class="small gray">Вы - авторизованный пользователь, а значит, ваши маршруты всегда будут с вами.</div>
+            <div class="single"></div>
+            <div class="button button-danger pull-right" onclick="do_logout();">Выход</div>
           </div>
         </div>
       </div>
