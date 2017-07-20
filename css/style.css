@@ -1880,7 +1880,7 @@ div#sub_plank_select_logo {
   cursor: pointer;
   position: absolute;
   right: -48px;
-  bottom: 10px;
+  bottom: 68px;
   width: 48px;
   height: 48px;
   background: #ff3344;
@@ -1984,6 +1984,12 @@ div#sub_plank_select_logo {
 
 }
 
+#chat_input .button.active {
+  animation: send 250ms;
+}
+@keyframes send {
+  100% { color: rgba(255,255,255,0); padding-left: 45px; }
+}
 .chat_msg {
   background: #444;
   box-sizing: border-box;

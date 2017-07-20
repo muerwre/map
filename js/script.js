@@ -3031,6 +3031,8 @@ function chat_put(){
     msg = $('#chat_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
     chat_hold = true;
     if(msg.length>0){
+        $('#chat_input .button').addClass('active');
+        setTimeout(function(){$('#chat_input .button').removeClass('active');},500)
         $('#chat_history_buffer').append('<div class="chat_msg chat_own_msg"><i class="fa fa-circle-o-notch fa-spin fa-fw pull-right"></i>' + msg + '</div>');
         $.get('/engine/auth.php',
             {   'action': 'chat_put',
