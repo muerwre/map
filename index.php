@@ -82,7 +82,7 @@
         <div id="chat_history">
           <div id="chat_history_buffer"></div>
         </div>
-        <textarea id="chat_input_box" onkeyup="chat_watch_enter(event);"></textarea>
+        <textarea id="chat_input_box" onkeyup="chat_watch_enter(event);" placeholder=""></textarea>
         <div class="button button-primary pull-right" onclick="chat_put();"><span class="fa fa-arrow-right"></span></div>
       </div>
 
@@ -123,6 +123,8 @@
       <div class="bar" onclick="enable_editor();"><div class="btn btn-router" ></div><div class="bar_text">Редактор</div></div>
       <div class="sep"></div>
       <div class="bar" onclick="get_gpx();"><div class="btn btn-import" ></div><div class="bar_text">GPX</div></div>
+      <div class="sep"></div>
+      <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
     </div>
     <div id="plank">
         <div class="sub_plank relative" id="plank_hello" onclick="toggle_none();">

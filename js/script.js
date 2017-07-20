@@ -922,7 +922,6 @@ function toggle_none() {
     $('#image_cropper').hide();
     $('#logo_composer').removeClass('active');
     $('#map').removeClass('cross');
-    $('#editor_left_slide').removeClass('active');
 }
 
 function toggle_map() {
@@ -990,6 +989,8 @@ function key_down(e) {
                 if(mode=='routing' && router.A && router.B && e.keyCode === 13){
                     apply_route();
                 }else{
+                    $('#editor_left_slide').removeClass('active');
+                    $('#chat_left_slide').removeClass('active');
                     $('#store_helper').hide();
                     clear_router();
                     toggle_none();   // esc
@@ -2989,6 +2990,7 @@ function open_chat(){
     if($('#chat_left_slide').hasClass('active')){
         close_chat();
     }else{
+        $('#chat_input_box').focus();
         $('#editor_left_slide').removeClass('active');
         $('#chat_left_slide').addClass('active');
         chat_get();

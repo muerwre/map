@@ -1959,6 +1959,7 @@ div#sub_plank_select_logo {
   position: absolute;left:10px;width:280px;height: 90px;bottom: 70px;
   border-radius: 4px;
   background: #444;
+  box-shadow: #111 0 0 2px;
 }
 
 #chat_input textarea {
@@ -1974,11 +1975,13 @@ div#sub_plank_select_logo {
   font-family: inherit;
   font-size:inherit;
   font-size: 0.8em;
+  box-shadow: inset #666 0 1px, inset #333 0 -1px;
 }
 
 #chat_input .button {
   margin: 3px;width: 60px;
   box-sizing: border-box;
+
 }
 
 .chat_msg {
