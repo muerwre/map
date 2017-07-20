@@ -100,4 +100,17 @@ function prefetch($x,$y,$z,$source){
         return false;
     }
 }
+
+function format_chat_msg($message, $highlight){
+    $data = json_decode($message['data']);
+    $name = $data->name ? strstr($data->name, ' ', true) : 'guest:'.$message['user_id'];
+    $photo = $data->photo ? $data->photo : '';
+    $msg = str_replace('<','&lt;', str_replace('>','&gt;',$message['msg']));
+    if($message['role']=='system'){
+        return '<div class="chat_msg chat_commit">+ '.$msg.'</div>'; 
+    }else{
+        return '<div class="chat_msg'.($message['token']==$highlight ? ' chat_own_msg' : '').'"><div class="chat_avatar" style="background-image: url(\''.$photo.'\');"></div><b>'.$name.'</b>: '.$msg.'</div>';      
+    }
+}
+
 ?>

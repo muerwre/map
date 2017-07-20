@@ -65,9 +65,9 @@
     <!--div class="ctrl ctrl-search">
       <span class="fa fa-search"></span>
     </div-->
-    <div id="logo_composer">
-    </div>
-    <div id="editor_left_slide">
+    <div id="logo_composer"></div> <!-- Оверлэй с логотипом -->
+
+    <div id="editor_left_slide"> <!-- Слайд с сохранёнными картами -->
       <div class="editor_left_slide_close" onclick="$('#editor_left_slide').removeClass('active');">✕</div>
       <div class="editor_left_slide_empty">
         <b>Здесь будет список сохранённых вами карт.</b><br><span class="gray">Пока что он пуст.</span>
@@ -75,6 +75,19 @@
       <div id="user_route_list">
       </div>
     </div>
+
+     <div id="chat_left_slide"> <!-- Слайд с сохранёнными картами -->
+      <div class="editor_left_slide_close" onclick="close_chat();">✕</div>
+      <div id="chat_input">
+        <div id="chat_history">
+          <div id="chat_history_buffer"></div>
+        </div>
+        <textarea id="chat_input_box" onkeyup="chat_watch_enter(event);"></textarea>
+        <div class="button button-primary pull-right" onclick="chat_put();"><span class="fa fa-arrow-right"></span></div>
+      </div>
+
+    </div>
+
     <div id="editor_left_plank">
 
       <span id="user_login_unauthorized">
@@ -93,9 +106,9 @@
         <div class="sep"></div>
       </span>
       
-      <div class="bar" onclick="$('#editor_left_slide').toggleClass('active');"><div class="btn btn-fa"><i class="fa fa-folder-o"></i><i id="menu_user_route_count">0</i></div></div>
-      <!--div class="sep"></div>
-      <div class="bar" onclick="show_left_slide();"><div class="btn btn-fa"><i class="fa fa-comments"></i></div></div-->
+      <div class="bar" onclick="open_route_list();"><div class="btn btn-fa"><i class="fa fa-folder-o"></i><i id="menu_user_route_count"></i></div></div>
+      <div class="sep"></div>
+      <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
      
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">

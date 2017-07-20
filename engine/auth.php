@@ -38,6 +38,8 @@ if($action == 'gen_guest_token'){
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
 	$result= mysqli_query($link,"SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
+	$last_message = isset($_COOKIE['last_message']) && is_numeric($_COOKIE['last_message']) && $_COOKIE['last_message'] >  0 ? mysqli_escape_string($link, $_COOKIE['last_message']) : 0;
+	$new_messages = 0;
 	if($user = mysqli_fetch_assoc($result)){
 		//print_r($user);
 		// Грузим карты для данного пользователя
@@ -56,6 +58,7 @@ if($action == 'gen_guest_token'){
 		//print_r($routes);
 		//echo "SELECT * FROM `routes` WHERE id='".$user['id']."' ORDER BY created DESC LIMIT 0,20";
 		$c=0;
+
 		while($c<=3000){
 			// генерируем заранее такое имя карты, чтобы его не было в базе
 			$c+=1;
@@ -64,8 +67,13 @@ if($action == 'gen_guest_token'){
 				break;
 			}
 		}
-		//$name='bfga';
-		echo json_encode(['success'=>true, 'random_url'=>$name, 'role' => $user['role'], 'routes' => $routes, 'routes_count' => $query->num_rows, 'userdata' => $userdata]);
+		if($last_message > 0){
+			//echo "SELECT * FROM `chat` WHERE id > '".$last_message."'";
+			$query_msg = mysqli_query($link,"SELECT * FROM `chat` WHERE id > '".$last_message."'");
+			$new_messages = $query_msg->num_rows;
+		}
+
+		echo json_encode(['success'=>true, 'random_url'=>$name, 'role' => $user['role'], 'routes' => $routes, 'routes_count' => $query->num_rows, 'userdata' => $userdata, 'new_messages' => $new_messages]);
 	}else{
 		oops("query=SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
 	}
@@ -211,6 +219,70 @@ if($action == 'gen_guest_token'){
 	$query = mysqli_query($link,"DELETE FROM `routes` WHERE id='{$result['id']}' AND name='{$route_name}'");
 
 	echo json_encode(['success' => true, 'debug' => "DELETE FROM `routes` WHERE id='{$result['id']}' AND name='{$route_name}'"]);
+
+}elseif($action=='chat_put'){
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+
+	$message = isset($_REQUEST['message']) ? mysqli_escape_string($link, $_REQUEST['message']) : null;
+	$last_message = isset($_REQUEST['last_message']) && is_numeric($_REQUEST['last_message']) && $_REQUEST['last_message'] >  0 ? mysqli_escape_string($link, $_REQUEST['last_message']) : 0;
+
+	$new_last_message = null;
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
+
+	if($result['id'] && mb_strlen($message) > 1){
+
+		$matches = array();
+
+		if($id == 'vk:360004' && preg_match("/^((.|\n)*)@commit((.|\n)*)$/", $message,$matches)){
+			if($matches[1]){
+				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[1]."', '".$result['role']."', '".$result['data']."', '".$id."')");
+			}
+			if($matches[3]){
+				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[3]."', 'system', '".$result['data']."', '".$id."')");
+			}			
+		}else{
+			mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$message."', '".$result['role']."', '".$result['data']."', '".$id."')");
+		}		
+
+		$query = mysqli_query($link, "SELECT * FROM `chat` WHERE id > ".$last_message." ORDER BY id DESC LIMIT 0,100");
+
+		$output = array();		
+
+		while($result = mysqli_fetch_assoc($query)){			
+			array_unshift($output, format_chat_msg($result, $id));
+			if(!$new_last_message){
+				$new_last_message = $result['id'];
+			}
+		}
+
+		echo json_encode(['success' => true, 'messages' => $output, 'last_message' => $new_last_message]);
+
+	}else{
+		echo 'hi';
+	}
+
+}elseif($action=='chat_get'){
+
+	$id = isset($_GET['id']) ? mysqli_escape_string($link, $_GET['id']) : null;
+	$last_message = isset($_REQUEST['last_message']) && is_numeric($_REQUEST['last_message']) && $_REQUEST['last_message'] >  0 ? mysqli_escape_string($link, $_REQUEST['last_message']) : 0;
+
+	$query = mysqli_query($link, "SELECT * FROM `chat` WHERE id > ".$last_message." ORDER BY id DESC LIMIT 0,100");
+
+	$output = array();		
+
+	while($result = mysqli_fetch_assoc($query)){			
+		array_unshift($output, format_chat_msg($result, $id));
+		if(!$new_last_message){
+			$new_last_message = $result['id'];
+		}
+	}
+
+	echo json_encode(['success' => true, 'messages' => $output, 'last_message' => $new_last_message]);
 }
 mysqli_close($link);
 ?>

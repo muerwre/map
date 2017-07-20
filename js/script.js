@@ -123,7 +123,10 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
                 'Вперёд, Могучие Рэйнджеры!'],
 
     // Всё, что нужно для oauth
-    oauth_window;
+    oauth_window,
+
+    // для чата
+    last_message, chat_hold = false, chat_timer;
 
 function test_get_tiles(){
     var w  = $('#map').width(),h = $('#map').height(),
@@ -568,7 +571,7 @@ function check_token(){
     if( typeof(userdata.id) === 'undefined' || !userdata.id || typeof(userdata.token) === 'undefined' || !userdata.token){
         gen_guest_token();
     }else{
-        $.get('/engine/auth.php',{action:'check_token', 'id': userdata.id, 'token': userdata.token},
+        $.get('/engine/auth.php',{action:'check_token', 'id': userdata.id, 'token': userdata.token, 'last_message': get_cookie('last_message')},
             function(data){
                 //console.log(data);
                 if(!data.success){
@@ -597,8 +600,9 @@ function check_token(){
                     // Заполняем менюшку со списком роутов
                     $('#user_route_list').html('');
                     $('#menu_user_route_count').hide();
-                    
+                    //console.log();
                     if(data.routes_count > 0){
+
                         $('#menu_user_routes_item').addClass('not_empty');
 
                         $('#menu_user_route_count').show().text(data.routes_count);
@@ -633,6 +637,10 @@ function check_token(){
                     }else{
                         $('#menu_user_route_count').text('');
                         $('#editor_left_slide').removeClass('not_empty');
+                    }
+
+                    if(data.new_messages>0){
+                        $('#menu_user_chat_count').text(data.new_messages).addClass('active');
                     }
                     //console.log('token ok');
                 }
@@ -677,6 +685,11 @@ function get_cookie(name) {
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/ig, '\\$1') + "=([^;]*)"
   ));
   return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+function set_cookie(name,value){
+    var expire = new Date(new Date().getTime() + 38600 * 365000);
+    document.cookie = name+'='+value+'; path=/; expires='+expire.toUTCString();
 }
 
 function redraw_map() {
@@ -2966,6 +2979,95 @@ function remote_drop_route(route_id){
             }
         );    
 }
+
+function open_route_list(){
+    $('#chat_left_slide').removeClass('active');
+    $('#editor_left_slide').toggleClass('active');
+}
+
+function open_chat(){
+    if($('#chat_left_slide').hasClass('active')){
+        close_chat();
+    }else{
+        $('#editor_left_slide').removeClass('active');
+        $('#chat_left_slide').addClass('active');
+        chat_get();
+        $('#menu_user_chat_count').removeClass('active');
+        $('#chat_left_slide').addClass('active');
+        chat_timer = setInterval(chat_get, 3000);
+    }
+}
+
+function close_chat(){
+    $('#chat_left_slide').removeClass('active');
+    clearInterval(chat_timer);
+}
+
+function chat_get(){
+    console.log('chat');
+    token = get_token();
+    if(!chat_hold){
+        $.get('/engine/auth.php',
+            {   'action': 'chat_get',
+                'id': token.id,
+                'last_message': last_message},
+            function(data){
+                if(data.success){
+                    $('#chat_history_buffer').before(data.messages);
+                    if(data.last_message){
+                        last_message = data.last_message;
+                        set_cookie('last_message', data.last_message);
+                    }
+                }
+                chat_hold = false;
+            }, 'json');
+    }
+}
+
+function chat_put(){
+    token = get_token();
+    msg = $('#chat_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
+    chat_hold = true;
+    if(msg.length>0){
+        $('#chat_history_buffer').append('<div class="chat_msg chat_own_msg"><i class="fa fa-circle-o-notch fa-spin fa-fw pull-right"></i>' + msg + '</div>');
+        $.get('/engine/auth.php',
+            {   'action': 'chat_put',
+                'id': token.id,
+                'token': token.token,
+                'message': msg,
+                'last_message': last_message},
+            function(data){
+                if(data.success){
+                    $('#chat_history_buffer').html('');
+                    $('#chat_history_buffer').before(data.messages);
+                    if(data.last_message){
+                        console.log('initated');
+                        set_cookie('last_message', data.last_message);
+                        last_message = data.last_message;
+                    }
+                }
+                chat_hold = false;
+            }, 'json').fail(
+            function(a,b,c){
+                chat_hold = false;
+                report_xhr_error(a,'chat_put');
+            }
+        );    
+    }
+    $('#chat_input_box').val('').focus();
+}
+
+function chat_watch_enter(e){
+    if( typeof(e) !== 'undefined' && e.type === 'keyup' && e.keyCode === 13 ){
+        // Блюрим по эскейпу
+        chat_put();
+    }
+}
+/*
+
+Все сторонние функции
+
+*/
 
 function transliterate(engToRus) {
     var     rus = "щ   ш  ч  ц  ю  я  ё  ж  ъ  ы  э  а б в г д е з и й к л м н о п р с т у ф х ь".split(/ +/g),

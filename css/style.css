@@ -1827,7 +1827,6 @@ div#sub_plank_select_logo {
 
 #editor_left_slide.active {
   transform: translateX(0px);
-
 }
 
 #editor_left_slide::after {
@@ -1933,4 +1932,107 @@ div#sub_plank_select_logo {
   color: white;
   float: left;
   padding: 10px;
+}
+
+#chat_left_slide {
+  transform: translateX(-348px);
+  width: 300px;
+  height: 100%;
+  background: #333;
+  position: absolute;left:0px;bottom:0px;
+  z-index:2002;
+  box-sizing: border-box;
+  transition: transform 500ms;
+  padding: 10px 10px 70px 10px;
+}
+
+#chat_left_slide.active {
+  transform: translateX(0px);
+}
+
+#chat_history {
+  width: 100%;
+  position: absolute;bottom:90px;left: 0px;
+}
+
+#chat_input {
+  position: absolute;left:10px;width:280px;height: 90px;bottom: 70px;
+  border-radius: 4px;
+  background: #444;
+}
+
+#chat_input textarea {
+  width: 100%;
+  height: 60px;
+  border: none;
+  background: #555;
+  outline: none;
+  border-radius: 4px 4px 0px 0px;
+  box-sizing: border-box;
+  padding: 5px;
+  color: white;
+  font-family: inherit;
+  font-size:inherit;
+  font-size: 0.8em;
+}
+
+#chat_input .button {
+  margin: 3px;width: 60px;
+  box-sizing: border-box;
+}
+
+.chat_msg {
+  background: #444;
+  box-sizing: border-box;
+  padding: 5px;
+  color: white;
+  font-family: inherit;
+  border-radius: 4px;
+  font-size: 0.8em;
+  margin-bottom: 10px;
+}
+
+.chat_own_msg {
+  opacity: 0.5;
+}
+.chat_avatar {
+    width: 23px;
+    height: 25px;
+    float: left;
+    background: #555 50% 50% no-repeat;
+    background-size: cover;    
+    margin-left: -5px;
+    margin-top: -5px;
+    margin-right: 5px;
+    border-radius: 4px;
+}
+
+#menu_user_chat_count {
+  display: none;
+  font-size: 10px;
+  text-align: center;
+  font-family: Roboto, Helvetica, Sans-serif;
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  padding: 1px 3px 0px;
+  /* border-radius: 10px; */
+  font-style: normal;
+  /* width: 18px; */
+  text-align: center;
+  user-select: none;
+  background: #333;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  font-weight: bold;
+  /* color: #565656; */
+}
+
+#menu_user_chat_count.active {
+  display: block;
+}
+
+.chat_commit {
+  background: #17bf6d;
+  color: #333;
 }
