@@ -106,9 +106,9 @@
         <div class="sep"></div>
       </span>
       
-      <div class="bar" onclick="open_route_list();"><div class="btn btn-fa"><i class="fa fa-folder-o"></i><i id="menu_user_route_count"></i></div></div>
+      <div class="bar" onclick="open_route_list();"><div class="btn btn-fa"><span>Все сохранённые вами маршруты.</span><i class="fa fa-folder-o"></i><i id="menu_user_route_count"></i></div></div>
       <div class="sep"></div>
-      <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
+      <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><span>Чат и ответы на вопросы.</span><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
      
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
@@ -124,7 +124,7 @@
       <div class="sep"></div>
       <div class="bar" onclick="get_gpx();"><div class="btn btn-import" ></div><div class="bar_text">GPX</div></div>
       <div class="sep"></div>
-      <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
+      <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><span>Чат и ответы на вопросы.</span><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
     </div>
     <div id="plank">
         <div class="sub_plank relative" id="plank_hello" onclick="toggle_none();">
