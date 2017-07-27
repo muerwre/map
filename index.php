@@ -283,10 +283,10 @@
           <div class="map_type_desc">Камуфляжные тона на карте от openstreetmap.</div>
         </div>
         <div class="map_type_option">
-          <a onclick="change_map('blank');"></a>
-          <div class="map_type_thumb"><img src="http://b.basemaps.cartocdn.com/light_all/13/5983/2590.png"></div>
-          <div class="map_type_name">BLANQ</div>
-          <div class="map_type_desc">Белая карта без излишеств.</div>
+          <a onclick="change_map('ysat');"></a>
+          <div class="map_type_thumb"><img src="https://sat02.maps.yandex.net/tiles?l=sat&v=3.330.0&x=5983&y=2590&z=13&lang=ru_RU"></div>
+          <div class="map_type_name">YSAT</div>
+          <div class="map_type_desc">Спутниковый яндекс</div>
         </div>
         <!--div class="map_type_option">
           <a onclick="change_map('sat');"></a>

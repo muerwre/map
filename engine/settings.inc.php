@@ -9,7 +9,8 @@ $providers = [
     'hot'=> 'http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
     'blank'=> 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
     'sat'=> 'http://mt{n}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',
-    'ymap'=> 'https://vec03.maps.yandex.net/tiles?l=map&v=17.04.16-0&x={x}&y={y}&z={z}&scale=1&lang=ru_RU'
+    'ymap'=> 'https://vec03.maps.yandex.net/tiles?l=map&v=17.04.16-0&x={x}&y={y}&z={z}&scale=1&lang=ru_RU',
+    'ysat' => 'https://sat02.maps.yandex.net/tiles?l=sat&v=3.330.0&x={x}&y={y}&z={z}&lang=ru_RU'
 ];
 
 $mysql = [
