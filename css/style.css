@@ -228,7 +228,7 @@ a.leaflet-control-zoom-out:before {
     opacity: 0;
     color: red;
     padding: 2px 10px 0px;
-  
+
 }
 .point_drop {
     width: 27px;
@@ -569,7 +569,7 @@ a.button {color: white;text-decoration: none;}
   transform: scaleY(1);
 }
 .sub_plank_left {
-  left: 145px;  
+  left: 145px;
 }
 .sub_plank_full {
   left: 1%;
@@ -943,7 +943,7 @@ b.key {
   position: relative;
   -webkit-transform: scale(1.1);
       -ms-transform: scale(1.1);
-          transform: scale(1.1); 
+          transform: scale(1.1);
 }
 .sk-folding-cube .sk-cube:before {
   content: '';
@@ -977,7 +977,7 @@ b.key {
 }
 .sk-folding-cube .sk-cube3:before {
   -webkit-animation-delay: 0.6s;
-          animation-delay: 0.6s; 
+          animation-delay: 0.6s;
 }
 .sk-folding-cube .sk-cube4:before {
   -webkit-animation-delay: 0.9s;
@@ -987,31 +987,31 @@ b.key {
   0%, 10% {
     -webkit-transform: perspective(140px) rotateX(-180deg);
             transform: perspective(140px) rotateX(-180deg);
-    opacity: 0; 
+    opacity: 0;
   } 25%, 75% {
     -webkit-transform: perspective(140px) rotateX(0deg);
             transform: perspective(140px) rotateX(0deg);
-    opacity: 1; 
+    opacity: 1;
   } 90%, 100% {
     -webkit-transform: perspective(140px) rotateY(180deg);
             transform: perspective(140px) rotateY(180deg);
-    opacity: 0; 
-  } 
+    opacity: 0;
+  }
 }
 
 @keyframes sk-foldCubeAngle {
   0%, 10% {
     -webkit-transform: perspective(140px) rotateX(-180deg);
             transform: perspective(140px) rotateX(-180deg);
-    opacity: 0; 
+    opacity: 0;
   } 25%, 75% {
     -webkit-transform: perspective(140px) rotateX(0deg);
             transform: perspective(140px) rotateX(0deg);
-    opacity: 1; 
+    opacity: 1;
   } 90%, 100% {
     -webkit-transform: perspective(140px) rotateY(180deg);
             transform: perspective(140px) rotateY(180deg);
-    opacity: 0; 
+    opacity: 0;
   }
 }
 
@@ -1169,7 +1169,7 @@ b.key {
 }
 
 /*
-.sticker_with_text {    
+.sticker_with_text {
 
   top: -44px;
   left: 7px;
@@ -1178,7 +1178,7 @@ b.key {
     user-select:none;
 }
 .sticker_text {
-  background: #333;    
+  background: #333;
   color: white;
   position: absolute;top:-20px;left:0px;z-index:2;
     padding: 0 0 0 40px;
@@ -1234,7 +1234,7 @@ b.key {
 .sticker_gap {
     width: 38px;
     height: 38px;
-    background: #ff4433;    
+    background: #ff4433;
     position: absolute;
     top: 0;
     left: 0px;z-index:3;
@@ -1242,7 +1242,7 @@ b.key {
  transform: rotate(0.73997rad);
 }
 .sticker_text.invert {
-    left: auto; 
+    left: auto;
     right: 64px;
     padding: 0 40px 0 0;
 }
@@ -1261,7 +1261,7 @@ b.key {
     user-select:none;width:0px;height:0px;
 }
 .sticker_text {
-  background: #333;    
+  background: #333;
   color: white;
   position: absolute;top:-20px;left:0px;z-index:2;
     padding: 0 0 0 40px;
@@ -1332,7 +1332,9 @@ b.key {
 .sticker_image {
     width: 72px;
     height: 72px;
+    /* Теперь даже и не вспомню, зачем оно нужно было
     border-radius: 64px;
+    */
     position: relative;
     top: -36px;
     left: -36px;
@@ -1343,7 +1345,7 @@ b.key {
 .sticker_gap {
     width: 38px;
     height: 38px;
-    background: #ff4433;    
+    background: #ff4433;
     position: absolute;
     top: 0;
     left: 0px;z-index:3;
@@ -1352,7 +1354,7 @@ b.key {
     background: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='38' height='38' viewBox='0 0 38 38' preserveAspectRatio='none'%3E%3Cpolygon points='0,0 26,0 38,38 0,26' style='fill:%23ff4433;' /%3E%3C/svg%3E");
 }
 .invert .sticker_text {
-    left: auto; 
+    left: auto;
     right: 0px;
     padding: 0 40px 0 0;
 }
@@ -1471,7 +1473,7 @@ div#sub_plank_remote_store {
     right: 10px;
     width: 380px;
     box-sizing:border-box;
-    
+
 }
 
 .sub_plank_store_green {
@@ -1496,7 +1498,7 @@ div#sub_plank_remote_store {
   border: none;border-radius: 4px;
   box-shadow: inset rgba(255,255,255,0.4) 0 -1px, inset rgba(0,0,0,0.1) 0 1px;
   outline: none;
-} 
+}
 .store_address_input span {
   position:absolute;left:0px;top:0px;
   padding: 4px 10px;background: rgba(0,0,0,0.3);font-size: 16px;
@@ -1608,7 +1610,7 @@ a#store_address_url span {
     width: 440px;
     height: 400px;*/
    /*
-    
+
     background-size: contain;
     */
 }
@@ -2009,7 +2011,7 @@ div#sub_plank_select_logo {
     height: 25px;
     float: left;
     background: #555 50% 50% no-repeat;
-    background-size: cover;    
+    background-size: cover;
     margin-left: -5px;
     margin-top: -5px;
     margin-right: 5px;
