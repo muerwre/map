@@ -110,7 +110,7 @@ if($action == 'gen_guest_token'){
 	}
 	if(sizeof($route)<=0 && sizeof($stickers)<=0 && sizeof($points)<=0){
 		echo json_encode(['success' => false, 'description' => 'Здесь нечего сохранять. Нарисуйте что-нибудь и возвращайтесь.', 'mode' => '']);
-		exit;		
+		exit;
 	}
 	if(mb_strlen($name)<=0){
 		$c=0;
@@ -162,7 +162,7 @@ if($action == 'gen_guest_token'){
 		$rand_pattern=time()+rand(0,65535);
 		while(file_exists($result_prefix.urlencode($rand_pattern).".gpx")){
 			$rand_pattern=time()+rand(65535);
-		}	
+		}
 		if(!file_put_contents($result_prefix.urlencode($rand_pattern).".gpx", $raw)){
 			oops('Ошибка сохранения готового изображения');
 		}
@@ -187,7 +187,7 @@ if($action == 'gen_guest_token'){
 
 	$old_id = isset($_GET['old_id']) ? mysqli_escape_string($link, $_GET['old_id']) : null;
 	$old_token = isset($_GET['old_token']) ? mysqli_escape_string($link, $_GET['old_token']) : null;
-	
+
 	$new_id = isset($_GET['new_id']) ? mysqli_escape_string($link, $_GET['new_id']) : null;
 	$new_token = isset($_GET['new_token']) ? mysqli_escape_string($link, $_GET['new_token']) : null;
 
@@ -202,7 +202,7 @@ if($action == 'gen_guest_token'){
 	$new_user_id = $result['id'];
 
 	mysqli_query($link,"UPDATE `routes` SET id = '{$new_user_id}' WHERE id='{$old_user_id}'");
-	
+
 	echo json_encode(['success'=>true, 'message'=>"Freed {$old_user_id} to {$new_user_id}", 'debug'=>"UPDATE `routes` SET id = '{$new_user_id}' WHERE id='{$old_user_id}'"]);
 
 }elseif($action=='drop_route'){
@@ -244,16 +244,16 @@ if($action == 'gen_guest_token'){
 			}
 			if($matches[3]){
 				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[3]."', 'system', '".$result['data']."', '".$id."')");
-			}			
+			}
 		}else{
 			mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$message."', '".$result['role']."', '".$result['data']."', '".$id."')");
-		}		
+		}
 
 		$query = mysqli_query($link, "SELECT * FROM `chat` WHERE id > ".$last_message." ORDER BY id DESC LIMIT 0,100");
 
-		$output = array();		
+		$output = array();
 
-		while($result = mysqli_fetch_assoc($query)){			
+		while($result = mysqli_fetch_assoc($query)){
 			array_unshift($output, format_chat_msg($result, $id));
 			if(!$new_last_message){
 				$new_last_message = $result['id'];
@@ -273,9 +273,9 @@ if($action == 'gen_guest_token'){
 
 	$query = mysqli_query($link, "SELECT * FROM `chat` WHERE id > ".$last_message." ORDER BY id DESC LIMIT 0,100");
 
-	$output = array();		
+	$output = array();
 
-	while($result = mysqli_fetch_assoc($query)){			
+	while($result = mysqli_fetch_assoc($query)){
 		array_unshift($output, format_chat_msg($result, $id));
 		if(!$new_last_message){
 			$new_last_message = $result['id'];
@@ -283,6 +283,44 @@ if($action == 'gen_guest_token'){
 	}
 
 	echo json_encode(['success' => true, 'messages' => $output, 'last_message' => $new_last_message]);
+}elseif($action=='places_get'){
+	//echo 'm!';
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+	$places = [];
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
+
+	$query = mysqli_query($link, "SELECT places.*, tokens.login FROM `places` LEFT JOIN tokens ON places.owner = tokens.id;");
+	//$result = mysqli_fetch_assoc($query);
+	//print_r($query);
+	while($result = mysqli_fetch_assoc($query)){
+		$places[$result['id']] = $result;
+		$places[$result['id']]['owned'] = ($result['login'] == $id);
+	}
+	//echo 'e!';
+	echo json_encode(['success' => true, 'places' => $places]);
+}elseif($action=='place_get_info'){
+	//echo 'm!';
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+	$place = isset($_REQUEST['place']) && is_numeric($_REQUEST['place']) ? mysqli_escape_string($link, $_REQUEST['place']) : null;
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$place) { oops("Токен не найден"); }
+
+	$query = mysqli_query($link, "SELECT places.*, tokens.login, tokens.data as login_data FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.id = ".$place.";");
+
+	$result = mysqli_fetch_assoc($query);
+	$result['owned'] = ($result['login'] == $id);
+	$login_data = json_decode($result['login_data']);
+	$result['owner_name'] = ($login_data && $login_data->name) ? $login_data->name : $result['owner'];
+	echo json_encode(['success' => true, 'place' => $result]);
 }
 mysqli_close($link);
 ?>

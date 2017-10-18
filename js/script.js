@@ -13,8 +13,8 @@
 
 /*global L, $, jQuery, alert, middle_latlng, findDistance,console */
 
-var map, poly, point_btn, map_layer, mode, map_layer, is_dragged, 
-    dgis, current_logo, current_zoom, can_i_store = false, 
+var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
+    dgis, current_logo, current_zoom, can_i_store = false,
     can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false,
 // В этой штуке мы храним точки и выноски, их связки и всё такое
     point_array = {
@@ -30,10 +30,10 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     },
     logos = {
         'default': ['Без логотипа', '/misc/nologo.png?ww', 'bottom-right'],
-        'nvs': ['НВС', '/misc/lgo.png', 'bottom-right'],  
+        'nvs': ['НВС', '/misc/lgo.png', 'bottom-right'],
         'pinmix': ['Пин-Микс', '/misc/pin-mix.png', 'top-right'],
         'jolly': ['Пин-Микс + JW', '/misc/jw.png', 'top-right'],
-        'pedals' : ['Усталые Педальки', '/misc/pedals.png',  'bottom-right'], 
+        'pedals' : ['Усталые Педальки', '/misc/pedals.png',  'bottom-right'],
         'rider': ['Райдер', '/misc/rider.png', 'bottom-right'],
         'rider_evening': ['Вечерние городские', '/misc/rider_evening.png', 'top-right'],
         'fas': ['Алкоспорт', '/misc/fas.png', 'bottom-right'],
@@ -48,12 +48,12 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     // эти нужны для отмены
     Z = 90, redo_latlng, redoBuffer = [],
     // Это для загрузки тайлов
-    tiles = {'raw': [], 'loaded': []}, 
-    tile_max_iterations = 400, 
-    tile_max_flows = 12, 
-    tile_iteration = 0, 
-    tile_iterator, 
-    original_bounds, 
+    tiles = {'raw': [], 'loaded': []},
+    tile_max_iterations = 400,
+    tile_max_flows = 12,
+    tile_iteration = 0,
+    tile_iterator,
+    original_bounds,
     original_shift,
 
     // Стили карт
@@ -86,7 +86,7 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
             {off: 1, title: 'Лес', title_long: 'Берёзовая роща', latlng: [55.04572, 82.95]}, // первый ряд
             {off: 19, title: 'Пусто', title_long: "Пока что пусто 1"},
             {off: 20, title: 'Пусто', title_long: "Пока что пусто 2"}, // третий ряд
-            
+
             {off: 2, title: 'Трасса', title_long: 'Дорога'},
             {off: 3, title: 'Курочка', title_long: 'Курочка'},
             {off: 6, title: 'Палатка', title_long: 'Палаточный лагерь'},
@@ -97,7 +97,7 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
             {off: 15, title: 'Болото', title_long: "Пошла ты,\nтрясина грёбаная!"},
             {off: 16, title: 'Роджер', title_long: "Может не надо?"},
             {off: 17, title: 'Какашка', title_long: "Нехорошее место"},
-            
+
             {off: 21, title: 'Старт', title_long: "Старт здесь"},
             {off: 22, title: '1', title_long: "Первая точка"},
             {off: 23, title: '2', title_long: "Вторая точка"},
@@ -114,7 +114,7 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     active_sticker,
     sticker_id = 0,
 
-    // Роутер 
+    // Роутер
     router = {A: null, B:null, object: null, coordinates: null},
 
     // Сохранение
@@ -127,7 +127,11 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     oauth_window,
 
     // для чата
-    last_message, chat_hold = false, chat_timer;
+    last_message, chat_hold = false, chat_timer,
+
+    // Интересные места;
+    places_layer, places = {}, places_objects = {}, active_place = 0, place_loading = 0
+
 
 function test_get_tiles(){
     var w  = $('#map').width(),h = $('#map').height(),
@@ -180,14 +184,14 @@ function tile_to_latlng(point){
 
 function set_sticker(obj) {
     'use strict';
-    
+
     //var current_sticker = stickers.src[obj.data('sticker')];
     var current_sticker = stickers.src[obj.data('sticker')];
     sticker_style = obj.data('sticker');
-    
+
     if (typeof (current_sticker.latlng) === 'undefined' || typeof (current_sticker.active) !== 'undefined') {
         toggle_none();
-        mode = 'sticker';   
+        mode = 'sticker';
         $('#map').addClass('cross');
     } else {
         add_sticker(current_sticker.latlng);
@@ -201,7 +205,7 @@ function set_sticker(obj) {
 function prepare_stickers() {
     'use strict';
     var obj = $('#sub_plank_stickers').find('.sub_plank_sticker_list'),i;
-    
+
     for (i=stickers.src.length-1;i>=0;i=i-1) {
         obj.prepend('<div class="sticker_thumb" data-sticker="' + i + '"><div style="background-position: -' + parseInt(stickers.src[i].off * 48) + 'px 0px;"></div></div>');
     };
@@ -210,12 +214,13 @@ function prepare_stickers() {
 
 $(document).on('ready', function () {
     //bridge_layer();
+    /*
     'use strict';
-    //map.on('click', function (e) {
-        //e.cancel();
-        //console.log(e.latlng);
-    //});
-
+    map.on('click', function (e) {
+        e.cancel();
+        console.log(e.latlng);
+    });
+    */
     //test_sticker();
 });
 
@@ -224,18 +229,18 @@ function sticker_label_update(id){
     if (typeof (id) !== 'number' ){
         id = $(id.target).parent().parent().data('sticker');
     }
-    
+
     // Обновляет текст в баллуне стикера
-    
+
     var text = $('#sticker_' + id).find('.sticker_text'),
         label = text.find('.sticker_label'),
         input = text.find('textarea');
-        
+
     /*
     if( typeof(e) !== 'undefined' && e.type === 'keyup' && e.keyCode === 27 ){
         // Блюрим по эскейпу
         input.blur();
-    }  
+    }
     */
     label.text( input.val() + '--' );
     // И ещё выравниваем по высоте
@@ -255,12 +260,12 @@ function sticker_drag_label(e) {
         ang = Math.atan2(posy, posx),           // <-- наклон этой линии
         x=Math.cos(ang)*rad-30,                 // <-- Новые позиции всего контейнера
         y=Math.sin(ang)*rad-30;                 // относительно самого marker
-        
+
     $(active_sticker.container).css('left',6+x-parseInt(active_sticker.ctrl.css('left'))).css('top',6+y-parseInt(active_sticker.ctrl.css('top')));
     // Поворачиваем язычок стикера
-    active_sticker.gap.css('transform','rotate(' + (parseFloat(ang) + 2.35619) + 'rad)');  
+    active_sticker.gap.css('transform','rotate(' + (parseFloat(ang) + 2.35619) + 'rad)');
     active_sticker.ang=ang;
-    
+
     if (x < -50 && !active_sticker.container.hasClass('invert')) {
         active_sticker.container.addClass('invert');
     }else if (x > -10 && active_sticker.container.hasClass('invert')){
@@ -326,9 +331,9 @@ function add_sticker(latlng,text_over,angle_over){
     })
     sticker_label_update(sticker_id);
     stickers.objects[sticker_id] = m;
-    
+
     stickers.layer_to_object[m._leaflet_id] = sticker_id;
-    
+
     //map.setView(latlng, 16);
     m.on('editable:drag',function(e){
         /*  Этот забавный хак для того, чтобы при вращении стикера он сам не перетаскивался
@@ -336,7 +341,7 @@ function add_sticker(latlng,text_over,angle_over){
             последнующим включением заставляют нас сразу тащить маркер. А этот метод -- нет
         */
         if(active_sticker && active_sticker.object && active_sticker.latlng){
-            active_sticker.object.setLatLng(active_sticker.latlng); 
+            active_sticker.object.setLatLng(active_sticker.latlng);
             stickers.savedata[stickers.layer_to_object[e.layer._leaflet_id]].latlng = active_sticker.latlng;
         } else {
             stickers.savedata[stickers.layer_to_object[e.layer._leaflet_id]].latlng = e.latlng;
@@ -344,16 +349,17 @@ function add_sticker(latlng,text_over,angle_over){
         // Кароч, при драге стикера мы не можем узнать его id
         // нужно вводить layer_id к object_id, ну и всё такое. Или брать из ивента layer_id, получать обьект, искать его в stickers.objects, что чуточку разумнее
         //stickers.savedata[active_sticker.id].latlng = active_sticker.latlng;
-        
+
     });
     m.on('editable:dragend', function (e) {
         local_store_data();
     });
-    
+
     $('.sticker_pos').on('mousedown',function(e){
+        is_dragged = true;
         active_sticker = {};
         active_sticker.id = $(e.target).parent().data('sticker'),
-        active_sticker.object = stickers.objects[active_sticker.id],                
+        active_sticker.object = stickers.objects[active_sticker.id],
         active_sticker.latlng = active_sticker.object.getLatLng(),
         active_sticker.pos = map.latLngToContainerPoint(active_sticker.latlng);
         active_sticker.container = $('#sticker_' + active_sticker.id);
@@ -437,7 +443,7 @@ function update_overlays() {
                 if (distance > 1) {
                     km_marks.addLayer(L.marker([middle.lat, middle.lng], { icon: L.divIcon({ html: '<div style="transform: scale(' + (map.getZoom() / 13) + ');"><img src="/misc/arr.png" style="transform: translateX(-4px) translateY(-4px) rotate(' + (270 + rotation) + 'deg);"></div>', className: 'arr_mark' }) }));
                 }
-                
+
             }
         } else {
             $('#text_route_length').text('0 км');
@@ -452,13 +458,13 @@ function local_store_data(){
             route = [],
             points_to_save = [],
             stickers_to_save = [];
-        $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); }); 
+        $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); });
         $.each(point_array.savedata, function (a,b) { points_to_save.push(b); });
         $.each(stickers.savedata, function (a,b) { stickers_to_save.push(b); });
         //console.log(JSON.stringify(route))
         localStorage.setItem("route", JSON.stringify(route));
-        localStorage.setItem("points", JSON.stringify(points_to_save) ); 
-        localStorage.setItem("stickers", JSON.stringify(stickers_to_save) );  
+        localStorage.setItem("points", JSON.stringify(points_to_save) );
+        localStorage.setItem("stickers", JSON.stringify(stickers_to_save) );
         localStorage.setItem("map_style", current_map_style);
         localStorage.setItem("logo", current_logo);
     }
@@ -472,10 +478,10 @@ function remote_store_data(force){
             route = [],
             points_to_save = [],
             stickers_to_save = [];
-        $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); }); 
+        $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); });
         $.each(point_array.savedata, function (a,b) { points_to_save.push(b); });
         //$.each(stickers.savedata, function (a,b) {  });
-        $.each(stickers.savedata, function (a,b) { 
+        $.each(stickers.savedata, function (a,b) {
 
             var c = {ang: b.ang, latlng: {}, style: b.style, text: b.text, x: b.x};
             stickers_to_save.push(c);
@@ -490,11 +496,11 @@ function remote_store_data(force){
         //console.log(stickers_to_save);
         //return;
         $.post('/engine/auth.php',
-            {   'action': 'store', 
+            {   'action': 'store',
                 'logo': current_logo,
-                'route': route, 
-                'points': points_to_save, 
-                'stickers': stickers_to_save, 
+                'route': route,
+                'points': points_to_save,
+                'stickers': stickers_to_save,
                 'id': userdata.id,
                 'token': userdata.token,
                 'name': $('#store_name').val(),
@@ -552,7 +558,7 @@ function gen_guest_token(){
             //console.log('puuz: ',data)
             if($('#store_name').val().length === 0 && typeof(data.random_url) !== 'undefined'){
                 $('#store_name').val(data.random_url);
-                update_store_url();                
+                update_store_url();
             }
             check_token();
             //console.log(data.random_url);
@@ -568,7 +574,7 @@ function check_token(){
     //console.log('checking token');
     var userdata = get_token(),
         shown_routes;
-    //$.get('engine/auth.php',{action:'check_token', 'id': userdata.id, 'token': userdata.token},'json');   
+    //$.get('engine/auth.php',{action:'check_token', 'id': userdata.id, 'token': userdata.token},'json');
     if( typeof(userdata.id) === 'undefined' || !userdata.id || typeof(userdata.token) === 'undefined' || !userdata.token){
         gen_guest_token();
     }else{
@@ -594,10 +600,10 @@ function check_token(){
                         $('.field_user_name').text(data.userdata.name);
                         $('#user_login_unauthorized').hide();
                         $('#user_login_logged').show();
-                        
+
                     }
-                    
-                    
+
+
                     // Заполняем менюшку со списком роутов
                     $('#user_route_list').html('');
                     $('#menu_user_route_count').hide();
@@ -607,7 +613,7 @@ function check_token(){
                         $('#menu_user_routes_item').addClass('not_empty');
 
                         $('#menu_user_route_count').show().text(data.routes_count);
-                        
+
                         $('#editor_left_slide').addClass('not_empty');
 
                         $.each(data.routes,function(a,b){
@@ -625,10 +631,10 @@ function check_token(){
                                 parent.remove();
                                 //console.log(parent.data('route'));
                             }
-                            
+
                         });
                         $('.route_item a').bind('click', function(e){
-                            var parent = $(e.target).parent();                            
+                            var parent = $(e.target).parent();
                             editor_load(parent.data('route'));
                         })
 
@@ -817,7 +823,7 @@ function drop_route() {
         poly = map.editTools.startPolyline(); // начинаем новую полилинию
         poly.setStyle({color: '#ff3333', weight: '5'});
         poly.editor.disable();
-        
+
         if(mode==='route'){
             toggle_none();
             toggle_route();
@@ -832,12 +838,12 @@ function drop_route() {
 }
 
 function drop_stickers(){
-    $.each(stickers.objects, function(a,b){ 
+    $.each(stickers.objects, function(a,b){
         //console.log(b._leaflet_id);
         delete stickers.layer_to_object[b._leaflet_id];
         delete stickers.objects[a];
         delete stickers.savedata[a]
-        map.removeLayer(b); 
+        map.removeLayer(b);
     });
 }
 
@@ -1020,7 +1026,7 @@ function key_down(e) {
         } else if (e.keyCode === 87) {
             // W
             route_state('active');
-            
+
         } else if (e.keyCode === 69) {
             // E рисование точек
         point_state('active');
@@ -1052,7 +1058,7 @@ function key_down(e) {
                 map.setView(stickers.src[sticker_style].latlng, map.getZoom(), {"animate": true,"pan": {"duration": 0.5}});
                 add_sticker(stickers.src[sticker_style].latlng);
                 //map.setView(stickers.src[sticker_style].latlng);
-                
+
             }
         } else {
         //console.log(e.keyCode);
@@ -1067,7 +1073,7 @@ function pan_zoom() {
   // Зуммирует карту до размера видимой области
   if (map && poly && typeof(poly.getBounds())!=='undefined') {
     map.fitBounds(poly.getBounds(), {padding: [10,10]})
-  }  
+  }
 }
 
 function get_tile_placement(){
@@ -1099,7 +1105,7 @@ function get_tile_placement(){
 function test_it(){
     /*
     current_logo='nvs';
-    $('#image_cropper').show(); 
+    $('#image_cropper').show();
     $('.crop_canvas').show();
     $('#crop_image').fadeIn();
     $('#crop_image').cropper({
@@ -1108,11 +1114,11 @@ function test_it(){
 
         $('#crop_image').cropper('setData',{"x":0,"y":0,"width":2000,"height":2000});
         $('#crop_image_canvas .cropper-crop-box').prepend('<div id="crop_image_logo"'+(typeof(logos[current_logo][2])!=='undefined'?' class="'+logos[current_logo][2]+'"':'')+'></div>');
-        
+
         $('#crop_image_logo').after('<div id="logo_select_btn" onclick="$(this).toggleClass(\'active\');"><div id="logo_select_list"></div></div>');
         set_crop_logo(current_logo);
-        toggle_crop(); 
-          
+        toggle_crop();
+
       }});
     */
 }
@@ -1141,7 +1147,7 @@ function make_a_shot(callback) {
   $('#sub_plank_shot').addClass('active');
 
   // Блокируем экран
-  $('#image_cropper').show(); 
+  $('#image_cropper').show();
   // Обнуляем массив с тайлами.
   tiles = {'raw':[], 'loaded':0}
   // Заполняем raw списком тайлов. Загруженные будем помещать в loaded
@@ -1169,7 +1175,7 @@ function image_prefetcher(callback) {
   // Подгружает все слайды из tiles, пока они не подгрузятся или число попыток не превысит tile_max_iterations
 
   $('#shot_status_text').html('Подгружаем тайлы ('+tiles.loaded+'/'+tiles.raw.length+')');
-  
+
   $('#shot_status_bar span').stop().animate({'width':(tiles.loaded/tiles.raw.length)*85+'%'},150)
   current_flows = 0;
   for(i = 0;i<tiles.raw.length;i++) {
@@ -1225,7 +1231,7 @@ function image_composer(tiles, callback){
     //tile_placement = get_tile_placement();
     mode = 'composing'; // Меняем режим
 
-    $('#shot_status_text').html('Обработка на сервере'); 
+    $('#shot_status_text').html('Обработка на сервере');
 
     // Обработка длится менее 3 секунд, поэтому двигаем прогрессбар к финишу
     $('#shot_status_bar span').css('width', '85%').animate({'width':'97%'},3000);
@@ -1255,9 +1261,9 @@ function image_composer(tiles, callback){
               $('#shot_status_bar span').stop().css('width', '100%');
               $('#crop_image_canvas').css('height',$('.crop_pan').height());
               $('#crop_image_canvas').html('<img id="crop_image" src="" style="max-width:100%;max-height:100%;">');
-              $('#crop_image').one('load', function () { 
+              $('#crop_image').one('load', function () {
                 //console.log('loaded');
-                
+
 
                 // Почему-то в firefox скриншотилка работает только вот так
                 setTimeout(function(){
@@ -1271,17 +1277,17 @@ function image_composer(tiles, callback){
                         $('#crop_image_canvas .cropper-crop-box').prepend('<div onclick="$(\'#logo_select_btn\').toggleClass(\'active\');" id="crop_image_logo"'+(typeof(logos[current_logo][2])!=='undefined'?' class="'+logos[current_logo][2]+'"':'')+'></div>');
                         //$('#crop_image_logo').after('<div id="logo_select_btn" onclick="$(this).toggleClass(\'active\');"><div id="logo_select_list"></div></div>');
                         set_crop_logo(current_logo);
-                        toggle_crop(); 
+                        toggle_crop();
                   }});
                 },300);
-      
+
               }).each(function () {
                 if (this.complete) $(this).load();
               });
               $('#crop_image').attr('src',data.image)
               $('#sub_plank_shot').removeClass('active');
                 $('#map').css('width','100%').css('height','100%');
-                setTimeout(function(){ 
+                setTimeout(function(){
                     map.invalidateSize();
                     map.panTo(map.getCenter());
                 },400);
@@ -1304,11 +1310,11 @@ function engage_cropper() {
 function insert_vertex(e) {
   // Добавляет редактирующую ручку по щелчку
   // если щелчок по кривой, а не по ручке И если ломаная в режиме редактирования. Иначе - перейти к редактированию
-  if ($(e.originalEvent.target).is('path') && poly.editor._enabled) { 
+  if ($(e.originalEvent.target).is('path') && poly.editor._enabled) {
     //console.log('aaa');
     // если щелкнуть по кривой во время редактирования, editable не должно рисовать новую точку
     if (e.type === 'editable:drawing:click') {
-      e.cancel(); 
+      e.cancel();
     }
     latlngs=poly.getLatLngs(); // набор точек ломанной
     best=10000;pos=[]; // переменные для определения принадлежности точки отрезку на ломанной
@@ -1320,7 +1326,7 @@ function insert_vertex(e) {
       y = e.latlng['lng'];
       y1 = latlngs[i]['lng'];
       y2 = latlngs[i+1]['lng'];
-      
+
       // эта странная конструкция определяет, лежит ли вообще точка между двумя соседями на отрезке
       if ((
           (x1<x2 && (x>x1 && x<x2))
@@ -1344,7 +1350,7 @@ function insert_vertex(e) {
             // это - не очень-то точная функция. Но по клику она определяет, по какому отрезку мы кликнули
             best = result;
             pos = [i,i+1];
-           }       
+           }
         }
     }
     // если точка найдена, добавляем её в отрезок
@@ -1502,7 +1508,7 @@ function new_prepare_route(){
         var xy = map.latLngToContainerPoint(b);
         ret.push({x: xy.x, y: xy.y});
     });
-    return {path: ret, color: '#ff4433', width: 5};    
+    return {path: ret, color: '#ff4433', width: 5};
 }
 
 function new_prepare_dots(){
@@ -1567,30 +1573,35 @@ function prepare_map() {
     // Эта функция создаёт саму карту и наносит на неё маршруты в самом начале работы
     $('#map').css('width', '100%').css('height', '100%');
     // создаём объект с картой
-	map = L.map('map', {
+	  map = L.map('map', {
         editable: true,
         layers: [ points, km_marks, point_array.points, point_array.vectors, stickers.layers ]
     }).setView([55.0153275, 82.9071235], 13);
     map.doubleClickZoom.disable();
- 
-  // Слой с картой. 
-    
+
+  // Слой с картой.
+
 	map_layer = L.tileLayer(map_list[current_map_style], {
 	    attribution: 'Независимое Велосообщество',
 	    maxNativeZoom: 18,
 	    maxZoom: 18,
         //minZoom: 11
 	}).addTo(map);
-    
-    poly = map.editTools.startPolyline(); // начинаем новую полилинию
-    poly.setStyle({color: '#ff3333', weight: '5'});
-    poly.editor.options.skipMiddleMarkers = true;
-    poly.editor.disable();
+
+  // Слой с интересными местами
+  places_layer =  L.markerClusterGroup({maxClusterRadius: 40}).addTo(map);
+  //console.log(20);
+  //places_layer.addLayer(L.marker(getRandomLatLng(map)));
+
+  poly = map.editTools.startPolyline(); // начинаем новую полилинию
+  poly.setStyle({color: '#ff3333', weight: '5'});
+  poly.editor.options.skipMiddleMarkers = true;
+  poly.editor.disable();
 
     //return;
-    
+
   //$(".leaflet-control-attribution")[0].style.font = "11px RalewayMedium";
-	
+
 
 
   // по-моему, эта функция отслеживает перетаскивания, чтобы не путать их с кликами
@@ -1602,9 +1613,13 @@ function prepare_map() {
     //map.on('dragend', function (e) { });
     // добавление точек по щелчку
     map.on('click', function (e) {
-        //!is_dragged && 
+
+        //!is_dragged &&
         //console.log('--> '+e.latlng)
-        if (e.type == 'click' && can_i_edit) {
+        //places_layer.addLayer(L.marker(e.latlng));
+
+        if (e.type == 'click' && can_i_edit && !is_dragged) {
+            //console.log('drag: ', is_dragged);
             L.DomEvent.preventDefault(e);
             if ($(e.originalEvent.target).attr('id') === 'map') {
                 if(mode === 'point'){
@@ -1617,9 +1632,13 @@ function prepare_map() {
                     //console.log(sticker_style,mode);
                 }
             }
+        }else{
+          // Это на случай, если кто-то тянет стикер
+          // и выполняет после этого mouseup
+          is_dragged = false;
         }
     });
-    
+
     // Если на карте что-то меняется, пересчитать километражи
     map.editTools.addEventListener('editable:drawing:mouseup', function (e) { update_overlays(e); });
     map.editTools.addEventListener('editable:vertex:dragend', function (e) { update_overlays(e); });
@@ -1628,7 +1647,7 @@ function prepare_map() {
     map.editTools.addEventListener('editable:drawing:clicked', function (e) { update_overlays(e); });
     poly.on('click', function (e) {
         if(can_i_edit){
-            route_state('active'); 
+            route_state('active');
         }
     });
     // Это для точек. При перетаскивании конца указателя тащим точку
@@ -1645,14 +1664,14 @@ function prepare_map() {
     map.editTools.addEventListener('editable:vertex:dragstart', function (e) { km_marks.clearLayers(); });
     // при масштабировании карты масштабировать стрелки
     map.on('zoom', function (e) {
-        $('.arr_mark >div').css('transform', 'scale(' + (map.getZoom()/13) + ')');       
+        $('.arr_mark >div').css('transform', 'scale(' + (map.getZoom()/13) + ')');
     });
-    map.on('zoomanim', function (e) {   
+    map.on('zoomanim', function (e) {
         var current_zoom = map.getZoom(),
             new_zoom = e.zoom;
         //console.log(new_zoom);
         $('.sticker').removeClass('sticker_zoom_' + current_zoom).addClass('sticker_zoom_' + new_zoom);
-        $('.sticker').css('transform','scale(' + parseFloat(map.getZoomScale(new_zoom,15)) + ')');  
+        $('.sticker').css('transform','scale(' + parseFloat(map.getZoomScale(new_zoom,15)) + ')');
     })
     map.on('zoomend', function (e) {
         //console.log(e.target._zoom);
@@ -1663,7 +1682,7 @@ function prepare_map() {
     L.DomEvent.addListener(document, 'keydown', key_down, map);
     L.DomEvent.addListener(document, 'keyup', key_up, map);
     //set_logo(current_logo);
-    
+
     //var imageUrl = 'http://www.debscrossstitch.co.uk/ekmps/shops/debscrossstitch/images/bright-red-square-aperture-card-envelope-6-x-8-a5-2185-p.jpg',
     //imageBounds = [{lat: 54.827194631440356, lng: 83.56819152832033}, {lat: 54.82759016780595, lng: 83.56887817382814}];
     //L.imageOverlay(imageUrl, imageBounds).addTo(map);
@@ -1672,6 +1691,113 @@ function prepare_map() {
     original_shift = tile_to_latlng(latlng_to_tile(original_bounds));
     //enable_editor();
     //console.log('original shift: ',{lat: shift_value.lat, lng: shift_value.lng})
+    //$('#place_left_slide').addClass('active');
+    show_places();
+}
+
+function show_places(){
+  // Функция подгружает все достопримечательности (на самом деле - последние 200)
+  token = get_token(); // получаем данные о пользователе
+  $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
+  {   'action': 'places_get',
+      'id': token.id,
+      'token': token.token
+      },
+  function(data){
+      if(data.success){ // если получилось, наносим их на карту
+        $.each(data.places, function(i,v){
+          place(v.lat, v.lng, v.id, v.title, 'test', v.owned) // вот этой функцией
+        });
+      }
+  },'json').fail(
+      function(a,b,c){
+          //report_xhr_error(a,'move_data'); // расскомментить в продакшне
+      }
+  );
+
+}
+
+function place(lat, lng, id, title, type, owned){
+    // добавляет место на карту
+  if(lat, lng, id){
+    over = '<div id="place-'+id+'" data-id="'+id+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
+    myIcon = L.divIcon({ html: over, className: 'place place-'+type }),
+    m = L.marker(new L.latLng(lat, lng), {editable: true, icon: myIcon}); // L-объект с местом
+    places_objects[id] = m; // здесь храним сам объект
+    /* здесь -- информацию о нём:
+        loaded - есть ли подробности о месте (на этапе добавления -- нет)
+        owned - является ли пользователь хозяином этого места
+    */
+    places[id] = { 'title': title, 'type': type, 'lat': lat, 'lng': lng, 'owned': owned, 'loaded': false}; 
+    // Добавляем на карту
+    places_layer.addLayer(m);
+  }
+}
+
+function click_place(event){
+    // срабатывает по клику на место на карте
+  target = $(event.target);
+  //console.log(target);
+  if(target.data('id')){
+    //console.log('activated ' + target.data('id'));
+    show_place(target.data('id')); // Если у места есть айди, фокус на него и показываем инфу
+  }
+}
+
+function show_place(id){
+    // при выборе места сфокусироваться на нём и показать инфу
+  if(active_place > 0){ // если до этого было выбрано другое место
+    places_objects[active_place].disableEdit(); // отключить перетаскивание
+    $('#place-' + active_place).removeClass('active'); // убрать выделение
+  }
+  
+  active_place = id; // теперь это место активное
+  
+  $('#place-' + active_place).addClass('active'); // добавляем выделение
+
+  if(places[active_place].owned === true){ // если можно редактировать, включаем перетаскивание
+    places_objects[active_place].enableEdit();
+  }
+
+  map.panTo(places_objects[active_place].getLatLng()); // центрируем карту на нём
+
+  $('#place_left_slide').addClass('active loading'); // показываем левую панель
+
+  load_place_data(id); // подгружаем данные о месте
+
+}
+
+function load_place_data(id){
+    // подгружает данные о месте и заполняет ими левую табличку
+    
+    place_loading = id; // в эту переменную пишем id места, потому что данные грузятся асинхронно
+
+    $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
+      {   'action': 'place_get_info',
+          'place': id,
+          'id': token.id,
+          'token': token.token
+          },
+      function(data){
+          if(data.success && data.place.id == place_loading){ // если получилось, записываем данные в табличку
+            $('#place_title').html(data.place.title);
+            $('#place_owner').html(data.place.owner_name);
+            $('#place_description').html(data.place.desc);
+            $('#place_left_slide').removeClass('loading');
+          }else{
+            console.log('place_loading: '+place_loading+' / '+data.place.id)
+            $('#place_left_slide').removeClass('active loading');
+          }
+      },'json').fail(
+          function(a,b,c){
+            $('#place_left_slide').removeClass('active loading');
+            //report_xhr_error(a,'move_data'); // расскомментить в продакшне
+          }
+      );
+}
+
+function hide_all_places(){
+  
 }
 
 function enable_editor(){
@@ -1799,7 +1925,7 @@ function simplify(latlngs){
     //poly.setLatLngs(target_latlngs);
     return target_latlngs;
 }
-/* good, but not cool 
+/* good, but not cool
 function another_simplify(latlngs){
     var points=[], simplified, target_latlngs=[];
     for(i=0;i<latlngs.length;i += 1){
@@ -1841,7 +1967,7 @@ function update_router(e){
                     waypoints.push(new L.Routing.Waypoint(e.latlng));
                     router.object.setWaypoints(waypoints);
                 }
-                
+
             }   /*
             else if(typeof(e) !== 'undefined' && typeof(e.latlng) !== 'undefined'){
                 router.B = e.latlng;
@@ -1904,7 +2030,7 @@ function create_router(){
                                     styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: '#4597d0', opacity: 1, weight: 4, dashArray: '15,10'}]
                                 },
                                 altLineOptions: {
-                                  styles: [{color: '#4597d0', opacity: 1, weight: 3}]  
+                                  styles: [{color: '#4597d0', opacity: 1, weight: 3}]
                                 },
                                 show: false,
                                 plan: null,
@@ -1951,7 +2077,7 @@ function update_router(){
                                     styles: [{color: 'black', opacity: 0.15, weight: 9}, {color: 'white', opacity: 0.8, weight: 6}, {color: '#ff4433', opacity: 1, weight: 4, dashArray: '15,10'}]
                                 },
                                 altLineOptions: {
-                                  styles: [{color: '#777777', opacity: 1, weight: 2}]  
+                                  styles: [{color: '#777777', opacity: 1, weight: 2}]
                                 },
                                 show: false,
                                 plan: null,
@@ -2007,8 +2133,8 @@ function local_recover_data(){
         if(localStorage.getItem("logo") !== 'undefined' && typeof(logos[localStorage.getItem("logo")]) !==  'undefined'){
             current_logo = localStorage.getItem("logo");
         }else{
-            current_logo = 'default';  
-        } 
+            current_logo = 'default';
+        }
         //console.log('current logo restored'+localStorage.getItem("logo"));
         if (typeof(storedRoute) !== 'undefined' && storedRoute && storedRoute.length > 1) {
             routeLatLngs = [];
@@ -2025,14 +2151,14 @@ function local_recover_data(){
             poly.editor.disable().enable();
             poly.on('click', function (e) {
                 if(can_i_edit){
-                    route_state('active'); 
+                    route_state('active');
                 }
             });
             //update_overlays();
             map.fitBounds(poly.getBounds());
         } else {
           //console.log('drawing');
-            
+
           //route_state('active');
         }
 
@@ -2042,16 +2168,16 @@ function local_recover_data(){
             console.log('!! упс, неправильный формат точек')
             storedPoints = null;
         }
-        
+
         //console.log(storedPoints);
         if (typeof(storedPoints) !== 'undefined' && storedPoints && storedPoints.length > 0) {
             $.each(storedPoints, function(a,b){
                 if( typeof(b.latlngs) !== 'undefined' && typeof(b.text) !== 'undefined'){
-                    point(b.latlngs,b.text);                   
+                    point(b.latlngs,b.text);
                 }
             });
         }
-        
+
         //console.log('stickers',localStorage.getItem("stickers"))
         try {
             storedStickers = JSON.parse(localStorage.getItem("stickers"));
@@ -2067,7 +2193,7 @@ function local_recover_data(){
                     //console.log('m');
                     sticker_style = b.style;
                     //console.log(b);
-                    add_sticker(b.latlng,b.text,b.ang); 
+                    add_sticker(b.latlng,b.text,b.ang);
                     current_sticker = null;
                     //console.log('add_sticker({lat: '+b.latlng.lat+', lng: '+b.latlng.lng+'},\''+b.text+'\','+b.ang+')');
                 }
@@ -2097,9 +2223,9 @@ function remote_load_data(name){
 
                     if( typeof(data.data.logo) !== 'undefined' && typeof(logos[data.data.logo]) !==  'undefined'){
                         current_logo = data.data.logo;
-                    }else{                        
-                        current_logo = 'default';  
-                    } 
+                    }else{
+                        current_logo = 'default';
+                    }
                     //console.log('setting logo');
                     //$('#logo_composer').html('<img src="'+logos[current_logo][1]+'">');
 
@@ -2121,7 +2247,7 @@ function remote_load_data(name){
                         poly.editor.disable();
                         poly.on('click', function (e) {
                             if(can_i_edit){
-                                route_state('active'); 
+                                route_state('active');
                             }
                         });
                         map.fitBounds( poly.getBounds() );
@@ -2129,23 +2255,23 @@ function remote_load_data(name){
                         update_store_url();
                         //setTimeout(function(){  }, 5000);
                         //update_overlays();
-                        
+
                     }
 
                     storedPoints = data.data.points;
-                    
+
                     //console.log(storedPoints);
                     if (typeof(storedPoints) !== 'undefined' && storedPoints && storedPoints.length > 0) {
                         //console.log('putting points');
                         $.each(storedPoints, function(a,b){
                             if( typeof(b.latlngs) !== 'undefined' && typeof(b.text) !== 'undefined'){
-                                point(b.latlngs,b.text);                   
+                                point(b.latlngs,b.text);
                             }
                         });
                     }
-                    
+
                     storedStickers = data.data.stickers;
-                    
+
                     if (typeof(storedStickers) !== 'undefined' && storedStickers && storedStickers.length > 0) {
                         //console.log('putting stickers');
                         $.each(storedStickers, function(a,b){
@@ -2153,7 +2279,7 @@ function remote_load_data(name){
                                 //console.log('m');
                                 sticker_style = b.style;
                                 //console.log(b);
-                                add_sticker(b.latlng,b.text,b.ang); 
+                                add_sticker(b.latlng,b.text,b.ang);
                                 current_sticker = null;
                                 //console.log('add_sticker({lat: '+b.latlng.lat+', lng: '+b.latlng.lng+'},\''+b.text+'\','+b.ang+')');
                             }
@@ -2195,7 +2321,7 @@ function new_publish_map(callback) {
       // Я ЗАКОНЧИЛ ТУТ ЭТУ ПОЕБОТУ
       var arrows = [];
       $.each($('.arr_mark'), function (a,b) {
-        console.log($(b).find('img').css('transform')); 
+        console.log($(b).find('img').css('transform'));
         arrows.push($(b).css('transform'));
       });
       var mapPane = $(".leaflet-map-pane")[0];
@@ -2298,7 +2424,7 @@ function new_publish_map(callback) {
               //render_script = 'ender.php?canvas = '+canvas.toDataURL()+'&viewbox = '+encodeURIComponent(linesLayer.getAttribute('viewBox'))+'&path = '+encodeURIComponent($('path.leaflet-interactive').attr('d'));
               //console.log(render_script);
               //window.open(render_script);
-            //callback();   
+            //callback();
       });
 
       for (var i = 0; i < myTiles.length; i++) {
@@ -2437,7 +2563,7 @@ function y_new_publish_map(callback) {
               //render_script = 'ender.php?canvas = '+canvas.toDataURL()+'&viewbox = '+encodeURIComponent(linesLayer.getAttribute('viewBox'))+'&path = '+encodeURIComponent($('path.leaflet-interactive').attr('d'));
               //console.log(render_script);
               //window.open(render_script);
-            //callback();   
+            //callback();
           }
       });
 
@@ -2617,7 +2743,7 @@ function z_publish_map() {
 
         // HERE
         // этот хак чинит сдвиг карты, блеать!
-        
+
         //attrs=$("svg.leaflet-zoom-animated")[0].getAttribute('viewBox').split(' ');
 
         //var centerPoint = map.getSize().divideBy(2),
@@ -2667,13 +2793,13 @@ function z_publish_map() {
                             };
 
                             //here we will place image
-                            
+
                             //var ctx = canvas.getContext("2d");       // get 2D context of canvas
                             //ctx.textBaseline = "top";                // start with drawing text from top
                             //ctx.font = "20px sans-serif";            // set a font and size
                             //ctx.fillStyle = "red";                   // set a color for the text
                             //ctx.fillText("WATERMARK", canvas.width-200, canvas.height-200);
-                            
+
                             //console.log(canvas.width);
                             //img.src = canvas.toDataURL("image/png");
 
@@ -2709,14 +2835,14 @@ var draggable_sticker,sticker_offset,target_object,target_latlng,target_pos,targ
 $(document).on('mousemove', function (e) {
     'use strict';
     if (draggable_sticker) {
-       // test_drag(e); 
+       // test_drag(e);
         // <-- in case of fire unceommment this
     }
 });
 $(document).on('mouseup', function (e) {
     'use strict';
     if (draggable_sticker) {
-        
+
         //map.dragging.enable();
         //target_object.dragging.enable();
         draggable_sticker = false;
@@ -2735,7 +2861,7 @@ function test_drag(e) {
         par = $(obj).parent().parent(),
         off = par.offset(),
         posx = e.pageX-sticker_offset[0],
-        posy = e.pageY-sticker_offset[1],    
+        posy = e.pageY-sticker_offset[1],
         a = 50,
         ang=Math.atan2(posy,posx),
         x=Math.cos(ang)*a-30,
@@ -2744,13 +2870,13 @@ function test_drag(e) {
         $(sti).css('left',x-parseInt($(obj).css('left'))).css('top',y-parseInt($(obj).css('top')));
         $('#sticker_gap_' + target_sticker_id).css('transform','rotate(' + (parseFloat(ang) + 2.35619) + 'rad)');
     //    console.log('#sticker_gap_' + target_sticker_id,'rotate(' + (parseFloat(ang) - 2.35619) + 'rad)');
-    console.log('x: '+x);    
+    console.log('x: '+x);
     if (x < -50 && !$('#sticker_text_' + target_sticker_id).hasClass('invert')) {
         $('#sticker_text_' + target_sticker_id).addClass('invert');
     }else if (x > -10 && $('#sticker_text_' + target_sticker_id).hasClass('invert')){
         $('#sticker_text_' + target_sticker_id).removeClass('invert');
     }
-        
+
 }
 
 function test_sticker(){
@@ -2768,7 +2894,7 @@ function test_sticker(){
     //console.log([L.latLng(lat,lng),L.latLng(parseInt(lat)+0.000001,parseInt(lng)+0.000001)]);
     stickers.layer.addLayer(m);
     m.enableEdit();
-    
+
     sticker_label_update(sticker_id);
     stickers.objects[sticker_id]=m;
     stickers.layer_to_object[m._leaflet_id] = sticker_id;
@@ -2779,17 +2905,17 @@ function test_sticker(){
     map.setView({lat: 54.96943602216546, lng: 82.95441627502443},16);
     m.on('editable:drag',function(e){
         if(draggable_sticker && target_object && target_latlng){
-            target_object.setLatLng(target_latlng); 
+            target_object.setLatLng(target_latlng);
         }
     });
     $('.sticker_pos').on('mousedown',function(e){
         //console.log(stickers.object_to_layer[$(e.target).attr('data-sticker')]);
         target_sticker_id = $(e.target).attr('data-sticker');
         target_layer = stickers.object_to_layer[target_sticker_id];
-        
-        
+
+
         //console.log(target_sticker_id);
-        
+
         target_object = stickers.objects[target_sticker_id];
         target_latlng = target_object.getLatLng(),
         target_pos = map.latLngToContainerPoint(target_latlng);
@@ -2804,7 +2930,7 @@ function test_sticker(){
         //target_object.editor.disable();
         //target_object.dragging.disable();
         console.log(target_object);
-        draggable_sticker=e.target;        
+        draggable_sticker=e.target;
     });
 
     //point_array.vectors.addLayer(l);
@@ -2820,7 +2946,7 @@ function test_sticker(){
     //l.editor.skipMiddleMarkers = true;
     //m.enableEdit();
 }
-*/ 
+*/
 
 /*
 function test_bridge(){
@@ -2861,13 +2987,13 @@ $(document).ready(function () {
     'use strict';
 	prepare_map();
     prepare_stickers();
-    
+
     if ("onhashchange" in window) {
-        $(window).bind( 'hashchange', function(e) { 
+        $(window).bind( 'hashchange', function(e) {
             change_mode(location.hash);
         });
     }
-    
+
     change_mode(location.hash);
 
 });
@@ -2879,10 +3005,10 @@ function make_bigger_shot(size){
     var center = map.getCenter();
 
     $('#map').css('width',size+'px').css('height',size+'px');
-    setTimeout(function(){    
+    setTimeout(function(){
         map.invalidateSize();
         map.panTo(center);
-        make_a_shot();        
+        make_a_shot();
     }, 400);
 }
 
@@ -2906,13 +3032,13 @@ function editor_load(name){
 function get_gpx(){
     var latlngs = poly.getLatLngs(),
         route = [];
-    $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); }); 
+    $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); });
     if(route.length > 0){
         //window.open('/engine/auth.php?action=get_gpx&name='+$('#store_name').val()+'&route='+JSON.stringify(route));
         $.post('/engine/auth.php',
-            {   'action': 'put_gpx', 
+            {   'action': 'put_gpx',
                 'name': $('#store_name').val(),
-                'route': route 
+                'route': route
                 },
             function(data){
                 console.log(data);
@@ -2943,7 +3069,7 @@ function do_login(input_data){
     oauth_window = null;
     //console.log('moving forces');
     $.get('/engine/auth.php',
-    {   'action': 'move_data', 
+    {   'action': 'move_data',
         'old_id': old_data.id,
         'old_token': old_data.token,
         'new_id': input_data.id,
@@ -2956,7 +3082,7 @@ function do_login(input_data){
         function(a,b,c){
             report_xhr_error(a,'move_data');
         }
-    );       
+    );
 }
 
 function do_logout(){
@@ -2968,18 +3094,18 @@ function do_logout(){
 function remote_drop_route(route_id){
     token = get_token();
     $.get('/engine/auth.php',
-        {   'action': 'drop_route', 
+        {   'action': 'drop_route',
             'id': token.id,
             'token': token.token,
             'route': route_id
             },
-        function(data){ 
-            check_token();       
+        function(data){
+            check_token();
         },'json').fail(
             function(a,b,c){
                 report_xhr_error(a,'drop_route');
             }
-        );    
+        );
 }
 
 function open_route_list(){
@@ -3057,7 +3183,7 @@ function chat_put(){
                 chat_hold = false;
                 report_xhr_error(a,'chat_put');
             }
-        );    
+        );
     }
     $('#chat_input_box').val('').focus();
 }
@@ -3097,6 +3223,6 @@ function translit(text){
     return text;
 }
 
- 
+
 /* в чём стори: когда заходим на карту, открывается редактор. А схуяли?
 */

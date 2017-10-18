@@ -3,7 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="initial-scale=1, maximum-scale=0.8">
     <link rel="icon" href="favicon.png?d" type="image/png" />
-    
+
     <title>Маршрут покатушки | Независимое Велосообщество</title>
 
     <script src="/js/jquery-3.1.1.min.js"></script>
@@ -22,13 +22,17 @@
     <!--script src="http://maps.api.2gis.ru/1.0" type="text/javascript"></script-->
     <script src="/js/cropper.min.js"></script>
     <script src="/js/common.js"></script>
+    <script src="/js/leaflet.markercluster.js"></script>
     <script src="/js/script.js?v=4.0.<?=rand(0,65535);?>"></script>
     <!--link type="text/css" rel="stylesheet" media="all" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" /-->
     <link type="text/css" rel="stylesheet" media="all" href="/css/style.css?v=4.0.<?=rand(0,65535);?>" />
     <link type="text/css" rel="stylesheet" media="all" href="/css/cropper.min.css" />
+
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.css?d" />
     <link rel="stylesheet" type="text/css" href="/css/fonts.css" />
     <link rel="stylesheet" type="text/css" href="/css/leaflet-routing-machine.css" />
+    <link rel="stylesheet" type="text/css" href="/css/MarkerCluster.Default.css" />
+    <link rel="stylesheet" type="text/css" href="/css/MarkerCluster.css" />
 
     <link rel="shortcut icon" href="/favicon.png?wd" type="image/png">
     <meta property="og:image" content="/misc/vk_preview.png" />
@@ -49,7 +53,7 @@
           <div class="sk-cube2 sk-cube"></div>
           <div class="sk-cube4 sk-cube"></div>
           <div class="sk-cube3 sk-cube"></div>
-            <div id="sk-status">ЗАГРУЖАЕМ</div>
+          <div id="sk-status">ЗАГРУЖАЕМ</div>
         </div>
       </div>
       <div class="crop_canvas hidden">
@@ -85,8 +89,33 @@
         <textarea id="chat_input_box" onkeyup="chat_watch_enter(event);" placeholder=""></textarea>
         <div class="button button-primary pull-right" onclick="chat_put();"><span class="fa fa-arrow-right"></span></div>
       </div>
-
     </div>
+
+    <div id="place_left_slide"> <!-- Слайд с описанием интересного места -->
+      <div class="loader">
+        <div class="sk-folding-cube">
+          <div class="sk-cube1 sk-cube"></div>
+          <div class="sk-cube2 sk-cube"></div>
+          <div class="sk-cube4 sk-cube"></div>
+          <div class="sk-cube3 sk-cube"></div>
+          <div id="sk-status">ЗАГРУЖАЕМ</div>
+        </div>
+      </div>
+      <div id="place_info">
+        <div id="place_thumb"></div>
+        <div id="place_mark"><span class="fa fa-map-marker"></span></div>
+        <div id="place_title"></div>
+        <div id="place_owner"></div>
+        
+        <div id="place_description"></div>
+        <div id="place_owner_buttons">
+          <div class="quadro"></div>
+          <div class="button button-primary"><span class="fa fa-pencil"></span>&nbsp;&nbsp;ИСПРАВИТЬ</div>
+          <div class="button button-danger"><span class="fa fa-times"></span>&nbsp;&nbsp;УДАЛИТЬ</div>
+        </div>
+      </div>
+      <div class="editor_left_slide_close" onclick="close_place();">✕</div>
+   </div>
 
     <div id="editor_left_plank">
 
@@ -105,11 +134,11 @@
         </div>
         <div class="sep"></div>
       </span>
-      
+
       <div class="bar" onclick="open_route_list();"><div class="btn btn-fa"><span>Все сохранённые вами маршруты.</span><i class="fa fa-folder-o"></i><i id="menu_user_route_count"></i></div></div>
       <div class="sep"></div>
       <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><span>Чат и ответы на вопросы.</span><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
-     
+
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
           <div class="routing_tip_text">
@@ -129,7 +158,7 @@
     <div id="plank">
         <div class="sub_plank relative" id="plank_hello" onclick="toggle_none();">
             <div id="hero">
-              <div id="elbow"><div id="palm"></div></div>              
+              <div id="elbow"><div id="palm"></div></div>
             </div>
             <h2>Ахой! Это - редактор карт!</h2>
             <p>Мы в Независимом Велосообществе создали его специально для велосипедистов.</p>
@@ -176,16 +205,16 @@
           <div class="gray" id="store_status">
             Вы можете задать своё название маршрута, а значит и адрес, по которому он будет доступен.
           </div>
-          
-        </div>    
+
+        </div>
           <div style="text-align:right;padding:5px 15px 5px;">
             <div class="store_spinner">Сохраняем...</div>
             <div class="store_error">Ошибка!</div>
             <span class="button_group store_status_none"><a class="button" onclick="toggle_none();">Отмена</a><a class="button button-primary" onclick="remote_store_data(false);">Сохранить</a></span>
             <span class="store_status_success"><a class="button button-success" onclick="cool_thanks();">Круто, спасибо</a></span>
             <span class="button_group store_status_overwriting"><a class="button" onclick="toggle_none();">Отмена</a><a class="button button-danger" onclick="remote_store_data(true);">Перезаписать</a></span>
-          </div> 
-          <div class="single"></div>     
+          </div>
+          <div class="single"></div>
     </div>
     <div class="sub_plank" id="sub_plank_routing_machine">
       <div id="sub_plank_routing_tip">
@@ -303,7 +332,7 @@
         <div class="btn btn-sticker"><span>Места&nbsp;и стикеры <b>R</b>&nbsp;&nbsp;&nbsp;или<b>Shift</b></span></div>
       </div>
       <div class="sep"></div>
-      <div id="bar-2" class="bar">     
+      <div id="bar-2" class="bar">
         <div class="btn btn-map"><span>Стиль карты <b>T</b></span></div>
         <div class="btn btn-logo"><span>Логотип <b>Y</b></span></div>
         <div class="btn btn-publish"><span>Сделать скриншот <b>U</b></span></div>
@@ -326,7 +355,7 @@
       $('.btn-sticker').on('click',function(){ toggle_stickers(); });
       $('.btn-publish').on('click',function(){ toggle_shot(); });
       $('.btn-map').on('click',function(){ toggle_map(); });
-      $('.btn-logo').on('click',function(){ 
+      $('.btn-logo').on('click',function(){
         $('#sub_plank_select_logo').toggleClass('active');
       });
       $('.ctrl-panzoom').on('click',function(){ pan_zoom(); });
