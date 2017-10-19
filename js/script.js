@@ -6,6 +6,7 @@
     Событие по завершению перетягивания ручки:
     map.editTools.addEventListener('editable:vertex:dragend', function () { console.log('drageeeeeeed!'); });
 
+    Событие, происходящее по измениню зума: ищи zoomanim
 */
 
 
@@ -130,7 +131,8 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     last_message, chat_hold = false, chat_timer,
 
     // Интересные места;
-    places_layer, places = {}, places_objects = {}, active_place = 0, place_loading = 0
+    places_layer, places = {}, places_objects = {}, active_place = 0, place_loading = 0,
+    places_lids = {}
 
 
 function test_get_tiles(){
@@ -997,7 +999,9 @@ function key_down(e) {
                     apply_route();
                 }else{
                     $('#editor_left_slide').removeClass('active');
-                    $('#chat_left_slide').removeClass('active');
+                    //$('#chat_left_slide').removeClass('active');
+                    close_chat();
+                    close_place();
                     $('#store_helper').hide();
                     clear_router();
                     toggle_none();   // esc
@@ -1589,7 +1593,7 @@ function prepare_map() {
 	}).addTo(map);
 
   // Слой с интересными местами
-  places_layer =  L.markerClusterGroup({maxClusterRadius: 40}).addTo(map);
+  places_layer =  L.markerClusterGroup({maxClusterRadius: 40});
   //console.log(20);
   //places_layer.addLayer(L.marker(getRandomLatLng(map)));
 
@@ -1670,8 +1674,8 @@ function prepare_map() {
         var current_zoom = map.getZoom(),
             new_zoom = e.zoom;
         //console.log(new_zoom);
-        $('.sticker').removeClass('sticker_zoom_' + current_zoom).addClass('sticker_zoom_' + new_zoom);
-        $('.sticker').css('transform','scale(' + parseFloat(map.getZoomScale(new_zoom,15)) + ')');
+        // $('.sticker').removeClass('sticker_zoom_' + current_zoom).addClass('sticker_zoom_' + new_zoom);
+        // $('.sticker').css('transform','scale(' + parseFloat(map.getZoomScale(new_zoom,15)) + ')');
     })
     map.on('zoomend', function (e) {
         //console.log(e.target._zoom);
@@ -1698,6 +1702,10 @@ function prepare_map() {
 function show_places(){
   // Функция подгружает все достопримечательности (на самом деле - последние 200)
   token = get_token(); // получаем данные о пользователе
+
+  places_layer.clearLayers();
+  places_layer.addTo(map);
+
   $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
   {   'action': 'places_get',
       'id': token.id,
@@ -1705,9 +1713,11 @@ function show_places(){
       },
   function(data){
       if(data.success){ // если получилось, наносим их на карту
+
         $.each(data.places, function(i,v){
-          place(v.lat, v.lng, v.id, v.title, 'test', v.owned) // вот этой функцией
+          place(v.lat, v.lng, v.id, v.title, v.type, v.owned) // вот этой функцией
         });
+
       }
   },'json').fail(
       function(a,b,c){
@@ -1717,20 +1727,32 @@ function show_places(){
 
 }
 
+function hide_places(){
+    places_layer.clearLayers().removeFrom(map);
+}
+
 function place(lat, lng, id, title, type, owned){
     // добавляет место на карту
   if(lat, lng, id){
-    over = '<div id="place-'+id+'" data-id="'+id+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
-    myIcon = L.divIcon({ html: over, className: 'place place-'+type }),
+    over = '<div id="place-'+id+'" data-id="'+id+'" class="type-'+type+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
+    myIcon = L.divIcon({ html: over, className: 'place' }),
     m = L.marker(new L.latLng(lat, lng), {editable: true, icon: myIcon}); // L-объект с местом
+
+    // При перетаскивании метка места теряет класс active. Этот хак его восстанавливает:
+    m.on('dragend', function (e) {
+        setTimeout(function(){ $('#place-'+id).addClass('active'); }, 100);
+    });
+
     places_objects[id] = m; // здесь храним сам объект
     /* здесь -- информацию о нём:
         loaded - есть ли подробности о месте (на этапе добавления -- нет)
         owned - является ли пользователь хозяином этого места
     */
-    places[id] = { 'title': title, 'type': type, 'lat': lat, 'lng': lng, 'owned': owned, 'loaded': false}; 
+    places[id] = { 'title': title, 'type': type, 'lat': lat, 'lng': lng, 'owned': owned, 'loaded': false};
     // Добавляем на карту
     places_layer.addLayer(m);
+    // В массиве будет храниться по _leaflet_id
+    places_lids[m._leaflet_id] = id;
   }
 }
 
@@ -1745,18 +1767,22 @@ function click_place(event){
 }
 
 function show_place(id){
+  place_stop_editing();
     // при выборе места сфокусироваться на нём и показать инфу
   if(active_place > 0){ // если до этого было выбрано другое место
     places_objects[active_place].disableEdit(); // отключить перетаскивание
     $('#place-' + active_place).removeClass('active'); // убрать выделение
   }
-  
+
   active_place = id; // теперь это место активное
-  
+
   $('#place-' + active_place).addClass('active'); // добавляем выделение
 
   if(places[active_place].owned === true){ // если можно редактировать, включаем перетаскивание
     places_objects[active_place].enableEdit();
+    $('#place_left_slide').addClass('can_edit');
+  }else{
+    $('#place_left_slide').removeClass('can_edit');
   }
 
   map.panTo(places_objects[active_place].getLatLng()); // центрируем карту на нём
@@ -1764,12 +1790,47 @@ function show_place(id){
   $('#place_left_slide').addClass('active loading'); // показываем левую панель
 
   load_place_data(id); // подгружаем данные о месте
+  //place_start_editing();
+}
 
+function place_toggle_editing(){
+    if($('#place_left_slide').hasClass('editing')){
+      place_stop_editing();
+    }else{
+      place_start_editing();
+    }
+}
+
+function place_start_editing(){
+
+  if(!active_place || typeof(places[active_place]) === 'undefined' || !places[active_place] ||! places[active_place]['owned']){
+    console.log('U can\'t edit me!');
+    return;
+  }
+  //lock_map();
+  $('#place_left_slide').addClass('editing');
+  console.log('let\' start editing');
+}
+
+function place_stop_editing(){
+  //unlock_map();
+  $('#place_left_slide').removeClass('editing');
+}
+
+function close_place(){
+  if($('#place_left_slide').hasClass('editing')){
+    place_stop_editing();
+  }else{
+    $('#place-' + active_place).removeClass('active'); // убрать выделение
+    $('#place_left_slide').removeClass('active');
+    places_objects[active_place].disableEdit();
+    active_slide = 0;
+  }
 }
 
 function load_place_data(id){
     // подгружает данные о месте и заполняет ими левую табличку
-    
+
     place_loading = id; // в эту переменную пишем id места, потому что данные грузятся асинхронно
 
     $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
@@ -1784,6 +1845,16 @@ function load_place_data(id){
             $('#place_owner').html(data.place.owner_name);
             $('#place_description').html(data.place.desc);
             $('#place_left_slide').removeClass('loading');
+
+            // Поля в редакторе
+            $('#place-input-title').val(data.place.title);
+            $('#place-input-desc').val(data.place.desc);
+
+            // Тип места в редакторе
+            $('.place_type_options > div').removeClass('active');
+            $('div.place-type-'+data.place.type).addClass('active');
+            $('#place-input-type').val(data.place.type);
+
           }else{
             console.log('place_loading: '+place_loading+' / '+data.place.id)
             $('#place_left_slide').removeClass('active loading');
@@ -1796,8 +1867,39 @@ function load_place_data(id){
       );
 }
 
-function hide_all_places(){
-  
+function place_change_type(e){
+    pick     = $(e.target).data('pick');
+    $('.place_type_options > div').removeClass('active');
+    $('div.place-type-'+pick).addClass('active');
+    $('#place-input-type').val(pick);
+    //$('#place-'+active_place).attr('class', 'active type-'+pick)
+    console.log(pick);
+}
+
+function save_place_data(){
+  console.log('SAVING !');
+}
+
+function lock_map(){
+  map.dragging.disable();
+  map.touchZoom.disable();
+  //map.doubleClickZoom.disable();
+  map.scrollWheelZoom.disable();
+  map.boxZoom.disable();
+  map.keyboard.disable();
+  if (map.tap) map.tap.disable();
+  document.getElementById('map').style.cursor='default';
+}
+
+function unlock_map(){
+  map.dragging.enable();
+  map.touchZoom.enable();
+  //map.doubleClickZoom.enable();
+  map.scrollWheelZoom.enable();
+  map.boxZoom.enable();
+  map.keyboard.enable();
+  if (map.tap) map.tap.enable();
+  document.getElementById('map').style.cursor='grab';
 }
 
 function enable_editor(){

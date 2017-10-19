@@ -92,29 +92,53 @@
     </div>
 
     <div id="place_left_slide"> <!-- Слайд с описанием интересного места -->
-      <div class="loader">
-        <div class="sk-folding-cube">
-          <div class="sk-cube1 sk-cube"></div>
-          <div class="sk-cube2 sk-cube"></div>
-          <div class="sk-cube4 sk-cube"></div>
-          <div class="sk-cube3 sk-cube"></div>
-          <div id="sk-status">ЗАГРУЖАЕМ</div>
+      <div class="slide_inner">
+        <!-- Иконка загрузки -->
+        <div class="loader"><div class="sk-folding-cube"><div class="sk-cube1 sk-cube"></div><div class="sk-cube2 sk-cube"></div><div class="sk-cube4 sk-cube"></div><div class="sk-cube3 sk-cube"></div></div></div>
+        <!-- Общая информация -->
+        <div id="place_info">
+
+          <div id="place_thumb"> <span class="fa fa-camera"></span> </div>
+
+          <div id="place_owner_buttons">
+            <div id="place_left_edit" onclick="place_toggle_editing();"> <span class="fa fa-pencil"></span> </div>
+            <!--div id="place_left_delete"> <span class="fa fa-trash-o"></span> </div-->
+          </div>
+
+          <div id="place_text">
+            <div id="place_title"></div>
+            <div id="place_description"></div>
+            <div id="place_owner"></div>
+          </div>
+
+          <div id="place_editor">
+            <input type="text" name="place-title" id="place-input-title" placeholder="Название" />
+            <div class="place_type_select">
+              <div class="place_type_options" onclick="$(this).toggleClass('expanded');">
+                <div class="place-type-none active" data-pick="none" onclick="place_change_type(event);">Неопределённый</div>
+                <div class="place-type-building" data-pick="building"   onclick="place_change_type(event);">Строения</div>
+                <div class="place-type-nature" data-pick="nature"      onclick="place_change_type(event);">Природа</div>
+                <div class="place-type-cult" data-pick="cult"      onclick="place_change_type(event);">Культура</div>
+                <div class="place-type-favs" data-pick="favs"        onclick="place_change_type(event);">Знаковые</div>
+              </div>
+            </div>
+            <input type="hidden" id="place-input-type" />
+            <textarea name="place-desc" id="place-input-desc" rows="5" placeholder="Описание"></textarea>
+            <div class="button_group right">
+              <div class="button" onclick="place_stop_editing();">
+                ОТМЕНА
+              </div>
+              <div class="button button-success" onclick="save_place_data();">
+                СОХРАНИТЬ
+              </div>
+            </div>
+          </div>
+
         </div>
+
+        <div class="place_left_slide_close" onclick="close_place();">✕</div>
+
       </div>
-      <div id="place_info">
-        <div id="place_thumb"></div>
-        <div id="place_mark"><span class="fa fa-map-marker"></span></div>
-        <div id="place_title"></div>
-        <div id="place_owner"></div>
-        
-        <div id="place_description"></div>
-        <div id="place_owner_buttons">
-          <div class="quadro"></div>
-          <div class="button button-primary"><span class="fa fa-pencil"></span>&nbsp;&nbsp;ИСПРАВИТЬ</div>
-          <div class="button button-danger"><span class="fa fa-times"></span>&nbsp;&nbsp;УДАЛИТЬ</div>
-        </div>
-      </div>
-      <div class="editor_left_slide_close" onclick="close_place();">✕</div>
    </div>
 
     <div id="editor_left_plank">
