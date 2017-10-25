@@ -107,23 +107,42 @@
 
           <div id="place_text">
             <div id="place_title"></div>
-            <div id="place_description"></div>
             <div id="place_owner"></div>
+            <div id="place_description"></div>            
           </div>
 
           <div id="place_editor">
-            <input type="text" name="place-title" id="place-input-title" placeholder="Название" />
+            <div class="place_input_container">
+              <input type="text" name="place-title" id="place-input-title" placeholder="Название" onkeydown="input_title_enter(event);" onkeyup="check_input_title(event);"/>
+              <div id="place_title_progress" class="input-progress">
+                  <div class="bar"></div>
+              </div>
+            </div>
+            <input type="hidden" id="place-input-lat" placeholder="lat" />
+            <input type="hidden" id="place-input-lng" placeholder="lng" />
             <div class="place_type_select">
               <div class="place_type_options" onclick="$(this).toggleClass('expanded');">
-                <div class="place-type-none active" data-pick="none" onclick="place_change_type(event);">Неопределённый</div>
+                <div class="place-type-none active" data-pick="none" onclick="place_change_type(event);">Тип не указан</div>
+                <div class="place-type-favs" data-pick="favs"        onclick="place_change_type(event);">Знаковые</div>
                 <div class="place-type-building" data-pick="building"   onclick="place_change_type(event);">Строения</div>
                 <div class="place-type-nature" data-pick="nature"      onclick="place_change_type(event);">Природа</div>
                 <div class="place-type-cult" data-pick="cult"      onclick="place_change_type(event);">Культура</div>
-                <div class="place-type-favs" data-pick="favs"        onclick="place_change_type(event);">Знаковые</div>
+                <div class="place-type-amuse" data-pick="amuse"   onclick="place_change_type(event);">Развлечения</div>
+                <div class="place-type-food" data-pick="food"   onclick="place_change_type(event);">Еда</div>
+                <div class="place-type-shops" data-pick="shops"   onclick="place_change_type(event);">Магазины</div>
+                
               </div>
             </div>
             <input type="hidden" id="place-input-type" />
-            <textarea name="place-desc" id="place-input-desc" rows="5" placeholder="Описание"></textarea>
+            <div class="place_input_container">
+              <textarea name="place-desc" id="place-input-desc" rows="7" placeholder="Описание" onkeyup="check_input_desc(event);" onkeydown="input_desc_ctrlenter(event);"></textarea>
+              <div id="place_desc_progress" class="input-progress">
+                  <div class="bar"></div>
+              </div>
+            </div>
+            <div id="place_error_container">
+                <div class="place_error_title">Укажите название места</div>
+            </div>
             <div class="button_group right">
               <div class="button" onclick="place_stop_editing();">
                 ОТМЕНА
@@ -353,7 +372,8 @@
           <div class="btn btn-router" onclick="toggle_routing();"><span>Автоматическое построение маршрута <b>Q</b></span></div>
           <div class="btn btn-poly"><span>Ручное редактирование маршрута <b>W</b></span></div>
         <div class="btn btn-point"><span>Пояснительные выноски <b>E</b></span></div>
-        <div class="btn btn-sticker"><span>Места&nbsp;и стикеры <b>R</b>&nbsp;&nbsp;&nbsp;или<b>Shift</b></span></div>
+        <div class="btn btn-sticker"><span>Стикеры <b>R</b>&nbsp;&nbsp;&nbsp;</span></div>
+        <div class="btn btn-places"><span>Добавить место<i>ВОЙДИТЕ, ЧТОБЫ ИСПОЛЬЗОВАТЬ</i></span></div>
       </div>
       <div class="sep"></div>
       <div id="bar-2" class="bar">
@@ -377,6 +397,7 @@
       $('.btn-poly').on('click',function(){ toggle_route(); });
       $('.btn-point').on('click',function(){ toggle_point(); });
       $('.btn-sticker').on('click',function(){ toggle_stickers(); });
+      $('.btn-places').on('click',function(){ toggle_places(); });
       $('.btn-publish').on('click',function(){ toggle_shot(); });
       $('.btn-map').on('click',function(){ toggle_map(); });
       $('.btn-logo').on('click',function(){

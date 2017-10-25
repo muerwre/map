@@ -294,7 +294,7 @@ if($action == 'gen_guest_token'){
 
 	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
 
-	$query = mysqli_query($link, "SELECT places.*, tokens.login FROM `places` LEFT JOIN tokens ON places.owner = tokens.id;");
+	$query = mysqli_query($link, "SELECT places.*, tokens.login FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.status > 0;");
 	//$result = mysqli_fetch_assoc($query);
 	//print_r($query);
 	while($result = mysqli_fetch_assoc($query)){
@@ -321,6 +321,67 @@ if($action == 'gen_guest_token'){
 	$login_data = json_decode($result['login_data']);
 	$result['owner_name'] = ($login_data && $login_data->name) ? $login_data->name : $result['owner'];
 	echo json_encode(['success' => true, 'place' => $result]);
+}elseif($action=='place_set_info'){
+
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+	$place = isset($_REQUEST['place']) && is_numeric($_REQUEST['place']) ? mysqli_escape_string($link, $_REQUEST['place']) : null;
+
+	// Проверка токена
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$place) { oops("Токен не найден"); }
+
+	// Принадлежит ли точка пользователю?
+	$query = mysqli_query($link, "SELECT places.*, tokens.login, tokens.data as login_data FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.id = ".$place." AND tokens.login = '" .$id. "';");
+
+	if(!mysqli_fetch_assoc($query)){
+		oops("not yours!");
+	}
+
+	// Проверка введёных данных
+	$title 	= isset($_REQUEST['title']) && mb_strlen(preg_replace('/[\s\n\r]/','',$_REQUEST['title'])) > 2 ? mb_substr(htmlspecialchars(trim(preg_replace('/[\n\r]/','',$_REQUEST['title']))), 0, 32) : null;
+	$desc 	= isset($_REQUEST['desc']) ? mb_substr(trim(preg_replace('/[\n\r]/','<br />', htmlspecialchars($_REQUEST['desc']))), 0, 256) : null;
+	$type 	= isset($_REQUEST['type']) && in_array($_REQUEST['type'], ['none', 'building', 'cult', 'nature', 'favs', 'shops', 'amuse', 'food']) ? $_REQUEST['type'] : 'none';
+
+	$lat		= isset($_REQUEST['lat']) && is_float((float)$_REQUEST['lat']) ? (float)$_REQUEST['lat'] : null;
+	$lng		= isset($_REQUEST['lng']) && is_float((float)$_REQUEST['lng']) ? (float)$_REQUEST['lng'] : null;
+
+	if(!$title || !$lat || !$lng){
+			oops("data is incomplete");
+	}
+	$query = mysqli_query($link, "UPDATE places SET `title` = '".$title."',	`desc` = '".$desc."',`type` = '".$type."',`lat` = '".$lat."',`lng` = '".$lng."', status = 1 WHERE id = '".$place."';");
+	//echo "UPDATE places SET title = '".$title."', desc='".$desc."', lat='".$lat."', lng='".$lng."', status=1 WHERE id = '".$place."';";
+	//oops("working");
+	//$result = mysqli_fetch_assoc($query);
+	//$result['owned'] = ($result['login'] == $id);
+	//$login_data = json_decode($result['login_data']);
+	//$result['owner_name'] = ($login_data && $login_data->name) ? $login_data->name : $result['owner'];
+	echo json_encode(['success' => true]);
+}elseif($action=='place_add'){
+
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+	$lat		= isset($_REQUEST['lat']) && is_float((float)$_REQUEST['lat']) ? (float)$_REQUEST['lat'] : null;
+	$lng		= isset($_REQUEST['lng']) && is_float((float)$_REQUEST['lng']) ? (float)$_REQUEST['lng'] : null;
+	// Проверка токена
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}' AND role != 'guest'");
+	$result = mysqli_fetch_assoc($query);
+	$owner  = $result['id'];
+
+	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$lat || !$lng) { oops("Токен не найден / Недостаточно прав"); }
+
+	$query = mysqli_query($link, "INSERT INTO `places` (`owner`, `lat`, `lng`, `status`, `created`, `type`, `title`, `desc`) VALUES (".$owner.", '".$lat."', '".$lng."', 0, UNIX_TIMESTAMP(), 'none', '', '');");
+
+	$place_id = mysqli_insert_id($link);
+
+	if($place_id && $place_id>0){
+		echo json_encode([ 'success' => true, 'place' => ['lat' => $lat, 'lng' => $lng, 'id' => $place_id] ]);
+	}else{
+		oops("db_error");
+	}
 }
+
 mysqli_close($link);
 ?>

@@ -299,7 +299,7 @@ div.col-3 {
   background-color: blue;
 }
 div.col-4 {
-  background-color: green;
+  background-color: #2ca05a;
 }
 div.col-5 {
   background-color: cyan;
@@ -745,6 +745,7 @@ a.button {color: white;text-decoration: none;}
   transform: scale(1.1);
 }
 .btn span, .btn.active:hover span, .bar_text span {
+    user-select: none;
     position: absolute;
     bottom: 58px;
     color: white;
@@ -766,7 +767,7 @@ a.button {color: white;text-decoration: none;}
 }
 .btn span::before, .bar_text span::before {
     content: ' ';
-    position:absolute;bottom:-15px;left:10px;
+    position:absolute;bottom:-14px;left:10px;
     width: 0;
     height: 0;
     border-style: solid;
@@ -842,8 +843,35 @@ b.key {
 .btn-sticker:hover {
   background-position: -96px -48px;
 }
-.btn-sticker.active,.btnsticker.active:hover {
+.btn-sticker.active,.btn-sticker.active:hover {
   background-position: -96px -96px;
+}
+.btn-places {
+  background-position: -432px 0px;
+}
+.btn-places:hover {
+  background-position: -432px -48px;
+}
+
+.btn-places.active,.btn-places.active:hover {
+  background-position: -432px -96px;
+}
+
+.btn-places.inactive, .btn-places.inactive:hover {
+ background-position: -624px 0px;
+}
+.btn span i {
+  font-style: normal;
+  background: #333;
+  display: none;
+  padding: 2px 4px;
+  border-radius: 3px;
+  margin-left: 10px;
+  margin-bottom: -2px;
+  font-weight: bold;
+}
+.btn.inactive span i {
+  display: inline-block;
 }
 .btn-map {
   background-position: -144px 0px;
@@ -1436,26 +1464,9 @@ button.routing-button-b {
 }
 
 #map.cross {
-  cursor: crosshair;
+  cursor: crosshair !important;
 }
 
-/*
-.routing_tip_text {
-  float: left;padding-right: 20px;
-  padding-bottom: 10px;
-}
-
-.routing_tip_btns {
-  white-space: nowrap;
-}
-
-.routing_tip_btns {
-    white-space: nowrap;
-    left: -10px;
-    position: relative;
-}
-
-*/
 .routing_tip {
   display: none;
   width: 100%;
@@ -2133,32 +2144,6 @@ div#sub_plank_select_logo {
   display: block
 }
 
-.type-favs span, .type-favs b {
-  background-color: #ff3344;
-  outline: none;
-}
-
-.type-nature span, .type-nature b {
-  background-color: green;
-  outline: none;
-}
-
-.type-building span, .type-building b {
-  background-color: cyan;
-  outline: none;
-}
-
-.type-cult span, .type-cult b {
-  background-color: blue;
-  outline: none;
-}
-
-.type-none span, .type-none b {
-  background-color: #333;
-  outline: none;
-}
-
-/*
 .place div.active:before {
   content:  ' ';
   position: absolute;
@@ -2166,7 +2151,7 @@ div#sub_plank_select_logo {
   border-radius: 100%;
   background: #ff3344;
   outline: none;
-  animation: hood infinite 1500ms 750ms;
+  animation: hood infinite 1500ms 500ms;
   opacity: 0;
 }
 
@@ -2182,12 +2167,11 @@ div#sub_plank_select_logo {
 }
 
 @keyframes hood {
-  0% { transform: scale(0); opacity: 0; }
-  30% {transform: scale(1); opacity: 0.8; }
+  0% { transform: scale(0); opacity: 1; }
   100% { transform: scale(3); opacity: 0; }
 }
-*/
 
+/*
 .place div.active:before {
   content:  ' ';
   position: absolute;
@@ -2196,6 +2180,7 @@ div#sub_plank_select_logo {
   box-shadow: #ff3344 0 0 0 2px;
   outline: none;
 }
+*/
 
 #place_left_slide .loader {
     position: absolute;
@@ -2218,11 +2203,24 @@ div#place_title {
     font-family: 'RalewayBlack';
     font-size: 1.4em;
     color: white;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 div#place_owner {
     font-size: .8em;
     color: #666;
+}
+
+div#place_owner::before {
+    content: "\f007";
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    padding-right: 4px;
 }
 
 div#place_description {
@@ -2322,6 +2320,10 @@ div#place_owner_buttons div.button {
     margin-bottom: 10px;
 }
 
+#place_left_slide textarea {
+  font-size: 14px;
+}
+
 .place_type_select {
     height: 39px;
     position: relative;
@@ -2370,7 +2372,101 @@ div#place_owner_buttons div.button {
     margin-right: 8px;
 }
 
-div.place-type-building:before { background: cyan; }
-div.place-type-nature:before { background: green; }
-div.place-type-cult:before { background: blue; }
 div.place-type-favs:before { background: #ff3344; }
+div.place-type-amuse:before { background: #ff3344; }
+div.place-type-shops:before { background: #ff3344; }
+
+.place div.active.type-building:before,
+.place div.active.type-building:after,
+div.place-type-building:before,
+.type-building span, .type-building b {
+  background: #00aad4;
+}
+
+.place div.active.type-favs:before,
+.place div.active.type-favs:after,
+div.place-type-favs:before,
+.type-favs span, .type-favs b {
+  background: #ff3344;
+}
+
+.place div.active.type-nature:before,
+.place div.active.type-nature:after,
+div.place-type-nature:before,
+.type-nature span, .type-nature b  {
+  background: #2ca05a;
+}
+
+.place div.active.type-cult:before,
+.place div.active.type-cult:after,
+div.place-type-cult:before,
+.type-cult span, .type-cult b {
+  background: #7f2aff;
+}
+
+.place div.active.type-none:before,
+.place div.active.type-none:after,
+div.place-type-none:before,
+.type-none span, .type-none b  {
+  background: #333;
+}
+
+
+.place div.active.type-amuse:before,
+.place div.active.type-amuse:after,
+div.place-type-amuse:before,
+.type-amuse span, .type-amuse b  {
+  background: #d653b4;
+}
+
+
+.place div.active.type-shops:before,
+.place div.active.type-shops:after,
+div.place-type-shops:before,
+.type-shops span, .type-shops b  {
+  background: #ca7900;
+}
+
+.place div.active.type-food:before,
+.place div.active.type-food:after,
+div.place-type-food:before,
+.type-food span, .type-food b  {
+  background: #58940a;
+}
+
+.place_input_container {
+  position: relative;
+}
+
+.input-progress {
+  position: absolute;bottom: 0px;left:0px;
+  width:100%;height:4px;
+  border-radius: 0 0 3px 3px;
+}
+#place_desc_progress, #place_title_progress { 
+  bottom: 7px;
+}
+.input-progress .bar {
+  height: 2px;
+  background: #1da2e0;
+  transition: width 50ms;
+  border-radius: 3px;
+  box-shadow: none;
+}
+
+
+div#place_error_container {
+    height: 20px;
+    margin-bottom: 10px;
+}
+
+.place_error_title {
+    text-transform: uppercase;
+    font-size: 14px;
+    background: #ff3344;
+    border-radius: 4px;
+    font-weight: bold;
+    padding: 2px;
+    text-align: center;
+    display: none;
+}

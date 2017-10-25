@@ -143,9 +143,6 @@ function test_get_tiles(){
         zne= tile_to_latlng(ne),
         rsw=map.latLngToContainerPoint(zsw);
         msw=map.latLngToContainerPoint(map.getBounds()._southWest);
-        //console.log({x: rsw.x-msw.x, y: h+rsw.y-msw.y, orig_x: sw.x, orig_y: sw.y})
-        //console.log('going from '+sw.x+','+sw.y+' to '+ne.x+','+ne.y+' shift '+(rsw.x-msw.x)+','+(h+rsw.y-msw.y));
-        //console.log('original shift: '+map.latLngToContainerPoint(original_shift))
         test_fetch_tiles({
             min_x:  sw.x,
             min_y:  ne.y,
@@ -201,7 +198,7 @@ function set_sticker(obj) {
         //map.setView(current_sticker.latlng,15);
         map.setView(current_sticker.latlng, map.getZoom(), {"animate": true,"pan": {"duration": 0.5}});
     }
-    //console.log(sticker_style);
+
 }
 
 function prepare_stickers() {
@@ -455,7 +452,7 @@ function update_overlays() {
 }
 
 function local_store_data(){
-    if (store && can_i_store) {
+    if (store && can_i_store && can_i_edit) {
         var latlngs = poly.getLatLngs(),
             route = [],
             points_to_save = [],
@@ -463,12 +460,16 @@ function local_store_data(){
         $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); });
         $.each(point_array.savedata, function (a,b) { points_to_save.push(b); });
         $.each(stickers.savedata, function (a,b) { stickers_to_save.push(b); });
-        //console.log(JSON.stringify(route))
+
         localStorage.setItem("route", JSON.stringify(route));
         localStorage.setItem("points", JSON.stringify(points_to_save) );
         localStorage.setItem("stickers", JSON.stringify(stickers_to_save) );
-        localStorage.setItem("map_style", current_map_style);
-        localStorage.setItem("logo", current_logo);
+        if( typeof(current_map_style) !== 'undefined' && current_map_style) {
+
+          localStorage.setItem("map_style", current_map_style);
+        }
+
+        if(typeof(current_logo) !== 'undefined'){ localStorage.setItem("logo", current_logo); }
     }
 }
 
@@ -553,7 +554,10 @@ function report_xhr_error(a,b){
     },
     'json');
 }
-function gen_guest_token(){
+function gen_guest_token(callback){
+
+    callback = typeof(callback) === 'function' && callback ? callback : null;
+    
     $.get('/engine/auth.php',{action:'gen_guest_token'},
         function(data){
             set_token(data.id,data.token,data.role);
@@ -562,7 +566,7 @@ function gen_guest_token(){
                 $('#store_name').val(data.random_url);
                 update_store_url();
             }
-            check_token();
+            check_token(callback);
             //console.log(data.random_url);
         }, 'json').fail(
                 function(a,b,c){
@@ -571,7 +575,9 @@ function gen_guest_token(){
             );
 }
 
-function check_token(){
+function check_token(callback){
+    
+    callback = typeof(callback) === 'function' && callback ? callback : null;
 
     //console.log('checking token');
     var userdata = get_token(),
@@ -584,7 +590,7 @@ function check_token(){
             function(data){
                 //console.log(data);
                 if(!data.success){
-                    gen_guest_token();
+                    gen_guest_token(callback);
                 }else{
 
                     if($('#store_name').val().length===0 && typeof(data.random_url) !== 'undefined'){
@@ -594,10 +600,12 @@ function check_token(){
                     if(data.role == 'guest'){
                         $('#user_login_logged').hide();
                         $('#user_login_unauthorized').show();
+                        $('.btn-places').removeClass('enabled').addClass('inactive');
                     }else{
                         if(data.userdata.photo){
                             $('.field_user_avatar').css('background-image', 'url(\'' + data.userdata.photo + '\')');
                         }
+                        $('.btn-places').removeClass('inactive').addClass('enabled');
                         $('.field_user_id').html('<span class="fa fa-vk"></span> <b>' + userdata.id.replace('vk:','') + '</b>');
                         $('.field_user_name').text(data.userdata.name);
                         $('#user_login_unauthorized').hide();
@@ -609,7 +617,7 @@ function check_token(){
                     // Заполняем менюшку со списком роутов
                     $('#user_route_list').html('');
                     $('#menu_user_route_count').hide();
-                    //console.log();
+                    
                     if(data.routes_count > 0){
 
                         $('#menu_user_routes_item').addClass('not_empty');
@@ -650,6 +658,10 @@ function check_token(){
 
                     if(data.new_messages>0){
                         $('#menu_user_chat_count').text(data.new_messages).addClass('active');
+                    }
+
+                    if(callback){
+                        callback();
                     }
                     //console.log('token ok');
                 }
@@ -717,7 +729,7 @@ function redraw_map() {
 
 function set_logo(preset) {
     'use strict';
-    if (!logos[preset]) { preset = 'default'; }
+    if (!logos[preset]) { preset = 'default'; console.log('it happened!');}
     $('.logo_select_list').html(null);
     $.each(logos, function (a, b) {
         $('.logo_select_list').append('<div' + (a === preset ? ' class="active"' : '') + ' onclick="set_logo(\'' + a + '\')">' + b[0] + '</div>');
@@ -887,6 +899,22 @@ function toggle_stickers(){
             $('#sub_plank_stickers').addClass('active');
         } else {
             toggle_none();
+        }
+    }
+}
+
+function toggle_places(){
+    if($('.btn-places').hasClass('enabled')){
+        if(mode==='placing'){
+            $('#sub_plank_places').removeClass('active');
+            $('.btn-places').removeClass('active');
+            toggle_none();
+            mode = 'none';
+        }else{
+            $('#sub_plank_places').addClass('active');
+            $('.btn-places').addClass('active');
+            mode = 'placing';
+            $('#map').addClass('cross');
         }
     }
 }
@@ -1106,29 +1134,8 @@ function get_tile_placement(){
         };
 }
 
-function test_it(){
-    /*
-    current_logo='nvs';
-    $('#image_cropper').show();
-    $('.crop_canvas').show();
-    $('#crop_image').fadeIn();
-    $('#crop_image').cropper({
-      viewMode:3,zoomable:false,scalable:false,rotatable:false,
-      ready:function () {
-
-        $('#crop_image').cropper('setData',{"x":0,"y":0,"width":2000,"height":2000});
-        $('#crop_image_canvas .cropper-crop-box').prepend('<div id="crop_image_logo"'+(typeof(logos[current_logo][2])!=='undefined'?' class="'+logos[current_logo][2]+'"':'')+'></div>');
-
-        $('#crop_image_logo').after('<div id="logo_select_btn" onclick="$(this).toggleClass(\'active\');"><div id="logo_select_list"></div></div>');
-        set_crop_logo(current_logo);
-        toggle_crop();
-
-      }});
-    */
-}
-
 function set_crop_logo(preset){
-    if (!logos[preset]) { preset = 'default'; }
+    if (!logos[preset]) { preset = 'default'; console.log('On crop logo');}
     current_logo = preset;
     //console.log('set current logo '+current_log+' / '+preset)
     if(store){
@@ -1593,7 +1600,7 @@ function prepare_map() {
 	}).addTo(map);
 
   // Слой с интересными местами
-  places_layer =  L.markerClusterGroup({maxClusterRadius: 40});
+  places_layer =  L.markerClusterGroup({maxClusterRadius: 20});
   //console.log(20);
   //places_layer.addLayer(L.marker(getRandomLatLng(map)));
 
@@ -1617,10 +1624,7 @@ function prepare_map() {
     //map.on('dragend', function (e) { });
     // добавление точек по щелчку
     map.on('click', function (e) {
-
-        //!is_dragged &&
-        //console.log('--> '+e.latlng)
-        //places_layer.addLayer(L.marker(e.latlng));
+        // map_click
 
         if (e.type == 'click' && can_i_edit && !is_dragged) {
             //console.log('drag: ', is_dragged);
@@ -1632,7 +1636,9 @@ function prepare_map() {
                     add_sticker(e.latlng);
                 } else if (mode === 'routing') {
                     update_router(e);
-                }else{
+                } else if (mode === 'placing') {
+                    add_place(e.latlng);
+                } else {
                     //console.log(sticker_style,mode);
                 }
             }
@@ -1704,7 +1710,7 @@ function show_places(){
   token = get_token(); // получаем данные о пользователе
 
   places_layer.clearLayers();
-  places_layer.addTo(map);
+  places_layer.addTo(map);  
 
   $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
   {   'action': 'places_get',
@@ -1732,15 +1738,24 @@ function hide_places(){
 }
 
 function place(lat, lng, id, title, type, owned){
+  //console.log(lat, lng, id, title, type, owned);
     // добавляет место на карту
-  if(lat, lng, id){
+  if( typeof(lat) !== 'undefined' && lat,
+      typeof(lng) !== 'undefined' && lng,
+      typeof(id)  !== 'undefined'  // Вот это потому, что при добавлении места мы делаем место с id = 0
+    ){
     over = '<div id="place-'+id+'" data-id="'+id+'" class="type-'+type+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
     myIcon = L.divIcon({ html: over, className: 'place' }),
     m = L.marker(new L.latLng(lat, lng), {editable: true, icon: myIcon}); // L-объект с местом
 
     // При перетаскивании метка места теряет класс active. Этот хак его восстанавливает:
     m.on('dragend', function (e) {
-        setTimeout(function(){ $('#place-'+id).addClass('active'); }, 100);
+      console.log('m moved to: '+m.getLatLng(), e.target._latlng);
+      if(active_place == places_lids[e.target._leaflet_id]){
+        $('#place-input-lat').val(e.target._latlng.lat);
+        $('#place-input-lng').val(e.target._latlng.lng);
+      }
+      setTimeout(function(){ $('#place-'+id).addClass('active'); }, 100);
     });
 
     places_objects[id] = m; // здесь храним сам объект
@@ -1766,9 +1781,16 @@ function click_place(event){
   }
 }
 
-function show_place(id){
+function show_place(id, edit_mode){
+  
+  // при выборе места сфокусироваться на нём и показать инфу
+  // id         - айди места
+  // edit_mode  - если true, показывать сразу редактор, используется при добавлении места
+
+  edit_mode = typeof(edit_mode) !== 'undefined' && edit_mode ? edit_mode : false;
+
   place_stop_editing();
-    // при выборе места сфокусироваться на нём и показать инфу
+    
   if(active_place > 0){ // если до этого было выбрано другое место
     places_objects[active_place].disableEdit(); // отключить перетаскивание
     $('#place-' + active_place).removeClass('active'); // убрать выделение
@@ -1779,7 +1801,6 @@ function show_place(id){
   $('#place-' + active_place).addClass('active'); // добавляем выделение
 
   if(places[active_place].owned === true){ // если можно редактировать, включаем перетаскивание
-    places_objects[active_place].enableEdit();
     $('#place_left_slide').addClass('can_edit');
   }else{
     $('#place_left_slide').removeClass('can_edit');
@@ -1789,16 +1810,18 @@ function show_place(id){
 
   $('#place_left_slide').addClass('active loading'); // показываем левую панель
 
-  load_place_data(id); // подгружаем данные о месте
+  load_place_data(id, edit_mode); // подгружаем данные о месте
   //place_start_editing();
 }
 
 function place_toggle_editing(){
+
     if($('#place_left_slide').hasClass('editing')){
       place_stop_editing();
     }else{
       place_start_editing();
     }
+
 }
 
 function place_start_editing(){
@@ -1808,28 +1831,43 @@ function place_start_editing(){
     return;
   }
   //lock_map();
+  places_objects[active_place].enableEdit();
   $('#place_left_slide').addClass('editing');
-  console.log('let\' start editing');
+  $('#place-input-title').focus();
+  $('.place_type_options').removeClass('expanded');
+  //console.log('let\' start editing');
+  check_input_desc();
+  check_input_title();
 }
 
 function place_stop_editing(){
   //unlock_map();
+  if(active_place){
+    places_objects[active_place].disableEdit();
+  }
   $('#place_left_slide').removeClass('editing');
 }
 
 function close_place(){
-  if($('#place_left_slide').hasClass('editing')){
-    place_stop_editing();
-  }else{
-    $('#place-' + active_place).removeClass('active'); // убрать выделение
-    $('#place_left_slide').removeClass('active');
-    places_objects[active_place].disableEdit();
-    active_slide = 0;
-  }
+    if(active_place){
+      if($('#place_left_slide').hasClass('editing')){
+        place_stop_editing();
+      }else{
+        $('#place-' + active_place).removeClass('active'); // убрать выделение
+        $('#place_left_slide').removeClass('active');
+        places_objects[active_place].disableEdit();
+        active_place = 0;
+      }
+    }
 }
 
-function load_place_data(id){
-    // подгружает данные о месте и заполняет ими левую табличку
+function load_place_data(id, edit_mode){
+
+    // подгружает данные о месте и заполняет ими левую табличку, после чего показывает эту табличку
+    // id           - айди места
+    // edit_mode    - открывать ли сразу редактор, на случай создания точки
+
+    edit_mode = typeof(edit_mode) !== 'undefined' && edit_mode ? edit_mode : false;
 
     place_loading = id; // в эту переменную пишем id места, потому что данные грузятся асинхронно
 
@@ -1841,6 +1879,7 @@ function load_place_data(id){
           },
       function(data){
           if(data.success && data.place.id == place_loading){ // если получилось, записываем данные в табличку
+
             $('#place_title').html(data.place.title);
             $('#place_owner').html(data.place.owner_name);
             $('#place_description').html(data.place.desc);
@@ -1848,12 +1887,19 @@ function load_place_data(id){
 
             // Поля в редакторе
             $('#place-input-title').val(data.place.title);
-            $('#place-input-desc').val(data.place.desc);
+            $('#place-input-desc').val(data.place.desc.replace(/\<br \/\>/ig, "\n"));
+            $('#place-input-lat').val(data.place.lat);
+            $('#place-input-lng').val(data.place.lng);
 
             // Тип места в редакторе
             $('.place_type_options > div').removeClass('active');
             $('div.place-type-'+data.place.type).addClass('active');
             $('#place-input-type').val(data.place.type);
+
+            if(edit_mode){
+                // Включает режим редактирования вместо просто показа места
+                place_start_editing();
+            }
 
           }else{
             console.log('place_loading: '+place_loading+' / '+data.place.id)
@@ -1868,16 +1914,118 @@ function load_place_data(id){
 }
 
 function place_change_type(e){
+    // Обрабатывает select-бокс в меню редактирования места
     pick     = $(e.target).data('pick');
     $('.place_type_options > div').removeClass('active');
     $('div.place-type-'+pick).addClass('active');
     $('#place-input-type').val(pick);
     //$('#place-'+active_place).attr('class', 'active type-'+pick)
-    console.log(pick);
+    //console.log(pick);
 }
 
 function save_place_data(){
-  console.log('SAVING !');
+  // После нажатия на кнопку "Сохранить" обновляет данные и отправляет запрос на сервер
+  token = get_token();
+
+  // Проверки
+  if(!active_place || !places[active_place] || !places[active_place]['owned'] || role === 'guest'){ return; }
+
+  if(!place_check_input()){
+    // тут проверка введёных данных
+    return;
+  }
+
+  // Обновляем данные о месте
+  places[active_place]['title'] = $('#place-input-title').val().substr(0,64);
+  places[active_place]['desc'] = $('#place-input-desc').val().substr(0,256).replace(/\n/ig,"<br />");
+  places[active_place]['type'] = $('#place-input-type').val();
+  places[active_place]['lat'] = $('#place-input-lat').val();
+  places[active_place]['lng'] = $('#place-input-lng').val();
+
+  // Обновляем карточку места
+  $('#place_title').html($('#place-input-title').val().substr(0,64));
+  $('#place_description').html($('#place-input-desc').val().substr(0,256).replace(/\n/ig,"<br />"));
+
+  // Помещаем данные места во временный массив, удаляем его и заменяем новым
+  var place_temp = places[active_place];
+  drop_place(active_place);
+  console.log(place_temp);
+  place(place_temp.lat, place_temp.lng, active_place, place_temp.title, place_temp.type, place_temp.owned)
+  $('#place-'+active_place).addClass('active');
+
+  // Отправляем данные на сервер
+
+  $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
+    {   'action': 'place_set_info',
+        'place': active_place,
+        'id': token.id,
+        'token': token.token,
+        'title': $('#place-input-title').val().substr(0,64),
+        'desc': $('#place-input-desc').val().substr(0,256),
+        'type': $('#place-input-type').val(),
+        'lat': $('#place-input-lat').val(),
+        'lng': $('#place-input-lng').val(),
+        },
+    function(data){
+      // Ничего не делаем
+    },'json').fail(
+        function(a,b,c){
+          //report_xhr_error(a,'move_data'); // расскомментить в продакшне
+        }
+    );
+
+    // Завершаем редактирование
+    place_stop_editing();
+
+}
+
+function add_place(latlng){
+  //place(lat, lng, id, title, type, owned)
+  place(latlng.lat, latlng.lng, 0, '...', 'none', true); // Временная точка
+
+  lock_map();can_i_edit = false;
+
+  $.get('/engine/auth.php', // отправляем xhr на добавление места и ждём получения его id
+    {   'action': 'place_add',
+        'lat':    latlng.lat,
+        'lng':    latlng.lng,
+        'id':     token.id,
+        'token':  token.token
+        },
+    function(data){
+        if(data.success){
+          /*
+              если получилось, дропаем временное место,
+              добавляем новое с id от php-скрипта
+              и сразу переводим его в режим редактирования
+
+              место будет временным, пока ему не зададут title
+          */
+          place(data.place.lat, data.place.lng, data.place.id, '...', 'none', true);
+          drop_place(0);
+          can_i_edit = true;
+          unlock_map();
+          show_place(data.place.id, true);
+        }else{
+          console.log('Ошибка добавления места (php): ', data);
+          drop_place(0);
+          can_i_edit = true;
+          unlock_map();
+        }
+    },'json').fail(
+        function(a,b,c){
+          console.log('Ошибка добавления места (xhr): ', a);
+          drop_place(0);
+          can_i_edit = true;
+          unlock_map();
+          //report_xhr_error(a,'move_data'); // расскомментить в продакшне
+        }
+    );
+}
+function drop_place(id){
+  delete(places_lids[places_objects[id]._leaflet_id])
+  delete(places[id]);
+  places_layer.removeLayer(places_objects[id]);
 }
 
 function lock_map(){
@@ -2229,13 +2377,17 @@ function local_recover_data(){
             storedRoute = null;
         }
         if (typeof (map_list[localStorage.getItem("map_style")]) !== 'undefined') {
+            console.log('recover map_style ', localStorage.getItem("map_style"));
             current_map_style = localStorage.getItem("map_style");
             change_map(current_map_style);
+        }else{
+          console.log("error map_style ", localStorage.getItem("map_style"));
         }
         if(localStorage.getItem("logo") !== 'undefined' && typeof(logos[localStorage.getItem("logo")]) !==  'undefined'){
             current_logo = localStorage.getItem("logo");
         }else{
             current_logo = 'default';
+            console.log('Here!', localStorage.getItem("logo"));
         }
         //console.log('current logo restored'+localStorage.getItem("logo"));
         if (typeof(storedRoute) !== 'undefined' && storedRoute && storedRoute.length > 1) {
@@ -3178,8 +3330,10 @@ function do_login(input_data){
         'new_token': input_data.token
         },
     function(data){
+        place_stop_editing();
+        close_place();
         set_token(input_data.id, input_data.token, 'vk');
-        check_token();
+        check_token(function(){ show_places(); });
     },'json').fail(
         function(a,b,c){
             report_xhr_error(a,'move_data');
@@ -3188,9 +3342,11 @@ function do_login(input_data){
 }
 
 function do_logout(){
+    place_stop_editing();
+    close_place();
     $('#sub_plank_user').removeClass('active');
     set_token(null,null,null);
-    gen_guest_token();
+    gen_guest_token(function(){ show_places(); });    
 }
 
 function remote_drop_route(route_id){
@@ -3296,6 +3452,59 @@ function chat_watch_enter(e){
         chat_put();
     }
 }
+
+function check_input_title (e) {
+    e = typeof(e) !== 'undefined' ? e : window.event;
+    //if(e.keyCode);
+}
+
+function check_input_title (e) {
+    e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
+    obj = $('#place-input-title');
+    if(obj.val().length > 32){
+        obj.val(obj.val().substr(0,32))
+    }
+    $('#place_title_progress .bar').css('width', parseInt(obj.val().length/32*100) + '%');
+}
+
+function input_title_enter(e){
+    e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
+    if(e && e.keyCode && e.keyCode === 13){
+        e.preventDefault();
+        save_place_data();
+    }
+}
+
+function check_input_desc (e) {
+    e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
+    obj = $('#place-input-desc');
+    if(obj.val().length > 256){
+        obj.val(obj.val().substr(0,256))
+    }
+
+    $('#place_desc_progress .bar').css('width', parseInt(obj.val().length/256*100) + '%');
+}
+
+function input_desc_ctrlenter(e){
+    e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
+
+    if(e && e.keyCode && e.keyCode === 13 && e.ctrlKey){
+        e.preventDefault();
+        save_place_data();
+    }
+    console.log(e);
+}
+function place_check_input(){
+    obj = $('#place-input-title');
+    if(obj.val().replace(/\s/,'').length >= 2){        
+        $('#place_error_container .place_error_title').hide();
+        return true;
+    }else{
+        $('#place_error_container .place_error_title').show();
+        return false;
+    }
+}
+
 /*
 
 Все сторонние функции
