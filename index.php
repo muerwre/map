@@ -92,18 +92,21 @@
     </div>
 
     <div id="place_left_slide"> <!-- Слайд с описанием интересного места -->
+
+      <div id="place_owner_buttons">
+        <div id="place_left_edit" onclick="place_toggle_editing();"> <span class="fa fa-pencil"></span> </div>
+        <!--div id="place_left_delete"> <span class="fa fa-trash-o"></span> </div-->
+      </div>
+      <div class="place_left_slide_close" onclick="close_place();">✕</div>
+
       <div class="slide_inner">
+
         <!-- Иконка загрузки -->
         <div class="loader"><div class="sk-folding-cube"><div class="sk-cube1 sk-cube"></div><div class="sk-cube2 sk-cube"></div><div class="sk-cube4 sk-cube"></div><div class="sk-cube3 sk-cube"></div></div></div>
         <!-- Общая информация -->
         <div id="place_info">
 
           <div id="place_thumb"> <span class="fa fa-camera"></span> </div>
-
-          <div id="place_owner_buttons">
-            <div id="place_left_edit" onclick="place_toggle_editing();"> <span class="fa fa-pencil"></span> </div>
-            <!--div id="place_left_delete"> <span class="fa fa-trash-o"></span> </div-->
-          </div>
 
           <div id="place_text">
             <div id="place_title"></div>
@@ -121,17 +124,7 @@
             <input type="hidden" id="place-input-lat" placeholder="lat" />
             <input type="hidden" id="place-input-lng" placeholder="lng" />
             <div class="place_type_select">
-              <div class="place_type_options" onclick="$(this).toggleClass('expanded');">
-                <div class="place-type-none active" data-pick="none" onclick="place_change_type(event);">Тип не указан</div>
-                <div class="place-type-favs" data-pick="favs"        onclick="place_change_type(event);">Знаковые</div>
-                <div class="place-type-building" data-pick="building"   onclick="place_change_type(event);">Строения</div>
-                <div class="place-type-nature" data-pick="nature"      onclick="place_change_type(event);">Природа</div>
-                <div class="place-type-cult" data-pick="cult"      onclick="place_change_type(event);">Культура</div>
-                <div class="place-type-amuse" data-pick="amuse"   onclick="place_change_type(event);">Развлечения</div>
-                <div class="place-type-food" data-pick="food"   onclick="place_change_type(event);">Еда</div>
-                <div class="place-type-shops" data-pick="shops"   onclick="place_change_type(event);">Магазины</div>
-                
-              </div>
+              <div id="place_type_options" onclick="$(this).toggleClass('expanded');"></div>
             </div>
             <input type="hidden" id="place-input-type" />
             <div class="place_input_container">
@@ -154,9 +147,6 @@
           </div>
 
         </div>
-
-        <div class="place_left_slide_close" onclick="close_place();">✕</div>
-
       </div>
    </div>
 
@@ -181,6 +171,22 @@
       <div class="bar" onclick="open_route_list();"><div class="btn btn-fa"><span>Все сохранённые вами маршруты.</span><i class="fa fa-folder-o"></i><i id="menu_user_route_count"></i></div></div>
       <div class="sep"></div>
       <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><span>Чат и ответы на вопросы.</span><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
+      <div class="sep"></div>
+      <div class="bar" onclick="">
+        <span class="places-view-tooltip">
+
+          <div id="places-view-checkboxes"></div>
+          
+          <div class="double"></div>
+
+          <div id="places-view-toggles">
+            <label for="places-toggle-viewer"><input type="checkbox" class="checkbox-type-viewer" id="places-toggle-viewer" data-type="viewer" onchange="select_place_view(event);">В режиме просмотра</label>
+            <label for="places-toggle-editor"><input type="checkbox" class="checkbox-type-editor" id="places-toggle-editor" data-type="editor" onchange="select_place_view(event);">В редакторе</label>
+          </div>
+
+        </span>
+        <div class="btn btn-places-view"></div>
+      </div>
 
       <div class="sub_plank" id="sub_plank_user">
         <div class="routing_tip" style="display:table;width:100%">
@@ -400,6 +406,7 @@
       $('.btn-places').on('click',function(){ toggle_places(); });
       $('.btn-publish').on('click',function(){ toggle_shot(); });
       $('.btn-map').on('click',function(){ toggle_map(); });
+      $('.btn-places-view').on('click', function(){ toggle_places(); })
       $('.btn-logo').on('click',function(){
         $('#sub_plank_select_logo').toggleClass('active');
       });

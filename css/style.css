@@ -6,6 +6,43 @@ body {
 :focus {
     outline: 0;
 }
+
+/* SCOLLBARS */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #1eac76;
+  border: 0px none #ffffff;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1eac76;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #16e295;
+}
+::-webkit-scrollbar-track {
+  background: #333333;
+  border: 0px none #ffffff;
+  border-radius: 50px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #333333;
+}
+::-webkit-scrollbar-track:active {
+  background: #333333;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* /SCROLLBARS */
+
 .leaflet-container.leaflet-touch-drag.leaflet-touch-drag {
     -webkit-user-select: none;
     -o-user-select: none;
@@ -28,6 +65,15 @@ body {
 }
 .single {
   height: 10px;
+}
+.double {
+  height: 20px;
+}
+.triple {
+  height: 30px;
+}
+.quadro {
+  height: 40px;
 }
 .leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
     border:none;
@@ -529,6 +575,11 @@ div#sub_plank_stickers {
   font-family:'RalewayBold';
   border-radius: 2px;cursor:pointer;
   font-size:0.8em;color: #fff;
+  box-sizing: border-box;
+}
+.button.fit {
+  width: 100%;
+  text-align:center;
 }
 a.button {color: white;text-decoration: none;}
 .button_group { font-size: 0px; }
@@ -859,6 +910,13 @@ b.key {
 
 .btn-places.inactive, .btn-places.inactive:hover {
  background-position: -624px 0px;
+}
+
+.btn-places-view {
+  background-position: -624px -48px;
+}
+.btn-places-view.inactive {
+  opacity: .3;
 }
 .btn span i {
   font-style: normal;
@@ -2076,6 +2134,8 @@ div#sub_plank_select_logo {
 }
 
 #place_left_slide .slide_inner {
+  overflow-y: auto;
+  overflow-x: hidden;
   border-radius: 3px 3px 0 3px;
   background: #222;
   padding: 10px;
@@ -2090,8 +2150,8 @@ div#sub_plank_select_logo {
 .place_left_slide_close {
   cursor: pointer;
   position: absolute;
-  right: -48px;
-  bottom: 0px;
+  right: -58px;
+  bottom: 70px;
   width: 48px;
   height: 48px;
   background: #444;
@@ -2099,7 +2159,7 @@ div#sub_plank_select_logo {
   color: white;
   box-sizing: border-box;
   padding: 10px 0 0 13px;
-  font-size:24px;
+  font-size: 24px;
 }
 
 .place div {
@@ -2254,8 +2314,11 @@ div#place_mark {
 }
 
 div#place_owner_buttons {
-  position: relative;
-  display: none;
+    position: relative;
+    display: none;
+    position: absolute;
+    right: 0px;
+    top: 220px;
 }
 
 div#place_owner_buttons div.button {
@@ -2338,7 +2401,7 @@ div#place_owner_buttons div.button {
     margin-bottom: 10px;
 }
 
-.place_type_options {
+#place_type_options {
     position: absolute;
     z-index: 10;
     background: #444;
@@ -2349,65 +2412,65 @@ div#place_owner_buttons div.button {
     border-radius: 3px;
 }
 
-.place_type_options div {
+#place_type_options div {
   padding: 10px;
   display: none;
   cursor: pointer;
 }
 
-.place_type_options div.active {
+#place_type_options div.active {
   display:block;
 }
 
-.place_type_options.expanded div {
+#place_type_options.expanded div {
   display:block;
 }
-.place_type_options div:before {
+#place_type_options div:before {
     content: ' ';
     width: 10px;
     height: 10px;
     border-radius: 10px;
     display: inline-block;
-    background: #222;
     margin-right: 8px;
 }
-
-div.place-type-favs:before { background: #ff3344; }
-div.place-type-amuse:before { background: #ff3344; }
-div.place-type-shops:before { background: #ff3344; }
 
 .place div.active.type-building:before,
 .place div.active.type-building:after,
 div.place-type-building:before,
-.type-building span, .type-building b {
+.type-building span, .type-building b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-building:checked {
   background: #00aad4;
 }
 
 .place div.active.type-favs:before,
 .place div.active.type-favs:after,
 div.place-type-favs:before,
-.type-favs span, .type-favs b {
+.type-favs span, .type-favs b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-favs:checked {
   background: #ff3344;
 }
 
 .place div.active.type-nature:before,
 .place div.active.type-nature:after,
 div.place-type-nature:before,
-.type-nature span, .type-nature b  {
+.type-nature span, .type-nature b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-nature:checked  {
   background: #2ca05a;
 }
 
 .place div.active.type-cult:before,
 .place div.active.type-cult:after,
 div.place-type-cult:before,
-.type-cult span, .type-cult b {
+.type-cult span, .type-cult b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-cult:checked {
   background: #7f2aff;
 }
 
 .place div.active.type-none:before,
 .place div.active.type-none:after,
 div.place-type-none:before,
-.type-none span, .type-none b  {
+.type-none span, .type-none b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-none:checked  {
   background: #333;
 }
 
@@ -2415,7 +2478,8 @@ div.place-type-none:before,
 .place div.active.type-amuse:before,
 .place div.active.type-amuse:after,
 div.place-type-amuse:before,
-.type-amuse span, .type-amuse b  {
+.type-amuse span, .type-amuse b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-amuse:checked  {
   background: #d653b4;
 }
 
@@ -2423,14 +2487,16 @@ div.place-type-amuse:before,
 .place div.active.type-shops:before,
 .place div.active.type-shops:after,
 div.place-type-shops:before,
-.type-shops span, .type-shops b  {
+.type-shops span, .type-shops b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-shops:checked  {
   background: #ca7900;
 }
 
 .place div.active.type-food:before,
 .place div.active.type-food:after,
 div.place-type-food:before,
-.type-food span, .type-food b  {
+.type-food span, .type-food b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-food:checked  {
   background: #58940a;
 }
 
@@ -2443,7 +2509,7 @@ div.place-type-food:before,
   width:100%;height:4px;
   border-radius: 0 0 3px 3px;
 }
-#place_desc_progress, #place_title_progress { 
+#place_desc_progress, #place_title_progress {
   bottom: 7px;
 }
 .input-progress .bar {
@@ -2469,4 +2535,90 @@ div#place_error_container {
     padding: 2px;
     text-align: center;
     display: none;
+}
+
+span.places-view-tooltip {
+    user-select: none;
+    position: absolute;
+    bottom: 58px;
+    color: white;
+    background: #111;
+    padding: 10px;
+    width: 200px;
+    display: inline-block;
+    /* min-width: 200px; */
+    z-index: 0;
+    left: 0px;
+    border-radius: 5px;
+    transform: scaleY(0);
+    transition: transform 250ms;
+    transform-origin: 100% 110%;
+    /* color: #fff; */
+    font-family: 'RalewayMedium';
+    font-size: 14px;
+    white-space: nowrap;font-weight: normal;text-transform: none;
+}
+span.places-view-tooltip::before {
+    content: ' ';
+    position:absolute;bottom:-14px;left:10px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 15px 15px 0 15px;
+    border-color: #111 transparent transparent transparent;
+}
+
+.bar:hover span.places-view-tooltip {
+    transform: scaleY(1);
+}
+
+span.places-view-tooltip  input[type="checkbox"] {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 14px;
+  margin: 0 7px 0 0;
+  border-radius: 10px;
+  /* box-shadow: inset #fff 0 0 0 0px; */
+  position: relative;
+  cursor: pointer;
+  top: 1px;
+  background: #333;
+  transition: background-color 250ms;
+}
+
+/* :checked */
+span.places-view-tooltip  input[type="checkbox"]::after {
+  content: ' ';
+  width: 8px;height:8px;left:3px;top:3px;
+  background: #fff;position: absolute;border-radius:6px;
+  transition: left 250ms;
+}
+span.places-view-tooltip  input[type="checkbox"]:checked::after {
+  left: 13px;
+}
+span.places-view-tooltip label {
+  cursor: pointer;
+  display: block;
+  color: #aaa;
+  position: relative;
+  margin: 0 0 0 3px;
+  padding: 10px 0 0px 0px;
+  font-weight: bold;
+}
+span.places-view-tooltip label:hover {
+  color: #fff;
+}
+
+span.places-view-tooltip.inactive div#places-view-checkboxes label
+{
+  opacity: 0.5;
+}
+
+div#places-view-toggles input[type="checkbox"]:checked {
+  background: #fff;
+}
+
+
+div#places-view-toggles input[type="checkbox"]::after {
+  background: #111;
 }

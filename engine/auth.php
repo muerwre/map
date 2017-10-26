@@ -5,10 +5,18 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
 $link = mysqli_connect($mysql['host'], $mysql['user'], $mysql['pass'], $mysql['db']);
 mysqli_set_charset($link,'utf8');
 
+$place_types = [
+	'favs'		=> 'Избранное', 
+	'none'		=> 'Не указано', 
+	'building'	=> 'Сооружения', 
+	'cult'		=> 'Культура', 
+	'nature'	=> 'Природа', 	
+	'shops'		=> 'Магазины', 
+	'amuse'		=> 'Развлечения', 
+	'food'		=> 'Еда'
+];
+
 if($action == 'gen_guest_token'){
-	//echo '<pre>';
-	//print_r($_SERVER);
-	//exit;
 	$c=0;
 	while($c<=3000){
 		$c+=1;
@@ -35,28 +43,31 @@ if($action == 'gen_guest_token'){
 	echo json_encode(['success'=>true,'id'=> $id, 'token' => $token, 'random_url' => $name, 'role' => 'guest']);
 
 }elseif($action == 'check_token'){
+
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+
 	$result= mysqli_query($link,"SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
+
 	$last_message = isset($_COOKIE['last_message']) && is_numeric($_COOKIE['last_message']) && $_COOKIE['last_message'] >  0 ? mysqli_escape_string($link, $_COOKIE['last_message']) : 0;
+
 	$new_messages = 0;
+
 	if($user = mysqli_fetch_assoc($result)){
-		//print_r($user);
+
 		// Грузим карты для данного пользователя
 		$role = $user['role'];
 		$userdata = json_decode($user['data']);
 		$routes = array();
 		$query = mysqli_query($link,"SELECT * FROM `routes` WHERE id='".$user['id']."' ORDER BY created DESC");
-		//print_r(mysqli_fetch_assoc($query));
-		//echo $query->num_rows;
 		$i = 0;
 		while($result = mysqli_fetch_assoc($query)){
 			$routes[] = array('id' => $result['name'], 'created' => date('j',$result['created']).' '.monthy(date('n',$result['created'])).date(' Y в H:i',$result['created']));
 			if($i>=199){ break; }
 			$i++;
 		}
-		//print_r($routes);
-		//echo "SELECT * FROM `routes` WHERE id='".$user['id']."' ORDER BY created DESC LIMIT 0,20";
+
 		$c=0;
 
 		while($c<=3000){
@@ -68,12 +79,22 @@ if($action == 'gen_guest_token'){
 			}
 		}
 		if($last_message > 0){
-			//echo "SELECT * FROM `chat` WHERE id > '".$last_message."'";
+			// Получаем количество новых сообщений
 			$query_msg = mysqli_query($link,"SELECT * FROM `chat` WHERE id > '".$last_message."'");
 			$new_messages = $query_msg->num_rows;
 		}
 
-		echo json_encode(['success'=>true, 'random_url'=>$name, 'role' => $user['role'], 'routes' => $routes, 'routes_count' => $query->num_rows, 'userdata' => $userdata, 'new_messages' => $new_messages]);
+
+		echo json_encode([
+			'success'		=> true, 
+			'random_url'	=> $name, 
+			'role'			=> $user['role'],
+			'routes'		=> $routes,
+			'routes_count'	=> $query->num_rows,
+			'userdata' 		=> $userdata,
+			'new_messages'	=> $new_messages,
+			'place_types'	=> $place_types
+		]);
 	}else{
 		oops("query=SELECT * FROM `tokens` WHERE login='".$id."' AND token='".$token."'");
 	}
@@ -82,15 +103,10 @@ if($action == 'gen_guest_token'){
 	if(!$name){
 		oops('Карта не найдена');
 	}
-	//echo "SELECT * FROM routes LEFT JOIN tokens ON routes.id = tokens.id WHERE routes.name = '$name';";
-	//print_r(mysqli_fetch_assoc(mysqli_query($link,"SELECT routes.*, login, token FROM routes LEFT JOIN tokens ON routes.id = tokens.id WHERE routes.name = '$name';")));
 	if($row=mysqli_fetch_assoc(mysqli_query($link,"SELECT routes.*, login, token FROM routes LEFT JOIN tokens ON routes.id = tokens.id WHERE routes.name = '$name';"))){
-		//print_r(json_decode(utf8_decode($row['data']), true,  JSON_UNESCAPED_UNICODE));
-		//echo utf8_decode($row['data']);
-		//echo json_last_error();
 		echo json_encode(['success' => true, 'data' => json_decode(utf8_decode($row['data']))],  JSON_UNESCAPED_UNICODE);
-		//
 	}
+	//echo "SELECT routes.*, login, token FROM routes LEFT JOIN tokens ON routes.id = tokens.id WHERE routes.name = '$name';";
 }elseif($action == 'store'){
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
@@ -287,6 +303,7 @@ if($action == 'gen_guest_token'){
 	//echo 'm!';
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+	$filter = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : null;
 	$places = [];
 
 	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
@@ -294,22 +311,38 @@ if($action == 'gen_guest_token'){
 
 	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
 
-	$query = mysqli_query($link, "SELECT places.*, tokens.login FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.status > 0;");
-	//$result = mysqli_fetch_assoc($query);
-	//print_r($query);
+	// Проверяем, правильны ли места	
+	foreach($filter as $key=>$var){
+		if(!$place_types[$var]){
+		 unset($filter[$key]);
+		}else{
+			$filter[$key] = "'" . $var . "'";
+		}
+	}
+
+	// Если ничего не указано, просто указываем favs
+	if(sizeof($filter) == 0){ $filter[] = "'completely_nothing'"; }
+
+	$query = mysqli_query($link, "SELECT places.*, tokens.login FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.status > 0 AND places.type IN (" . implode(',', $filter) . ");");
+	
 	while($result = mysqli_fetch_assoc($query)){
 		$places[$result['id']] = $result;
 		$places[$result['id']]['owned'] = ($result['login'] == $id);
 	}
-	//echo 'e!';
+	
 	echo json_encode(['success' => true, 'places' => $places]);
+
 }elseif($action=='place_get_info'){
-	//echo 'm!';
+
+
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+
 	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+
 	$place = isset($_REQUEST['place']) && is_numeric($_REQUEST['place']) ? mysqli_escape_string($link, $_REQUEST['place']) : null;
 
 	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+
 	$result = mysqli_fetch_assoc($query);
 
 	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$place) { oops("Токен не найден"); }
@@ -317,10 +350,15 @@ if($action == 'gen_guest_token'){
 	$query = mysqli_query($link, "SELECT places.*, tokens.login, tokens.data as login_data FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.id = ".$place.";");
 
 	$result = mysqli_fetch_assoc($query);
+
 	$result['owned'] = ($result['login'] == $id);
+
 	$login_data = json_decode($result['login_data']);
+
 	$result['owner_name'] = ($login_data && $login_data->name) ? $login_data->name : $result['owner'];
+
 	echo json_encode(['success' => true, 'place' => $result]);
+
 }elseif($action=='place_set_info'){
 
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
@@ -341,24 +379,27 @@ if($action == 'gen_guest_token'){
 	}
 
 	// Проверка введёных данных
-	$title 	= isset($_REQUEST['title']) && mb_strlen(preg_replace('/[\s\n\r]/','',$_REQUEST['title'])) > 2 ? mb_substr(htmlspecialchars(trim(preg_replace('/[\n\r]/','',$_REQUEST['title']))), 0, 32) : null;
-	$desc 	= isset($_REQUEST['desc']) ? mb_substr(trim(preg_replace('/[\n\r]/','<br />', htmlspecialchars($_REQUEST['desc']))), 0, 256) : null;
-	$type 	= isset($_REQUEST['type']) && in_array($_REQUEST['type'], ['none', 'building', 'cult', 'nature', 'favs', 'shops', 'amuse', 'food']) ? $_REQUEST['type'] : 'none';
-
+	// Должно быть название > 2, обрезаем до 32 символов
+	$title 	= isset($_REQUEST['title']) && mb_strlen(preg_replace('/[\s\n\r]/','',$_REQUEST['title'])) > 2 ? htmlspecialchars(mb_substr(trim(preg_replace('/[\n\r]/','',$_REQUEST['title'])), 0, 32)) : null;
+	// Описание просто обрезаем до 256
+	$desc 	= isset($_REQUEST['desc']) ? htmlspecialchars(mb_substr(trim(preg_replace('/[\n\r]/','<br />', $_REQUEST['desc'])), 0, 256)) : null;
+	// Если тип не содержится в списке типов, делаем его none
+	// Тут, возможно, будет проверка прав на эксклюзивные типы, вроде избранного
+	$type 	= isset($_REQUEST['type']) && $place_types[$_REQUEST['type']] ? $_REQUEST['type'] : 'none';
+	// Lat и LNG должны соответствовать типу FLOAT
 	$lat		= isset($_REQUEST['lat']) && is_float((float)$_REQUEST['lat']) ? (float)$_REQUEST['lat'] : null;
 	$lng		= isset($_REQUEST['lng']) && is_float((float)$_REQUEST['lng']) ? (float)$_REQUEST['lng'] : null;
 
+	// Если что-то не так, выкидываем ошибку
 	if(!$title || !$lat || !$lng){
-			oops("data is incomplete");
+			oops("data is incomplete / ");
 	}
+
+	// Пишем в БД
 	$query = mysqli_query($link, "UPDATE places SET `title` = '".$title."',	`desc` = '".$desc."',`type` = '".$type."',`lat` = '".$lat."',`lng` = '".$lng."', status = 1 WHERE id = '".$place."';");
-	//echo "UPDATE places SET title = '".$title."', desc='".$desc."', lat='".$lat."', lng='".$lng."', status=1 WHERE id = '".$place."';";
-	//oops("working");
-	//$result = mysqli_fetch_assoc($query);
-	//$result['owned'] = ($result['login'] == $id);
-	//$login_data = json_decode($result['login_data']);
-	//$result['owner_name'] = ($login_data && $login_data->name) ? $login_data->name : $result['owner'];
+
 	echo json_encode(['success' => true]);
+
 }elseif($action=='place_add'){
 
 	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;

@@ -1,12 +1,8 @@
 /* hey, ho, let's go!
 
-    Доки редактора:
-    http://leaflet.github.io/Leaflet.Editable/doc/api.html
+    zoomanim - действие по изменению зума, ищи, если нужно
+    OBSOLETE - пометка неиспользуемых функций. Помечай и удаляй их
 
-    Событие по завершению перетягивания ручки:
-    map.editTools.addEventListener('editable:vertex:dragend', function () { console.log('drageeeeeeed!'); });
-
-    Событие, происходящее по измениню зума: ищи zoomanim
 */
 
 
@@ -17,18 +13,18 @@
 var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     dgis, current_logo, current_zoom, can_i_store = false,
     can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false,
-// В этой штуке мы храним точки и выноски, их связки и всё такое
+
+    // В этой штуке мы храним точки и выноски, их связки и всё такое
     point_array = {
         points: L.layerGroup(),
         vectors: L.layerGroup(),
         handles: L.layerGroup(),
-        //vector_array: {},
-        //points_array: {},
         pairs: {},
         point_to_id: {},
         id_to_point: {},
         savedata: {}
     },
+
     logos = {
         'default': ['Без логотипа', '/misc/nologo.png?ww', 'bottom-right'],
         'nvs': ['НВС', '/misc/lgo.png', 'bottom-right'],
@@ -39,6 +35,7 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
         'rider_evening': ['Вечерние городские', '/misc/rider_evening.png', 'top-right'],
         'fas': ['Алкоспорт', '/misc/fas.png', 'bottom-right'],
     },
+
     points = L.layerGroup(),
     km_marks = L.layerGroup(),
     pnt_id = 0,
@@ -132,8 +129,9 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
 
     // Интересные места;
     places_layer, places = {}, places_objects = {}, active_place = 0, place_loading = 0,
-    places_lids = {}
-
+    places_lids = {}, // здесь хранятся layer_id мест в формате places_lids[lid] = id
+    place_types, place_types_selected,
+    places_show
 
 function test_get_tiles(){
     var w  = $('#map').width(),h = $('#map').height(),
@@ -397,8 +395,7 @@ $(document).on('mouseup', function (e) {
 });
 
 function bridge_layer(){
-    //var latlng = {lat: 54.972632943832994, lng: 82.95600414276124};
-    //map.setView({lat: 54.96943602216546, lng: 82.95441627502443},16);
+    // OBSOLETE
     zzz=L.imageOverlay('/misc/stickers/bridge_layer.svg', [{lat: 54.97308784358926, lng: 82.95710921287538},{lat: 54.976259054848086, lng: 82.96591758728029}]).addTo(map);
 }
 
@@ -518,6 +515,7 @@ function remote_store_data(force){
                     $('#sub_plank_remote_store').removeClass('error recheck storing renaming overwriting').addClass('success');
                     $('#store_name').val(data.name);
                     update_store_url();
+                    //console.log(":from remote_store_data 1");
                     check_token();
                 }else{
                     //console.log('panic!');
@@ -528,6 +526,7 @@ function remote_store_data(force){
                     if(typeof(data.mode) !== 'undefined' && data.mode){
                         $('#sub_plank_remote_store').addClass('error '+data.mode);
                         if(data.mode === 'recheck'){
+                            //console.log(":from remote_store_data 2");
                             check_token();
                         }
                         $('#store_name').focus();
@@ -566,6 +565,7 @@ function gen_guest_token(callback){
                 $('#store_name').val(data.random_url);
                 update_store_url();
             }
+            //console.log(':from gen_guest_token');
             check_token(callback);
             //console.log(data.random_url);
         }, 'json').fail(
@@ -656,14 +656,53 @@ function check_token(callback){
                         $('#editor_left_slide').removeClass('not_empty');
                     }
 
+                    // Если есть новые сообщения в чате, показываем их количество на кнопку
                     if(data.new_messages>0){
                         $('#menu_user_chat_count').text(data.new_messages).addClass('active');
                     }
 
+                    // Заполняем список типов мест
+                    if(data.place_types){
+                        place_types = data.place_types;
+
+                        $('#place_type_options').html('');
+                        $('#places-view-checkboxes').html('');                        
+
+                        $.each(data.place_types, function(index, value){
+                            // Заполняем select в редакторе места
+                            $('#place_type_options').append('<div class="place-type-' + index + '" data-pick="' + index + '" onclick="place_change_type(event);">' + value + '</div>');
+
+                            // Заполняем чекбоксы в меню выбора типов мест
+                            $('#places-view-checkboxes').append('<label for="places-toggle-' + index + '"><input type="checkbox" class="checkbox-type-' + index + '" id="places-toggle-' + index + '" data-type="' + index + '">' + value + '</label>');
+                            $('#places-view-checkboxes .checkbox-type-' + index ).on('change', function(){ select_place_type(event, index); } );
+                        });
+
+                    }
+
+                    // Подгружаем выбранные пользователем типы мест для показа
+
+                    // Пытаемся подгрузить из localStorage
+                    place_types_selected = typeof (localStorage) !== "undefined" ? (localStorage.getItem("place_types") ? localStorage.getItem("place_types").split(',') : ['favs']) : ['favs'];
+
+                    // Чекаем необходимые чекбоксы
+                    $.each(place_types_selected, function(index, value){
+                        $('.checkbox-type-' + value).attr('checked', true);                                                       
+                    });
+
+                    // Подгружаем из localStorage опции отображения мест
+                    // [x, y] - x в режиме просмотра
+                    //          y в режиме редактора
+
+                    places_show = typeof (localStorage) !== "undefined" ? (localStorage.getItem("places_show") ? localStorage.getItem("places_show").split(',') : [1, 0] ) : [1, 0];
+
+                    // Показываем места
+                    decide_toggle_places();
+
+                    // Выполняем коллбэк при необходимости
                     if(callback){
                         callback();
                     }
-                    //console.log('token ok');
+                    
                 }
             }, 'json').fail(
                 function(a,b,c){
@@ -1580,7 +1619,8 @@ function publish_overlay() {
 
 function prepare_map() {
     'use strict';
-    check_token();
+    //console.log(":from prepare_map");
+    //check_token();
     // Эта функция создаёт саму карту и наносит на неё маршруты в самом начале работы
     $('#map').css('width', '100%').css('height', '100%');
     // создаём объект с картой
@@ -1702,35 +1742,48 @@ function prepare_map() {
     //enable_editor();
     //console.log('original shift: ',{lat: shift_value.lat, lng: shift_value.lng})
     //$('#place_left_slide').addClass('active');
-    show_places();
+    
 }
 
 function show_places(){
   // Функция подгружает все достопримечательности (на самом деле - последние 200)
   token = get_token(); // получаем данные о пользователе
 
-  places_layer.clearLayers();
+  
+  clear_all_places();
   places_layer.addTo(map);  
 
   $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
   {   'action': 'places_get',
       'id': token.id,
-      'token': token.token
+      'token': token.token,
+      'filter': place_types_selected
       },
   function(data){
       if(data.success){ // если получилось, наносим их на карту
-
+        clear_all_places();
         $.each(data.places, function(i,v){
           place(v.lat, v.lng, v.id, v.title, v.type, v.owned) // вот этой функцией
         });
 
       }
-  },'json').fail(
+  }, 'json').fail(
       function(a,b,c){
           //report_xhr_error(a,'move_data'); // расскомментить в продакшне
       }
   );
 
+}
+
+function clear_all_places(){
+    console.log('engaged clear all places');
+    places_layer.clearLayers();
+    // Очищает весь список мест
+    $.each(places, function(i, v){
+        drop_place(i);
+    });
+    // На всякий случай чистим вообще все слои
+    
 }
 
 function hide_places(){
@@ -1834,7 +1887,7 @@ function place_start_editing(){
   places_objects[active_place].enableEdit();
   $('#place_left_slide').addClass('editing');
   $('#place-input-title').focus();
-  $('.place_type_options').removeClass('expanded');
+  $('#place_type_options').removeClass('expanded');
   //console.log('let\' start editing');
   check_input_desc();
   check_input_title();
@@ -1892,7 +1945,7 @@ function load_place_data(id, edit_mode){
             $('#place-input-lng').val(data.place.lng);
 
             // Тип места в редакторе
-            $('.place_type_options > div').removeClass('active');
+            $('#place_type_options > div').removeClass('active');
             $('div.place-type-'+data.place.type).addClass('active');
             $('#place-input-type').val(data.place.type);
 
@@ -1916,7 +1969,7 @@ function load_place_data(id, edit_mode){
 function place_change_type(e){
     // Обрабатывает select-бокс в меню редактирования места
     pick     = $(e.target).data('pick');
-    $('.place_type_options > div').removeClass('active');
+    $('#place_type_options > div').removeClass('active');
     $('div.place-type-'+pick).addClass('active');
     $('#place-input-type').val(pick);
     //$('#place-'+active_place).attr('class', 'active type-'+pick)
@@ -2022,10 +2075,14 @@ function add_place(latlng){
         }
     );
 }
+
 function drop_place(id){
-  delete(places_lids[places_objects[id]._leaflet_id])
-  delete(places[id]);
-  places_layer.removeLayer(places_objects[id]);
+    // Полностью удаляет место и все упоминания о нём
+  if( typeof(places_objects[id]) !== 'undefined' && typeof(places_lids[places_objects[id]._leaflet_id]) !== 'undefined' ){
+    places_layer.removeLayer(places_objects[id]);
+    delete( places_lids[places_objects[id]._leaflet_id] );    
+  } 
+  if( typeof(places[id] ) !== 'undefined' ) delete( places[id] );  
 }
 
 function lock_map(){
@@ -2079,37 +2136,48 @@ function enable_editor(){
     if(parseInt($(window).width()) >= 600){
         $('#plank').addClass('active');
     }
+
     $('#editor_left_plank').addClass('active');
-    check_token();
-    //can_i_store = true;
+
     update_overlays();
-    can_i_edit = true;
-    can_i_store=true;
+
+    can_i_edit  = true;
+    can_i_store = true;
+
     if(store && !localStorage.getItem('hello')){
         $('#plank_hello').addClass('active');
         localStorage.setItem('hello',1);
     }
-    //$('#sub_plank_chat').addClass('active');
-    // everythings here for a devel period
-    //toggle_store();
+
+    // Если надо, включаем места
+    decide_toggle_places();
+
 }
 
 function disable_editor(){
+
     $('body').removeClass('is_editing'); // Чтобы сдвигать в редакторе логотип выше
     $('#left_plank').addClass('active');
+
     toggle_none();
     update_overlays();
     poly.editor.disable();
     $('#plank').removeClass('active');
     $('#editor_left_plank').removeClass('active');
+
     can_i_edit = false;
+
     $.each(stickers.objects, function(a,b){
         b.disableEdit();
         $('#sticker_'+stickers.layer_to_object[b._leaflet_id]).removeClass('sticker_editable');
     });
+
     $.each(point_array.vectors.getLayers(), function(a,b){
         point_array.vectors.getLayer(b._leaflet_id).disableEdit();
     });
+
+    // Если надо, включаем места
+    decide_toggle_places();
 }
 
 function createButton(label, container, cls) {
@@ -2377,7 +2445,6 @@ function local_recover_data(){
             storedRoute = null;
         }
         if (typeof (map_list[localStorage.getItem("map_style")]) !== 'undefined') {
-            console.log('recover map_style ', localStorage.getItem("map_style"));
             current_map_style = localStorage.getItem("map_style");
             change_map(current_map_style);
         }else{
@@ -2460,11 +2527,11 @@ function local_recover_data(){
 }
 
 function remote_load_data(name){
+
        if (name) {
         var storedRoute, storedPoints, storedStickers, routeLatLngs, i;
         can_i_load = false;
-        //console.log('loading!');
-        //console.log(can_i_store);
+
         $.get('/engine/auth.php',
             {'name': decodeURI(name), 'action': 'load'},
             function(data){
@@ -2473,7 +2540,7 @@ function remote_load_data(name){
                     drop_stickers();
                     drop_points();
                     can_i_store = false;
-                    //drop_points();
+
 
                     if( typeof(data.data.logo) !== 'undefined' && typeof(logos[data.data.logo]) !==  'undefined'){
                         current_logo = data.data.logo;
@@ -3223,20 +3290,22 @@ function change_mode(hash){
     hash=hash.substr(1).split(/[:\/\?]+/);
     //console.log('hash burst: '+hash)
     if(hash[0]=='map' && hash[1]){
-
         can_i_load = false;
         if(can_i_edit){
             disable_editor();
         }
         can_i_store = false;
         remote_load_data(hash[1]);
+        check_token(function(){ disable_places(); });
     }else{
         //console.log('changing'+hash[0]);
         enable_editor();
+        check_token();
         can_i_store = true;
         local_store_data();
     }
 }
+
 $(document).ready(function () {
     'use strict';
 	prepare_map();
@@ -3447,15 +3516,11 @@ function chat_put(){
 }
 
 function chat_watch_enter(e){
+    // При нажатии enter в поле ввода чата отправляет сообщение
     if( typeof(e) !== 'undefined' && e.type === 'keyup' && e.keyCode === 13 ){
         // Блюрим по эскейпу
         chat_put();
     }
-}
-
-function check_input_title (e) {
-    e = typeof(e) !== 'undefined' ? e : window.event;
-    //if(e.keyCode);
 }
 
 function check_input_title (e) {
@@ -3468,6 +3533,7 @@ function check_input_title (e) {
 }
 
 function input_title_enter(e){
+    // Отслеживает нажатие enter в title редактора мест
     e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
     if(e && e.keyCode && e.keyCode === 13){
         e.preventDefault();
@@ -3476,6 +3542,7 @@ function input_title_enter(e){
 }
 
 function check_input_desc (e) {
+    // Обрезает текст в textarea редактора мест и двигает прогрессбар
     e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
     obj = $('#place-input-desc');
     if(obj.val().length > 256){
@@ -3486,6 +3553,7 @@ function check_input_desc (e) {
 }
 
 function input_desc_ctrlenter(e){
+    // По ctrl+enter отправляет данные в textarea редактора мест
     e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
 
     if(e && e.keyCode && e.keyCode === 13 && e.ctrlKey){
@@ -3494,7 +3562,9 @@ function input_desc_ctrlenter(e){
     }
     console.log(e);
 }
+
 function place_check_input(){
+    // Проверяет введёные данные в редакторе мест
     obj = $('#place-input-title');
     if(obj.val().replace(/\s/,'').length >= 2){        
         $('#place_error_container .place_error_title').hide();
@@ -3504,6 +3574,127 @@ function place_check_input(){
         return false;
     }
 }
+
+function select_place_type(e, type){
+    // Срабатывает по нажатию на чекбокс в меню выбора типов мест для показа
+    // Добавляет тип мест к списку выбранных / убирает его
+    e = typeof(e) !== 'undefined' ? e : ( typeof(window.event) !== 'undefined' ? window.event : null);
+    
+    // Если есть event, то продолжаем
+    if(!e || !place_types[type]) return;
+    // Объект, по которому кликнули
+    obj = $(e.target)
+    // Очищаем список выбранных мест
+    place_types_selected.splice(0, place_types_selected.length);
+    // Обновляем список выбранных мест
+    checkboxes = $('#places-view-checkboxes').find('input').get();
+    for( index=0; index < checkboxes.length; index++ ){
+        value = checkboxes[index];
+        if( typeof(place_types[$(value).data('type')]) !== 'undefined' && $(value).prop("checked")){
+            place_types_selected.push($(value).data('type'));
+        }
+    }
+
+    // Запоминаем их в localStorage
+    if( typeof(localStorage) !== 'undefined' ){
+        localStorage.setItem('place_types', place_types_selected.join(","));
+    }
+
+    // Второстепенное поведение при выключении всех чекбоксов или включении чекбокса
+    // при выключенных местах
+    if( $('.btn-places-view').hasClass('inactive') && place_types_selected.length > 0){
+        // если нажали по чекбоксу, а показ выключен
+        enable_places();
+    }else if( place_types_selected.length == 0){
+        // чекбокс выключал последнюю опцию
+        disable_places();
+    }else{
+        // В остальных, обычных случаях, просто обновляем места на карте
+        show_places();
+    }
+}
+
+function toggle_places(){
+    if( $('.btn-places-view').length <= 0 ){ return; }
+    if( $('.btn-places-view').hasClass('inactive') ){
+        enable_places();
+    }else{
+        disable_places();
+    }
+}
+
+function enable_places(){
+
+    $('.btn-places-view').removeClass('inactive')
+    $('#places-toggle-' + (can_i_edit ? 'editor' : 'viewer')).prop("checked", true);
+    $('span.places-view-tooltip').removeClass('inactive');
+
+    places_show[ can_i_edit ? 1 : 0] = 1;
+    store_places_view();
+    show_places();
+
+}
+
+function disable_places(){
+
+    $('.btn-places-view').addClass('inactive')
+    $('#places-toggle-' + (can_i_edit ? 'editor' : 'viewer')).prop("checked", false);
+    $('span.places-view-tooltip').addClass('inactive');
+
+    places_show[ can_i_edit ? 1 : 0] = 0;
+
+    store_places_view();
+    hide_places();
+    
+}
+
+function store_places_view(){
+    if( typeof(localStorage) !== 'undefined' ){
+        localStorage.setItem('places_show', places_show.join(","));
+    }
+
+}
+
+function change_places_view(){
+
+}
+
+function decide_toggle_places(){
+    // При переключении между режимами редактора и просмотра,
+    // а так же при загрузке выбирает, показывать места или нет,
+    // в зависимости от настроек
+
+    if(!places_show){ return; }
+
+    if( (can_i_edit && places_show[1]==1) || (!can_i_edit && places_show[0]==1) ){
+        enable_places();
+    }else{
+        disable_places();
+    }
+
+}
+
+function select_place_view(e){
+    // Срабатывает при нажатии на чекбокс "Показывать при просмотре / в редакторе"
+    
+    e = typeof(e) !== 'undefined' ? e : ( typeof(window.event) !== 'undefined' ? window.event : null);
+    
+    // Если есть event, то продолжаем
+    if(!e) return;
+    // Объект, по которому кликнули
+    obj = $(e.target);
+
+    // Меняем текущий режим отображения
+    places_show[ obj.data('type') == 'editor' ? 1 : 0 ] = obj.prop("checked") ? 1 : 0;
+    
+    // Запускаем выбор режима отображения мест, там же будет сохранение
+    decide_toggle_places();
+}
+
+
+
+
+
 
 /*
 
