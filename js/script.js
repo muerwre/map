@@ -693,7 +693,7 @@ function check_token(callback){
                     // [x, y] - x в режиме просмотра
                     //          y в режиме редактора
 
-                    places_show = typeof (localStorage) !== "undefined" ? (localStorage.getItem("places_show") ? localStorage.getItem("places_show").split(',') : [1, 0] ) : [1, 0];
+                    places_show = typeof (localStorage) !== "undefined" ? (localStorage.getItem("places_show") ? localStorage.getItem("places_show").split(',') : [1, 1] ) : [1, 1];
 
                     // Показываем места
                     decide_toggle_places();
