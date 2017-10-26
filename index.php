@@ -154,7 +154,7 @@
 
       <span id="user_login_unauthorized">
         <div class="bar" onclick="open_oauth_frame('<?=$_SERVER['HTTP_HOST'];?>');"><div class="btn btn-user btn-fa"><span>Войдите чере вконтакте, <br>чтобы ваши маршруты <br>всегда были с вами.</span></div><div class="bar_text"><span>Войдите чере вконтакте, <br>чтобы ваши маршруты <br>всегда были с вами.</span>ВОЙТИ</div></div>
-        <div class="sep"></div>
+        
       </span>
 
       <span id="user_login_logged" class="hidden">
@@ -165,15 +165,24 @@
             <div class="field_user_name small gray"></div>
           </div>
         </div>
-        <div class="sep"></div>
+        
       </span>
 
+      <div class="viewer-buttons">
+        <div class="sep"></div>
+        <div class="bar" onclick="get_gpx();"><div class="bar_text">&nbsp;&nbsp;&nbsp;GPX</div></div>
+        <div class="sep"></div>
+        <div class="bar" onclick="enable_editor();"><div class="btn btn-router" ></div><div class="bar_text">Редактор</div></div>
+      </div>
+      <div class="sep"></div>
       <div class="bar" onclick="open_route_list();"><div class="btn btn-fa"><span>Все сохранённые вами маршруты.</span><i class="fa fa-folder-o"></i><i id="menu_user_route_count"></i></div></div>
       <div class="sep"></div>
       <div class="bar" onclick="open_chat();"><div class="btn btn-fa"><span>Чат и ответы на вопросы.</span><i class="fa fa-comments"></i><i id="menu_user_chat_count"></i></div></div>
       <div class="sep"></div>
       <div class="bar" onclick="">
         <span class="places-view-tooltip">
+          
+          <div class="places-view-header"><b>Интересные места</b></div>
 
           <div id="places-view-checkboxes"></div>
           

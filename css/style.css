@@ -404,7 +404,7 @@ div.col-6 {
 }
 
 #left_plank.active {
-  transform: translateY(0px);
+  transform: translateY(100px);
 }
 
 #editor_left_plank {
@@ -415,7 +415,7 @@ div.col-6 {
     border-radius: 4px;
     bottom: 10px;
     left: 10px;
-    transform: translateY(100px);
+    /* transform: translateY(100px); */
     transition: transform 500ms;
 }
 
@@ -423,6 +423,14 @@ div.col-6 {
   transform: translateY(0px);
 }
 
+.viewer-buttons {
+  display: inline-block;
+}
+
+#editor_left_plank.active .viewer-buttons {
+  display: none;
+  
+}
 .bar_text {
     float: left;
     padding: 17px 15px 15px 3px;
@@ -643,7 +651,7 @@ a.button {color: white;text-decoration: none;}
   height:38px;
   background: #222;
   margin-top:5px;
-  width: 10px;
+  width: 5px;
   position: relative;
   top: -4px;
 }
@@ -2543,7 +2551,7 @@ span.places-view-tooltip {
     bottom: 58px;
     color: white;
     background: #111;
-    padding: 10px;
+    padding: 0px 10px 10px 10px;
     width: 200px;
     display: inline-block;
     /* min-width: 200px; */
@@ -2621,4 +2629,11 @@ div#places-view-toggles input[type="checkbox"]:checked {
 
 div#places-view-toggles input[type="checkbox"]::after {
   background: #111;
+}
+
+span.places-view-tooltip .places-view-header {
+  background: #222;
+  padding: 10px 10px 10px 42px;
+  margin: 0 -10px;
+  border-radius: 3px 3px 0 0;
 }

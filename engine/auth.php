@@ -7,13 +7,13 @@ mysqli_set_charset($link,'utf8');
 
 $place_types = [
 	'favs'		=> 'Избранное', 
-	'none'		=> 'Не указано', 
 	'building'	=> 'Сооружения', 
 	'cult'		=> 'Культура', 
 	'nature'	=> 'Природа', 	
 	'shops'		=> 'Магазины', 
 	'amuse'		=> 'Развлечения', 
-	'food'		=> 'Еда'
+	'food'		=> 'Еда',
+	'none'		=> 'Не указано'
 ];
 
 if($action == 'gen_guest_token'){
@@ -256,13 +256,13 @@ if($action == 'gen_guest_token'){
 
 		if($id == 'vk:360004' && preg_match("/^((.|\n)*)@commit((.|\n)*)$/", $message,$matches)){
 			if($matches[1]){
-				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[1]."', '".$result['role']."', '".$result['data']."', '".$id."')");
+				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[1]."', '".$result['role']."', '".$result['data']."', '".$id."', 'chat', 'message')");
 			}
 			if($matches[3]){
-				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[3]."', 'system', '".$result['data']."', '".$id."')");
+				mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$matches[3]."', '".$result['role']."', '".$result['data']."', '".$id."', 'chat', 'commit')");
 			}
 		}else{
-			mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$message."', '".$result['role']."', '".$result['data']."', '".$id."')");
+			mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$message."', '".$result['role']."', '".$result['data']."', '".$id."', 'chat', 'message')");
 		}
 
 		$query = mysqli_query($link, "SELECT * FROM `chat` WHERE id > ".$last_message." ORDER BY id DESC LIMIT 0,100");
