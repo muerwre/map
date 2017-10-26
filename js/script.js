@@ -682,7 +682,7 @@ function check_token(callback){
                     // Подгружаем выбранные пользователем типы мест для показа
 
                     // Пытаемся подгрузить из localStorage
-                    place_types_selected = typeof (localStorage) !== "undefined" ? (localStorage.getItem("place_types") ? localStorage.getItem("place_types").split(',') : ['favs']) : ['favs'];
+                    place_types_selected = typeof (localStorage) !== "undefined" ? (localStorage.getItem("place_types") ? localStorage.getItem("place_types").split(',') : ['favs','building','nature','cult']) : ['favs'];
 
                     // Чекаем необходимые чекбоксы
                     $.each(place_types_selected, function(index, value){
