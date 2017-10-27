@@ -2367,6 +2367,7 @@ a.chat_place_title {
   padding: 0px 4px;
   border-radius: 3px;
   text-shadow: rgba(0,0,0,0.3) 0 1px;
+  font-family: 'RalewaySemiBold';
 }
 
 div#place_history a.chat_place_title {
