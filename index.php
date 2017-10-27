@@ -425,7 +425,7 @@
       $('.btn-poly').on('click',function(){ toggle_route(); });
       $('.btn-point').on('click',function(){ toggle_point(); });
       $('.btn-sticker').on('click',function(){ toggle_stickers(); });
-      $('.btn-places').on('click',function(){ toggle_places(); });
+      $('.btn-places').on('click',function(){ toggle_places_add(); });
       $('.btn-publish').on('click',function(){ toggle_shot(); });
       $('.btn-map').on('click',function(){ toggle_map(); });
       $('.btn-places-view').on('click', function(){ toggle_places(); })

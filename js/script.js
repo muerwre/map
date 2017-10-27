@@ -950,7 +950,8 @@ function toggle_stickers(){
     }
 }
 
-function toggle_places(){
+function toggle_places_add(){
+    enable_places();
     if($('.btn-places').hasClass('enabled')){
         if(mode==='placing'){
             $('#sub_plank_places').removeClass('active');
