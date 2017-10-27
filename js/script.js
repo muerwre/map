@@ -515,18 +515,17 @@ function remote_store_data(force){
                 'force': force,
                 'map_style': current_map_style},
             function(data){
-                //console.log(data);
+                
                 if(data.success){
                     if(typeof(data.description) !== 'undefined' && data.description){
                         $('#store_status').text(data.description);
                     }
                     $('#sub_plank_remote_store').removeClass('error recheck storing renaming overwriting').addClass('success');
                     $('#store_name').val(data.name);
-                    update_store_url();
-                    //console.log(":from remote_store_data 1");
+                    update_store_url();                    
                     check_token();
                 }else{
-                    //console.log('panic!');
+                    
                     $('#sub_plank_remote_store').removeClass('error recheck success storing renaming overwriting');
                     if(typeof(data.description) !== 'undefined' && data.description){
                         $('#store_status').text(data.description);
@@ -609,6 +608,7 @@ function check_token(callback){
                         $('#user_login_logged').hide();
                         $('#user_login_unauthorized').show();
                         $('.btn-places').removeClass('enabled').addClass('inactive');
+                        $('#place_left_slide').removeClass('can_comment');
                     }else{
                         if(data.userdata.photo){
                             $('.field_user_avatar').css('background-image', 'url(\'' + data.userdata.photo + '\')');
@@ -618,7 +618,7 @@ function check_token(callback){
                         $('.field_user_name').text(data.userdata.name);
                         $('#user_login_unauthorized').hide();
                         $('#user_login_logged').show();
-
+                        $('#place_left_slide').addClass('can_comment');
                     }
 
 
@@ -1143,7 +1143,7 @@ function key_down(e) {
         //console.log(e.keyCode);
         }
     }else{
-        console.log(e.keyCode);
+        //console.log(e.keyCode);
         if (e.keyCode === 27) {
             $('#store_helper').hide();
             // esc или enter либо блюрят инпут, либо выходят из всех режимов
@@ -1798,7 +1798,7 @@ function show_places(){
 }
 
 function clear_all_places(){
-    console.log('engaged clear all places');
+    //console.log('engaged clear all places');
     places_layer.clearLayers();
     // Очищает весь список мест
     $.each(places, function(i, v){
@@ -1813,12 +1813,13 @@ function hide_places(){
 }
 
 function place(lat, lng, id, title, type, owned){
-  //console.log(lat, lng, id, title, type, owned);
+  //console.log('place',lat, lng, id, title, type, owned);
     // добавляет место на карту
   if( typeof(lat) !== 'undefined' && lat,
       typeof(lng) !== 'undefined' && lng,
       typeof(id)  !== 'undefined'  // Вот это потому, что при добавлении места мы делаем место с id = 0
     ){
+
     over = '<div id="place-'+id+'" data-id="'+id+'" class="type-'+type+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
     myIcon = L.divIcon({ html: over, className: 'place' }),
     m = L.marker(new L.latLng(lat, lng), {editable: true, icon: myIcon}); // L-объект с местом
@@ -1860,7 +1861,8 @@ function show_place(id, edit_mode){
   
   // при выборе места сфокусироваться на нём и показать инфу
   // id         - айди места
-  // edit_mode  - если true, показывать сразу редактор, используется при добавлении места
+  // edit_mode  - если true, показывать сразу редактор данных места,
+  //              используется при добавлении места
 
   edit_mode = typeof(edit_mode) !== 'undefined' && edit_mode ? edit_mode : false;
 
@@ -1871,9 +1873,17 @@ function show_place(id, edit_mode){
     $('#place-' + active_place).removeClass('active'); // убрать выделение
   }
 
+  // Если место не подгружено, грузим его, и только потом запускаем show_place
+
+  if( typeof(places[id]) === 'undefined' || !places[id] ){ 
+    load_single_place(id, function(){ show_place(id); });
+    return; 
+  }
+
   active_place = id; // теперь это место активное
 
-  $('#place-' + active_place).addClass('active'); // добавляем выделение
+  close_chat(); // прячем чат
+  $('#store_helper').hide(); // прячем панель со списком маршрутов
 
   if(places[active_place].owned === true){ // если можно редактировать, включаем перетаскивание
     $('#place_left_slide').addClass('can_edit');
@@ -1881,12 +1891,53 @@ function show_place(id, edit_mode){
     $('#place_left_slide').removeClass('can_edit');
   }
 
-  map.panTo(places_objects[active_place].getLatLng()); // центрируем карту на нём
+  // центрируем карту на нём
+  map.setView(places_objects[active_place].getLatLng(), 17, {animate: false});
+  $('#place-' + active_place).addClass('active'); // добавляем выделение
 
   $('#place_left_slide').addClass('active loading'); // показываем левую панель
 
   load_place_data(id, edit_mode); // подгружаем данные о месте
-  //place_start_editing();
+
+}
+
+function load_single_place(id, callback){
+    // Функция на случай, если место не показано / не подгружено, 
+    // а показать его надо.
+    // Используется в show_place на этот самый случай
+    // Берём данные пользователя
+    token = get_token();
+    //console.log('load single place');
+    // Если уже подгружено, то не надо
+    if( typeof(places[id]) !== 'undefined' || places[id] ){ return; }
+    //console.log('getting' + id);
+    // Подгружаем из базы место
+    $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
+    {   'action': 'load_single_place',
+        'id': token.id,
+        'token': token.token,
+        'filter': place_types_selected,
+        'place': id
+    },
+    function(data){
+        if(data.success){ // если подгрузили место
+            //console.log('data load success', data.places);
+            // Добавляем место
+                        
+            place(parseFloat(data.places.lat), parseFloat(data.places.lng), parseInt(data.places.id), data.places.title, data.places.type, data.places.owned) 
+
+            // Выполняем коллбэк
+            if( typeof(callback) === 'function' ){
+                callback();
+            }
+
+      }
+    }, 'json').fail(
+      function(a,b,c){
+          //report_xhr_error(a,'move_data'); // расскомментить в продакшне
+      }
+    );
+
 }
 
 function place_toggle_editing(){
@@ -2678,6 +2729,9 @@ function change_mode(hash){
         check_token();
         can_i_store = true;
         local_store_data();
+    }else if(hash[0]=='place'){
+        //console.log('changing'+hash[0]);
+        check_token( function(){ show_place(hash[1]); } );        
     }else{
         disable_editor();
         check_token();
@@ -2820,6 +2874,7 @@ function open_route_list(){
 }
 
 function open_chat(){
+    close_place();
     if($('#chat_left_slide').hasClass('active')){
         close_chat();
     }else{
@@ -2829,7 +2884,7 @@ function open_chat(){
         chat_get();
         $('#menu_user_chat_count').removeClass('active');
         $('#chat_left_slide').addClass('active');
-        chat_timer = setInterval(chat_get, 3000);
+        chat_timer = setInterval(chat_get, 30000);
     }
 }
 
@@ -2839,7 +2894,7 @@ function close_chat(){
 }
 
 function chat_get(){
-    console.log('chat');
+//    console.log('chat');
     token = get_token();
     if(!chat_hold){
         $.get('/engine/auth.php',
@@ -3080,6 +3135,8 @@ function place_comment_put(){
         $('#place_comment .button').addClass('active');
         setTimeout(function(){$('#place_comment .button').removeClass('active');}, 500)
         $('#place_history_buffer').append('<div class="chat_msg chat_own_msg"><i class="fa fa-circle-o-notch fa-spin fa-fw pull-right"></i>' + msg + '</div>');
+        $('#place_comment_input_box').val('');
+
         $.get('/engine/auth.php',
             {   'action': 'place_comment',
                 'id': token.id,
@@ -3101,6 +3158,14 @@ function place_comment_put(){
         );
     }
     $('#chat_input_box').val('').focus();
+}
+
+function place_comment_watch_enter(e){
+    // При нажатии enter в поле ввода чата отправляет сообщение
+    if( typeof(e) !== 'undefined' && e.type === 'keyup' && e.keyCode === 13 ){
+        // Блюрим по эскейпу
+        place_comment_put();
+    }
 }
 
 

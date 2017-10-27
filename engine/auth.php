@@ -30,7 +30,7 @@ function format_chat_msg($message, $highlight){
     	$query = mysqli_query($link, "SELECT * FROM `places` WHERE id='".$message['target']."';");
     	$target = mysqli_fetch_assoc($query);
     	if(!$target){ return; }
-        return '<div class="chat_msg chat-place-'.$target['type'].($message['token']==$highlight ? ' chat_own_msg' : '').'"><div class="chat_avatar" style="background-image: url(\''.$photo.'\');"></div><span class="gray">'.$name.'</span> <a class="chat_place_title" href="#place:'.$target['id'].'">'.$target['title'].'</a>:<br>'.$msg.'</div>';
+        return '<div class="chat_msg pointer chat-place-'.$target['type'].($message['token']==$highlight ? ' chat_own_msg' : '').'" onclick="show_place('.$target['id'].');"><div class="chat_avatar" style="background-image: url(\''.$photo.'\');"></div><span class="gray">'.$name.'</span> <a class="chat_place_title">'.$target['title'].'</a>:<br>'.$msg.'</div>';
     }else{
         return '<div class="chat_msg'.($message['token']==$highlight ? ' chat_own_msg' : '').'"><div class="chat_avatar" style="background-image: url(\''.$photo.'\');"></div><span class="gray">'.$name.'</span>: '.$msg.'</div>';
     }
@@ -349,6 +349,25 @@ if($action == 'gen_guest_token'){
 		$places[$result['id']] = $result;
 		$places[$result['id']]['owned'] = ($result['login'] == $id);
 	}
+	
+	echo json_encode(['success' => true, 'places' => $places]);
+
+}elseif($action=='load_single_place'){
+
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+	$place = isset($_REQUEST['place']) && is_numeric($_REQUEST['place']) ? mysqli_escape_string($link, $_REQUEST['place']) : null;
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$place) { oops("Токен не найден"); }
+
+	$query = mysqli_query($link, "SELECT places.*, tokens.login FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.status > 0 AND places.id = '".$place."';");
+	
+	$result = mysqli_fetch_assoc($query);
+	$places = $result;
+	$places['owned'] = ($result['login'] == $id);
 	
 	echo json_encode(['success' => true, 'places' => $places]);
 

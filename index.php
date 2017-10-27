@@ -86,7 +86,7 @@
         <div id="chat_history">
           <div id="chat_history_buffer"></div>
         </div>
-        <textarea id="chat_input_box" onkeyup="chat_watch_enter(event);" placeholder=""></textarea>
+        <textarea id="chat_input_box" onkeyup="chat_watch_enter(event);" placeholder="Что вы хотите сказать?"></textarea>
         <div class="button button-primary pull-right" onclick="chat_put();"><span class="fa fa-arrow-right"></span></div>
       </div>
     </div>
@@ -115,9 +115,8 @@
             <div id="place_description"></div>
 
             <div id="place_comment" class="comment-input-field">
-              <!--  onkeyup="place_comment_watch_enter(event);" -->
               
-              <textarea id="place_comment_input_box" placeholder=""></textarea>
+              <textarea id="place_comment_input_box" placeholder="Вы можете оставить комментарий" onkeyup="place_comment_watch_enter(event);"></textarea>
               <div class="button button-primary pull-right" onclick="place_comment_put();"><span class="fa fa-arrow-right"></span></div>
               <div class="clr"></div>
             </div>
