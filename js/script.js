@@ -1892,8 +1892,17 @@ function show_place(id, edit_mode){
   }
 
   // центрируем карту на нём
-  map.setView(places_objects[active_place].getLatLng(), 17, {animate: false});
-  $('#place-' + active_place).addClass('active'); // добавляем выделение
+  // Если место в кластере, приблизим к нему
+  if($('div#place-'+id).length<=0){
+    map.once("moveend zoomend", function(){
+        $('#place-' + active_place).addClass('active');
+    })
+    map.setView(places_objects[active_place].getLatLng(), 17);
+  }else{
+    // Если место итак видно, то просто двигаем, без зума
+    map.setView(places_objects[active_place].getLatLng());
+    $('#place-' + active_place).addClass('active'); // добавляем выделение
+  }  
 
   $('#place_left_slide').addClass('active loading'); // показываем левую панель
 
