@@ -15,6 +15,7 @@ $place_types = [
 	'shops'		=> 'Магазины', 
 	'amuse'		=> 'Развлечения', 
 	'food'		=> 'Еда',
+	'chicken'	=> 'Курочка',
 	'none'		=> 'Не указано'
 ];
 
@@ -390,6 +391,7 @@ if($action == 'gen_guest_token'){
 
 	$result = mysqli_fetch_assoc($query);
 
+	$result['desc'] = htmlspecialchars_decode($result['desc']);
 	$result['owned'] = ($result['login'] == $id);
 
 	$login_data = json_decode($result['login_data']);
@@ -426,8 +428,12 @@ if($action == 'gen_guest_token'){
 	// Проверка введёных данных
 	// Должно быть название > 2, обрезаем до 32 символов
 	$title 	= isset($_REQUEST['title']) && mb_strlen(preg_replace('/[\s\n\r]/','',$_REQUEST['title'])) > 2 ? htmlspecialchars(mb_substr(trim(preg_replace('/[\n\r]/','',$_REQUEST['title'])), 0, 32)) : null;
+
 	// Описание просто обрезаем до 256
-	$desc 	= isset($_REQUEST['desc']) ? htmlspecialchars(mb_substr(trim(preg_replace('/[\n\r]/','<br />', $_REQUEST['desc'])), 0, 256)) : null;
+	$desc 	= isset($_REQUEST['desc']) ? htmlspecialchars(trim(mb_substr($_REQUEST['desc'],0,400))) : null;
+
+	//echo 'passed: '.$desc;
+	//exit;
 	// Если тип не содержится в списке типов, делаем его none
 	// Тут, возможно, будет проверка прав на эксклюзивные типы, вроде избранного
 	$type 	= isset($_REQUEST['type']) && $place_types[$_REQUEST['type']] ? $_REQUEST['type'] : 'none';
@@ -478,7 +484,7 @@ if($action == 'gen_guest_token'){
 	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
 	$result = mysqli_fetch_assoc($query);
 
-	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
+	if (!$id || !$token || !$query->num_rows || !$result['id'] || $result['role'] == 'guest') { oops("Токен не найден"); }
 
 	$query = mysqli_query($link, "SELECT * FROM `places` WHERE id = '".$place."'");
 

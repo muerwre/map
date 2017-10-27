@@ -2018,7 +2018,7 @@ function load_place_data(id, edit_mode){
 
             $('#place_title').html(data.place.title);
             $('#place_owner').html(data.place.owner_name);
-            $('#place_description').html(data.place.desc);
+            $('#place_description').html(data.place.desc.replace(/\n/ig, "<br />"));
             $('#place_left_slide').removeClass('loading');
 
             // Поля в редакторе
@@ -2082,14 +2082,14 @@ function save_place_data(){
 
   // Обновляем данные о месте
   places[active_place]['title'] = $('#place-input-title').val().substr(0,64);
-  places[active_place]['desc'] = $('#place-input-desc').val().substr(0,256).replace(/\n/ig,"<br />");
+  places[active_place]['desc'] = $('#place-input-desc').val().substr(0,400).replace('<','&lt;').replace('<','&gt;').replace(/\n/ig,"<br />");
   places[active_place]['type'] = $('#place-input-type').val();
   places[active_place]['lat'] = $('#place-input-lat').val();
   places[active_place]['lng'] = $('#place-input-lng').val();
 
   // Обновляем карточку места
   $('#place_title').html($('#place-input-title').val().substr(0,64));
-  $('#place_description').html($('#place-input-desc').val().substr(0,256).replace(/\n/ig,"<br />"));
+  $('#place_description').html($('#place-input-desc').val().substr(0,400).replace('<','&lt;').replace('<','&gt;').replace(/\n/ig,"<br />"));
 
   // Помещаем данные места во временный массив, удаляем его и заменяем новым
   var place_temp = places[active_place];
@@ -2106,7 +2106,7 @@ function save_place_data(){
         'id': token.id,
         'token': token.token,
         'title': $('#place-input-title').val().substr(0,64),
-        'desc': $('#place-input-desc').val().substr(0,256),
+        'desc': $('#place-input-desc').val().substr(0,400),
         'type': $('#place-input-type').val(),
         'lat': $('#place-input-lat').val(),
         'lng': $('#place-input-lng').val(),
@@ -2989,11 +2989,11 @@ function check_input_desc (e) {
     // Обрезает текст в textarea редактора мест и двигает прогрессбар
     e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
     obj = $('#place-input-desc');
-    if(obj.val().length > 256){
-        obj.val(obj.val().substr(0,256))
+    if(obj.val().length > 400){
+        obj.val(obj.val().substr(0,400))
     }
 
-    $('#place_desc_progress .bar').css('width', parseInt(obj.val().length/256*100) + '%');
+    $('#place_desc_progress .bar').css('width', parseInt(obj.val().length/420*100) + '%');
 }
 
 function input_desc_ctrlenter(e){
@@ -3004,7 +3004,7 @@ function input_desc_ctrlenter(e){
         e.preventDefault();
         save_place_data();
     }
-    console.log(e);
+    //console.log(e);
 }
 
 function place_check_input(){
