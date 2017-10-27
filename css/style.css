@@ -2022,8 +2022,8 @@ div#sub_plank_select_logo {
 }
 
 #chat_left_slide {
-  transform: translateX(-348px);
-  width: 300px;
+  transform: translateX(-448px);
+  width: 400px;
   height: 100%;
   background: #333;
   position: absolute;left:0px;bottom:0px;
@@ -2049,7 +2049,7 @@ div#sub_plank_select_logo {
 }
 
 #chat_input {
-  position: absolute;left:10px;width:280px;height: 90px;bottom: 70px;
+  position: absolute;left:10px;width:380px;height: 90px;bottom: 70px;
 }
 
 .comment-input-field textarea {
