@@ -1971,6 +1971,15 @@ function load_place_data(id, edit_mode){
             $('div.place-type-'+data.place.type).addClass('active');
             $('#place-input-type').val(data.place.type);
 
+            // Комментарии
+            $('#place_history').find('.chat_msg').remove();
+            if(data.comments && data.comments.length>0){
+                for( i=0; i<data.comments.length; i++){
+                    $('#place_history_buffer').after(data.comments[i]);
+                }
+                
+            }
+
             if(edit_mode){
                 // Включает режим редактирования вместо просто показа места
                 place_start_editing();
@@ -3061,7 +3070,38 @@ function select_place_view(e){
     decide_toggle_places();
 }
 
+function place_comment_put(){
+    token = get_token();
 
+    msg = $('#place_comment_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
+    chat_hold = true; // она для чата, но пофиг
+
+    if(msg.length>0){
+        $('#place_comment .button').addClass('active');
+        setTimeout(function(){$('#place_comment .button').removeClass('active');}, 500)
+        $('#place_history_buffer').append('<div class="chat_msg chat_own_msg"><i class="fa fa-circle-o-notch fa-spin fa-fw pull-right"></i>' + msg + '</div>');
+        $.get('/engine/auth.php',
+            {   'action': 'place_comment',
+                'id': token.id,
+                'token': token.token,
+                'message': msg,
+                'place': active_place
+            },
+            function(data){
+                if(data.success){
+                    $('#place_history_buffer').html('');
+                    $('#place_history_buffer').before(data.message);
+                }
+                chat_hold = false;
+            }, 'json').fail(
+            function(a,b,c){
+                chat_hold = false;
+                report_xhr_error(a,'place_comment');
+            }
+        );
+    }
+    $('#chat_input_box').val('').focus();
+}
 
 
 

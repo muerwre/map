@@ -1,6 +1,8 @@
 <?
 require 'settings.inc.php';
+
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
+
 // Соединяемся, выбираем базу данных
 $link = mysqli_connect($mysql['host'], $mysql['user'], $mysql['pass'], $mysql['db']);
 mysqli_set_charset($link,'utf8');
@@ -15,6 +17,24 @@ $place_types = [
 	'food'		=> 'Еда',
 	'none'		=> 'Не указано'
 ];
+
+function format_chat_msg($message, $highlight){
+	global $link;
+    $data = json_decode($message['data']);
+    $name = $data->name ? strstr($data->name, ' ', true) : '#'.mb_substr(str_replace('guest:id','',$message['token']), 0,7);
+    $photo = $data->photo ? $data->photo : '';
+    $msg = str_replace('<','&lt;', str_replace('>','&gt;',$message['msg']));
+    if($message['role'] == 'system' || $message['type'] == 'commit'){
+        return '<div class="chat_msg chat_commit">+ '.$msg.'</div>'; 
+    }elseif($message['type'] == 'place'){
+    	$query = mysqli_query($link, "SELECT * FROM `places` WHERE id='".$message['target']."';");
+    	$target = mysqli_fetch_assoc($query);
+    	if(!$target){ return; }
+        return '<div class="chat_msg chat-place-'.$target['type'].($message['token']==$highlight ? ' chat_own_msg' : '').'"><div class="chat_avatar" style="background-image: url(\''.$photo.'\');"></div><span class="gray">'.$name.'</span> <a class="chat_place_title" href="#place:'.$target['id'].'">'.$target['title'].'</a>:<br>'.$msg.'</div>';
+    }else{
+        return '<div class="chat_msg'.($message['token']==$highlight ? ' chat_own_msg' : '').'"><div class="chat_avatar" style="background-image: url(\''.$photo.'\');"></div><span class="gray">'.$name.'</span>: '.$msg.'</div>';
+    }
+}
 
 if($action == 'gen_guest_token'){
 	$c=0;
@@ -357,7 +377,13 @@ if($action == 'gen_guest_token'){
 
 	$result['owner_name'] = ($login_data && $login_data->name) ? $login_data->name : $result['owner'];
 
-	echo json_encode(['success' => true, 'place' => $result]);
+	// Комментарии
+	$query = mysqli_query($link, "SELECT * FROM chat WHERE type='place' AND target='".$place."'");
+	$comments = [];
+	while($com_result=mysqli_fetch_assoc($query)){
+		$comments[] = format_chat_msg($com_result);
+	}
+	echo json_encode(['success' => true, 'place' => $result, 'comments' => $comments]);
 
 }elseif($action=='place_set_info'){
 
@@ -422,6 +448,35 @@ if($action == 'gen_guest_token'){
 	}else{
 		oops("db_error");
 	}
+}elseif($action=='place_comment'){
+	$id = isset($_REQUEST['id']) ? mysqli_escape_string($link, $_REQUEST['id']) : null;
+	$token = isset($_REQUEST['token']) ? mysqli_escape_string($link, $_REQUEST['token']) : null;
+
+	$message = isset($_REQUEST['message']) ? mysqli_escape_string($link, $_REQUEST['message']) : null;
+
+	$place = isset($_REQUEST['place']) && is_numeric($_REQUEST['place']) ? mysqli_escape_string($link, $_REQUEST['place']) : null;
+
+	$query = mysqli_query($link,"SELECT * FROM `tokens` WHERE login='{$id}' AND token='{$token}'");
+	$result = mysqli_fetch_assoc($query);
+
+	if (!$id || !$token || !$query->num_rows || !$result['id']) { oops("Токен не найден"); }
+
+	$query = mysqli_query($link, "SELECT * FROM `places` WHERE id = '".$place."'");
+
+	if(!$result['id'] || mb_strlen($message) <= 0 || !mysqli_fetch_assoc($query)){ oops("auth error"); }
+
+	mysqli_query($link, "INSERT INTO `chat` VALUES (null, '".$result['id']."', ".time().", '".$message."', '".$result['role']."', '".$result['data']."', '".$id."', 'place', '".$place."')");
+	
+	$msg_id = mysqli_insert_id($link);
+	
+	if( !$msg_id ){ oops("possibly db error at pos. 132"); }
+
+	$query = mysqli_query( $link, "SELECT * FROM `chat` WHERE id = ".$msg_id );
+	
+	$result = mysqli_fetch_assoc($query);
+
+	echo json_encode(['success' => true, 'message' => format_chat_msg($result, $id)]);
+
 }
 
 mysqli_close($link);

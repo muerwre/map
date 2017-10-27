@@ -82,7 +82,7 @@
 
      <div id="chat_left_slide"> <!-- Слайд с сохранёнными картами -->
       <div class="editor_left_slide_close" onclick="close_chat();">✕</div>
-      <div id="chat_input">
+      <div id="chat_input" class="comment-input-field">
         <div id="chat_history">
           <div id="chat_history_buffer"></div>
         </div>
@@ -109,9 +109,23 @@
           <div id="place_thumb"> <span class="fa fa-camera"></span> </div>
 
           <div id="place_text">
+
             <div id="place_title"></div>
             <div id="place_owner"></div>
-            <div id="place_description"></div>            
+            <div id="place_description"></div>
+
+            <div id="place_comment" class="comment-input-field">
+              <!--  onkeyup="place_comment_watch_enter(event);" -->
+              
+              <textarea id="place_comment_input_box" placeholder=""></textarea>
+              <div class="button button-primary pull-right" onclick="place_comment_put();"><span class="fa fa-arrow-right"></span></div>
+              <div class="clr"></div>
+            </div>
+
+            <div id="place_history">
+                <div id="place_history_buffer"></div>
+            </div>
+
           </div>
 
           <div id="place_editor">
