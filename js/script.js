@@ -21,6 +21,7 @@
 var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     dgis, current_logo, current_zoom, can_i_store = false,
     can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false,
+    token, 
 
     // В этой штуке мы храним точки и выноски, их связки и всё такое
     point_array = {
@@ -216,18 +217,6 @@ function prepare_stickers() {
     };
     $('.sticker_thumb').on('click', function () { set_sticker($(this)) })
 }
-
-$(document).on('ready', function () {
-    //bridge_layer();
-    /*
-    'use strict';
-    map.on('click', function (e) {
-        e.cancel();
-        console.log(e.latlng);
-    });
-    */
-    //test_sticker();
-});
 
 function sticker_label_update(id){
     // Иногда мы вызываем функцию по event, а иногда -- по ид стикера.
@@ -1887,9 +1876,9 @@ function show_place(id, edit_mode){
   $('#store_helper').hide(); // прячем панель со списком маршрутов
 
   if(places[active_place].owned === true){ // если можно редактировать, включаем перетаскивание
-    $('#place_left_slide').addClass('can_edit');
+    $('#place_left_slide').addClass('can_edit').removeClass('cannot_edit');
   }else{
-    $('#place_left_slide').removeClass('can_edit');
+    $('#place_left_slide').removeClass('can_edit').addClass('cannot_edit');
   }
 
   // центрируем карту на нём
@@ -2016,10 +2005,17 @@ function load_place_data(id, edit_mode){
       function(data){
           if(data.success && data.place.id == place_loading){ // если получилось, записываем данные в табличку
 
+            // Поля в инфо
             $('#place_title').html(data.place.title);
             $('#place_owner').html(data.place.owner_name);
             $('#place_description').html(data.place.desc.replace(/\n/ig, "<br />"));
             $('#place_left_slide').removeClass('loading');
+            if(data.place.uuid && data.place.filename){
+                $("#place_thumb").removeClass('no_thumb').css('background-image', 'url(/misc/thumbs/' + data.place.uuid + '/' + data.place.filename);
+            }else{
+                $("#place_thumb").addClass('no_thumb').css('background-image', 'none');
+            }
+            $('#place_thumb').removeClass('upload_started upload_success upload_error');
 
             // Поля в редакторе
             $('#place-input-title').val(data.place.title);
@@ -2040,6 +2036,8 @@ function load_place_data(id, edit_mode){
                 }
                 
             }
+            // Обновим аплоадер, если он есть                        
+            update_uploader();            
 
             if(edit_mode){
                 // Включает режим редактирования вместо просто показа места
@@ -2047,7 +2045,7 @@ function load_place_data(id, edit_mode){
             }
 
           }else{
-            console.log('place_loading: '+place_loading+' / '+data.place.id)
+            //console.log('place_loading: '+place_loading+' / '+data.place.id)
             $('#place_left_slide').removeClass('active loading');
           }
       },'json').fail(
@@ -2744,9 +2742,10 @@ function change_mode(hash){
         check_token( function(){ show_place(hash[1]); } );        
     }else{
         disable_editor();
-        check_token();
+        check_token(show_place(46));
         can_i_store = false;
     }
+    init_uploader();
 }
 
 $(document).ready(function () {
@@ -3178,8 +3177,54 @@ function place_comment_watch_enter(e){
     }
 }
 
+function init_uploader(){
 
+    $('#place_thumb_uploader').fineUploader({
+        debug: false,
+        request: {
+            endpoint: '/put/endpoint.php',
+        },
+        retry: {
+           
+        }
+    })
+    .on('complete', function (event, id, name, data) {
+        if(data && !data.error){            
+            if(data.uuid && data.uploadName){
+                $('#place_thumb').removeClass('upload_started upload_error').addClass('upload_success');
+                setTimeout(function(){ $('#place_thumb').removeClass('upload_success'); }, 2000)
+                $("#place_thumb").css('background-image', 'url(\'/misc/thumbs/' + data.uuid + '/' + data.uploadName + '\')');
+                $("#place_thumb").removeClass('no_thumb')
+            }else{
+                $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');                    
+                setTimeout(function(){ $('#place_thumb').removeClass('upload_error'); }, 2000)
+            }
+        }else{
+            $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');    
+            setTimeout(function(){ $('#place_thumb').removeClass('upload_error'); }, 2000)
+        }
+    })
+    .on('submitted', function(a,b,c){
+        $('#place_thumb').removeClass('upload_success upload_error').addClass('upload_started');
+    })
+    .on('error', function (a,b,c) {
+        $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');
+        setTimeout(function(){ $('#place_thumb').removeClass('upload_error'); }, 2000)
+        //console.log('error');
+        //console.log(a,b,c);
+    });
 
+}
+
+function update_uploader(){
+    console.log('fire!');
+    token = get_token();
+    $('#place_thumb_uploader').fineUploader('setParams',{
+        'id':       token.id,
+        'token':    token.token,
+        'place':    active_place
+    });
+}
 
 /*
 

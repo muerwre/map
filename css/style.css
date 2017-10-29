@@ -796,11 +796,11 @@ a.button {color: white;text-decoration: none;}
   position:absolute;
   top:0px;left:0px;
   width: 48px;height:48px;
-  background: url(pixmaps.png?w) -480px 0px no-repeat;
+  background: url(pixmaps.png?we) -480px 0px no-repeat;
 }
 .btn {
   width:48px;height:48px;float:left;
-  background: url(pixmaps.png?w) no-repeat;
+  background: url(pixmaps.png?we) no-repeat;
   cursor: pointer;
   transform: scale(1);
   transition: transform 100ms;
@@ -909,8 +909,7 @@ b.key {
 }
 .btn-sticker.active,.btn-sticker.active:hover {
   background-position: -96px -96px;
-}
-.btn-places {
+}.btn-places {
   background-position: -432px 0px;
 }
 .btn-places:hover {
@@ -922,11 +921,11 @@ b.key {
 }
 
 .btn-places.inactive, .btn-places.inactive:hover {
- background-position: -624px 0px;
+ background-position: -576px -96px;
 }
 
 .btn-places-view {
-  background-position: -624px -48px;
+  background-position: -576px -48px;
 }
 .btn-places-view.inactive {
   opacity: .3;
@@ -2314,9 +2313,11 @@ div#place_thumb {
   margin: -10px -10px 10px -10px;
   border-radius: 4px 4px 0 0;
   position: relative;
+  background-size: cover;
+  background-position: 50% 50%;
 }
 
-div#place_thumb .fa {
+div#place_thumb .fa-camera {
   position: absolute;
   left: 0%;
   top: 50%;
@@ -2324,8 +2325,13 @@ div#place_thumb .fa {
   text-align: center;
   font-size: 40px;
   margin-top: -10px;
+  opacity: 0;
+  display: none;
 }
 
+div#place_thumb.no_thumb .fa-camera {
+  display: block;
+}
 div#place_mark {
     float: left;
     font-size: 30px;
@@ -2557,6 +2563,15 @@ span.places-view-tooltip input[type="checkbox"].checkbox-type-food:checked,
   background: #58940a;
 }
 
+.place div.active.type-chicken:before,
+.place div.active.type-chicken:after,
+div.place-type-chicken:before,
+.type-chicken span, .type-chicken b,
+span.places-view-tooltip input[type="checkbox"].checkbox-type-chicken:checked,
+.chat-place-chicken a.chat_place_title  {
+  background: #000000;
+}
+
 .place_input_container {
   position: relative;
 }
@@ -2685,4 +2700,81 @@ span.places-view-tooltip .places-view-header {
   padding: 10px 10px 10px 42px;
   margin: 0 -10px;
   border-radius: 3px 3px 0 0;
+}
+
+/* FINE UPLOADER */
+.qq-upload-button-selector.qq-upload-button {
+    width: 48px;
+    height: 48px;
+    background: #17bf6d;
+    border-radius: 24px;
+    position: absolute !important;
+    right: 10px;
+    bottom: 10px;
+    font-size: 32px;
+    font-weight: normal;
+    box-sizing: border-box;
+    padding: 10px 0 0 0px;
+    text-align: center;
+    display: none;
+    background: url(pixmaps.png?we) #17bf6d -480px -48px;
+    transition: background-color 500ms, background-position 500ms;
+}
+.upload_success .qq-upload-button-selector.qq-upload-button {
+    background-position: -528px -96px;
+    background-color: #74de48;
+}
+.upload_error .qq-upload-button-selector.qq-upload-button {
+    background-color: #ff3344;
+    background-position: -528px -48px;
+}
+.upload_started .qq-upload-button-selector.qq-upload-button {
+  background-position: -480px -96px;
+  animation: rotapulse infinite 1s linear;
+}
+.can_edit .qq-upload-button-selector.qq-upload-button {
+  display: block;
+}
+.qq-upload-button-selector.qq-upload-button:hover {
+  animation: bounce 0.5s alternate infinite;
+}
+@keyframes rotapulse {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes bounce {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.qq-upload-list-selector {
+  display:none;
+}
+
+.qq-upload-drop-area {
+  position:absolute;left:0px;top:0px;width:100%;height:100%;
+  opacity: .5;
+  background: #ff3344;
+}
+
+.cannot_edit .qq-upload-drop-area {
+  display: none !important;
+}
+
+.qq-total-progress-bar-container-selector.qq-total-progress-bar-container {
+    position: absolute;
+    bottom: -2px;
+    left: 2px;
+    width: 100%;
+    height: 4px;
+}
+
+.qq-progress-bar {
+    width: 20%;
+    height: 4px;
+    background: #ff3344;
+}
+
+.qq-hide {
+  display:none;
 }

@@ -182,8 +182,6 @@ if($action == 'gen_guest_token'){
 	mysqli_query($link,"DELETE FROM `routes` WHERE name = '$name';");
 	mysqli_query($link,"INSERT INTO `routes` values (null,'$name','".mysqli_escape_string($link,$store_string)."',".time().",".$user['id'].");");
 	echo json_encode(['success' => true, 'name' => $name, 'force'=>$force, 'data' => $_REQUEST, 'description' => 'Отлично! Ваш маршрут сохранён. Поделитесь ссылкой с друзьями, приятной покатушки!']);
-}elseif($action=='fetch_msgs'){
-
 }elseif($action=='put_gpx'){
 	$route = $_REQUEST['route'];
 	//print_r($route);
@@ -387,7 +385,7 @@ if($action == 'gen_guest_token'){
 
 	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$place) { oops("Токен не найден"); }
 
-	$query = mysqli_query($link, "SELECT places.*, tokens.login, tokens.data as login_data FROM `places` LEFT JOIN tokens ON places.owner = tokens.id WHERE places.id = ".$place.";");
+	$query = mysqli_query($link, "SELECT places.*, tokens.login, tokens.data as login_data, files.uuid as uuid, files.name as filename FROM `places` LEFT JOIN tokens ON places.owner = tokens.id LEFT JOIN `files` ON places.thumb = files.id WHERE places.id = " . $place);
 
 	$result = mysqli_fetch_assoc($query);
 
@@ -464,7 +462,7 @@ if($action == 'gen_guest_token'){
 
 	if (!$id || !$token || !$query->num_rows || !$result['id'] || !$lat || !$lng) { oops("Токен не найден / Недостаточно прав"); }
 
-	$query = mysqli_query($link, "INSERT INTO `places` (`owner`, `lat`, `lng`, `status`, `created`, `type`, `title`, `desc`) VALUES (".$owner.", '".$lat."', '".$lng."', 0, UNIX_TIMESTAMP(), 'none', '', '');");
+	$query = mysqli_query($link, "INSERT INTO `places` (`owner`, `lat`, `lng`, `status`, `created`, `type`, `title`, `desc`, `thumb`) VALUES (".$owner.", '".$lat."', '".$lng."', 0, UNIX_TIMESTAMP(), 'none', '', '', 0);");
 
 	$place_id = mysqli_insert_id($link);
 

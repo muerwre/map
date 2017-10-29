@@ -21,6 +21,7 @@
     <!--script src="https://rawgithub.com/emikhalev/leaflet-2gis/master/dgis.js"></script-->
     <!--script src="http://maps.api.2gis.ru/1.0" type="text/javascript"></script-->
     <script src="/js/cropper.min.js"></script>
+    <script src="/js/uploader/jquery.fine-uploader.min.js"></script>
     <script src="/js/common.js"></script>
     <script src="/js/leaflet.markercluster.js"></script>
     <script src="/js/script.js?v=4.0.<?=rand(0,65535);?>"></script>
@@ -105,9 +106,11 @@
         <div class="loader"><div class="sk-folding-cube"><div class="sk-cube1 sk-cube"></div><div class="sk-cube2 sk-cube"></div><div class="sk-cube4 sk-cube"></div><div class="sk-cube3 sk-cube"></div></div></div>
         <!-- Общая информация -->
         <div id="place_info">
-
-          <div id="place_thumb"> <span class="fa fa-camera"></span> </div>
-
+          <div id="place_thumb">
+            <span class="fa fa-camera"></span>
+            <div id="place_thumb_uploader"></div>
+          </div>
+          
           <div id="place_text">
 
             <div id="place_title"></div>
@@ -440,5 +443,19 @@
       if(parseInt($(window).width()) < 600){
         $('#logo_composer').hide();
       }
+    </script>
+    <script type="text/template" id="qq-template">
+        <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="">
+            <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
+                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
+            </div>
+            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone></div>
+            <div class="qq-upload-button-selector qq-upload-button"></div>
+            
+            <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
+                <li></li>
+            </ul>
+
+        </div>
     </script>
 </body>
