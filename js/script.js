@@ -2742,7 +2742,6 @@ function change_mode(hash){
         check_token( function(){ show_place(hash[1]); } );        
     }else{
         disable_editor();
-        check_token(show_place(46));
         can_i_store = false;
     }
     init_uploader();
