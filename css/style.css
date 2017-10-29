@@ -57,7 +57,7 @@ body {
   cursor: pointer;
 }
 .hidden {
-  clear: both;
+  display: none;
 }
 .clr {
     clear:both;
