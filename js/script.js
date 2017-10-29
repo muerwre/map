@@ -2722,7 +2722,6 @@ function remote_load_data(name){
 
 function change_mode(hash){
     hash=hash.substr(1).split(/[:\/\?]+/);
-    //console.log('hash burst: '+hash)
     if(hash[0]=='map' && hash[1]){
         can_i_load = false;
         if(can_i_edit){
@@ -2741,6 +2740,7 @@ function change_mode(hash){
         //console.log('changing'+hash[0]);
         check_token( function(){ show_place(hash[1]); } );        
     }else{
+        check_token();
         disable_editor();
         can_i_store = false;
     }
