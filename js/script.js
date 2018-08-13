@@ -21,7 +21,7 @@
 var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     dgis, current_logo, current_zoom, can_i_store = false,
     can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false,
-    token, 
+    token,
 
     // В этой штуке мы храним точки и выноски, их связки и всё такое
     point_array = {
@@ -140,29 +140,29 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     places_layer, places = {}, places_objects = {}, active_place = 0, place_loading = 0,
     places_lids = {}, // здесь хранятся layer_id мест в формате places_lids[lid] = id
     place_types, place_types_selected,
-    places_show
-
-function test_get_tiles(){
-    var w  = $('#map').width(),h = $('#map').height(),
-        sw = latlng_to_tile(map.getBounds()._southWest),
-        ne = latlng_to_tile(map.getBounds()._northEast)
-        zsw= tile_to_latlng(sw),
-        zne= tile_to_latlng(ne),
-        rsw=map.latLngToContainerPoint(zsw);
-        msw=map.latLngToContainerPoint(map.getBounds()._southWest);
-        test_fetch_tiles({
-            min_x:  sw.x,
-            min_y:  ne.y,
-            max_x:  ne.x,
-            max_y:  sw.y,
-            sh_x: (rsw.x-msw.x),
-            sh_y: (h+rsw.y-msw.y),
-            size:   256,
-            width:  w,
-            height: h,
-            zoom: map.getZoom()
-        });
-}
+    places_show;
+//
+// function test_get_tiles(){
+//     var w  = $('#map').width(),h = $('#map').height(),
+//         sw = latlng_to_tile(map.getBounds()._southWest),
+//         ne = latlng_to_tile(map.getBounds()._northEast),
+//         zsw= tile_to_latlng(sw),
+//         zne= tile_to_latlng(ne),
+//         rsw=map.latLngToContainerPoint(zsw);
+//         msw=map.latLngToContainerPoint(map.getBounds()._southWest);
+//         test_fetch_tiles({
+//             min_x:  sw.x,
+//             min_y:  ne.y,
+//             max_x:  ne.x,
+//             max_y:  sw.y,
+//             sh_x: (rsw.x-msw.x),
+//             sh_y: (h+rsw.y-msw.y),
+//             size:   256,
+//             width:  w,
+//             height: h,
+//             zoom: map.getZoom()
+//         });
+// }
 
 function test_fetch_tiles(inp){
     $.get("fetcher.php",
@@ -391,10 +391,10 @@ $(document).on('mouseup', function (e) {
     }
 });
 
-function bridge_layer(){
-    // OBSOLETE
-    zzz=L.imageOverlay('/misc/stickers/bridge_layer.svg', [{lat: 54.97308784358926, lng: 82.95710921287538},{lat: 54.976259054848086, lng: 82.96591758728029}]).addTo(map);
-}
+// function bridge_layer(){
+//     // OBSOLETE
+//     zzz=L.imageOverlay('/misc/stickers/bridge_layer.svg', [{lat: 54.97308784358926, lng: 82.95710921287538},{lat: 54.976259054848086, lng: 82.96591758728029}]).addTo(map);
+// }
 
 if (typeof (localStorage) !== "undefined") { store = true; } // проверим, есть ли локальное хранилище
 
@@ -504,17 +504,17 @@ function remote_store_data(force){
                 'force': force,
                 'map_style': current_map_style},
             function(data){
-                
+
                 if(data.success){
                     if(typeof(data.description) !== 'undefined' && data.description){
                         $('#store_status').text(data.description);
                     }
                     $('#sub_plank_remote_store').removeClass('error recheck storing renaming overwriting').addClass('success');
                     $('#store_name').val(data.name);
-                    update_store_url();                    
+                    update_store_url();
                     check_token();
                 }else{
-                    
+
                     $('#sub_plank_remote_store').removeClass('error recheck success storing renaming overwriting');
                     if(typeof(data.description) !== 'undefined' && data.description){
                         $('#store_status').text(data.description);
@@ -552,7 +552,7 @@ function report_xhr_error(a,b){
 function gen_guest_token(callback){
 
     callback = typeof(callback) === 'function' && callback ? callback : null;
-    
+
     $.get('/engine/auth.php',{action:'gen_guest_token'},
         function(data){
             set_token(data.id,data.token,data.role);
@@ -572,7 +572,7 @@ function gen_guest_token(callback){
 }
 
 function check_token(callback){
-    
+
     callback = typeof(callback) === 'function' && callback ? callback : null;
 
     //console.log('checking token');
@@ -614,7 +614,7 @@ function check_token(callback){
                     // Заполняем менюшку со списком роутов
                     $('#user_route_list').html('');
                     $('#menu_user_route_count').hide();
-                    
+
                     if(data.routes_count > 0){
 
                         $('#menu_user_routes_item').addClass('not_empty');
@@ -663,7 +663,7 @@ function check_token(callback){
                         place_types = data.place_types;
 
                         $('#place_type_options').html('');
-                        $('#places-view-checkboxes').html('');                        
+                        $('#places-view-checkboxes').html('');
 
                         $.each(data.place_types, function(index, value){
                             // Заполняем select в редакторе места
@@ -683,7 +683,7 @@ function check_token(callback){
 
                     // Чекаем необходимые чекбоксы
                     $.each(place_types_selected, function(index, value){
-                        $('.checkbox-type-' + value).attr('checked', true);                                                       
+                        $('.checkbox-type-' + value).attr('checked', true);
                     });
 
                     // Подгружаем из localStorage опции отображения мест
@@ -699,7 +699,7 @@ function check_token(callback){
                     if(callback){
                         callback();
                     }
-                    
+
                 }
             }, 'json').fail(
                 function(a,b,c){
@@ -1146,7 +1146,7 @@ function key_down(e) {
                 $('#editor_left_slide').removeClass('active');
                 close_chat();
                 close_place();
-                toggle_none();   // esc            
+                toggle_none();   // esc
             }
 
         }
@@ -1754,16 +1754,16 @@ function prepare_map() {
     //enable_editor();
     //console.log('original shift: ',{lat: shift_value.lat, lng: shift_value.lng})
     //$('#place_left_slide').addClass('active');
-    
+
 }
 
 function show_places(){
   // Функция подгружает все достопримечательности (на самом деле - последние 200)
   token = get_token(); // получаем данные о пользователе
 
-  
+
   clear_all_places();
-  places_layer.addTo(map);  
+  places_layer.addTo(map);
 
   $.get('/engine/auth.php', // обращаемся к скрипту за списком мест
   {   'action': 'places_get',
@@ -1795,7 +1795,7 @@ function clear_all_places(){
         drop_place(i);
     });
     // На всякий случай чистим вообще все слои
-    
+
 }
 
 function hide_places(){
@@ -1848,7 +1848,7 @@ function click_place(event){
 }
 
 function show_place(id, edit_mode){
-  
+
   // при выборе места сфокусироваться на нём и показать инфу
   // id         - айди места
   // edit_mode  - если true, показывать сразу редактор данных места,
@@ -1857,7 +1857,7 @@ function show_place(id, edit_mode){
   edit_mode = typeof(edit_mode) !== 'undefined' && edit_mode ? edit_mode : false;
 
   place_stop_editing();
-    
+
   if(active_place > 0){ // если до этого было выбрано другое место
     places_objects[active_place].disableEdit(); // отключить перетаскивание
     $('#place-' + active_place).removeClass('active'); // убрать выделение
@@ -1865,9 +1865,9 @@ function show_place(id, edit_mode){
 
   // Если место не подгружено, грузим его, и только потом запускаем show_place
 
-  if( typeof(places[id]) === 'undefined' || !places[id] ){ 
+  if( typeof(places[id]) === 'undefined' || !places[id] ){
     load_single_place(id, function(){ show_place(id); });
-    return; 
+    return;
   }
 
   active_place = id; // теперь это место активное
@@ -1892,7 +1892,7 @@ function show_place(id, edit_mode){
     // Если место итак видно, то просто двигаем, без зума
     map.setView(places_objects[active_place].getLatLng());
     $('#place-' + active_place).addClass('active'); // добавляем выделение
-  }  
+  }
 
   $('#place_left_slide').addClass('active loading'); // показываем левую панель
 
@@ -1901,7 +1901,7 @@ function show_place(id, edit_mode){
 }
 
 function load_single_place(id, callback){
-    // Функция на случай, если место не показано / не подгружено, 
+    // Функция на случай, если место не показано / не подгружено,
     // а показать его надо.
     // Используется в show_place на этот самый случай
     // Берём данные пользователя
@@ -1922,8 +1922,8 @@ function load_single_place(id, callback){
         if(data.success){ // если подгрузили место
             //console.log('data load success', data.places);
             // Добавляем место
-                        
-            place(parseFloat(data.places.lat), parseFloat(data.places.lng), parseInt(data.places.id), data.places.title, data.places.type, data.places.owned) 
+
+            place(parseFloat(data.places.lat), parseFloat(data.places.lng), parseInt(data.places.id), data.places.title, data.places.type, data.places.owned)
 
             // Выполняем коллбэк
             if( typeof(callback) === 'function' ){
@@ -2034,10 +2034,10 @@ function load_place_data(id, edit_mode){
                 for( i=0; i<data.comments.length; i++){
                     $('#place_history_buffer').after(data.comments[i]);
                 }
-                
+
             }
-            // Обновим аплоадер, если он есть                        
-            update_uploader();            
+            // Обновим аплоадер, если он есть
+            update_uploader();
 
             if(edit_mode){
                 // Включает режим редактирования вместо просто показа места
@@ -2170,9 +2170,9 @@ function drop_place(id){
     // Полностью удаляет место и все упоминания о нём
   if( typeof(places_objects[id]) !== 'undefined' && typeof(places_lids[places_objects[id]._leaflet_id]) !== 'undefined' ){
     places_layer.removeLayer(places_objects[id]);
-    delete( places_lids[places_objects[id]._leaflet_id] );    
-  } 
-  if( typeof(places[id] ) !== 'undefined' ) delete( places[id] );  
+    delete( places_lids[places_objects[id]._leaflet_id] );
+  }
+  if( typeof(places[id] ) !== 'undefined' ) delete( places[id] );
 }
 
 function lock_map(){
@@ -2738,7 +2738,7 @@ function change_mode(hash){
         local_store_data();
     }else if(hash[0]=='place'){
         //console.log('changing'+hash[0]);
-        check_token( function(){ show_place(hash[1]); } );        
+        check_token( function(){ show_place(hash[1]); } );
     }else{
         check_token();
         disable_editor();
@@ -2856,7 +2856,7 @@ function do_logout(){
     close_place();
     $('#sub_plank_user').removeClass('active');
     set_token(null,null,null);
-    gen_guest_token(function(){ show_places(); });    
+    gen_guest_token(function(){ show_places(); });
 }
 
 function remote_drop_route(route_id){
@@ -3008,7 +3008,7 @@ function input_desc_ctrlenter(e){
 function place_check_input(){
     // Проверяет введёные данные в редакторе мест
     obj = $('#place-input-title');
-    if(obj.val().replace(/\s/,'').length >= 2){        
+    if(obj.val().replace(/\s/,'').length >= 2){
         $('#place_error_container .place_error_title').hide();
         return true;
     }else{
@@ -3021,7 +3021,7 @@ function select_place_type(e, type){
     // Срабатывает по нажатию на чекбокс в меню выбора типов мест для показа
     // Добавляет тип мест к списку выбранных / убирает его
     e = typeof(e) !== 'undefined' ? e : ( typeof(window.event) !== 'undefined' ? window.event : null);
-    
+
     // Если есть event, то продолжаем
     if(!e || !place_types[type]) return;
     // Объект, по которому кликнули
@@ -3087,17 +3087,13 @@ function disable_places(){
 
     store_places_view();
     hide_places();
-    
+
 }
 
 function store_places_view(){
     if( typeof(localStorage) !== 'undefined' ){
         localStorage.setItem('places_show', places_show.join(","));
     }
-
-}
-
-function change_places_view(){
 
 }
 
@@ -3118,9 +3114,9 @@ function decide_toggle_places(){
 
 function select_place_view(e){
     // Срабатывает при нажатии на чекбокс "Показывать при просмотре / в редакторе"
-    
+
     e = typeof(e) !== 'undefined' ? e : ( typeof(window.event) !== 'undefined' ? window.event : null);
-    
+
     // Если есть event, то продолжаем
     if(!e) return;
     // Объект, по которому кликнули
@@ -3128,7 +3124,7 @@ function select_place_view(e){
 
     // Меняем текущий режим отображения
     places_show[ obj.data('type') == 'editor' ? 1 : 0 ] = obj.prop("checked") ? 1 : 0;
-    
+
     // Запускаем выбор режима отображения мест, там же будет сохранение
     decide_toggle_places();
 }
@@ -3184,22 +3180,22 @@ function init_uploader(){
             endpoint: '/put/endpoint.php',
         },
         retry: {
-           
+
         }
     })
     .on('complete', function (event, id, name, data) {
-        if(data && !data.error){            
+        if(data && !data.error){
             if(data.uuid && data.uploadName){
                 $('#place_thumb').removeClass('upload_started upload_error').addClass('upload_success');
                 setTimeout(function(){ $('#place_thumb').removeClass('upload_success'); }, 2000)
                 $("#place_thumb").css('background-image', 'url(\'/misc/thumbs/' + data.uuid + '/' + data.uploadName + '\')');
                 $("#place_thumb").removeClass('no_thumb')
             }else{
-                $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');                    
+                $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');
                 setTimeout(function(){ $('#place_thumb').removeClass('upload_error'); }, 2000)
             }
         }else{
-            $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');    
+            $('#place_thumb').removeClass('upload_started upload_success').addClass('upload_error');
             setTimeout(function(){ $('#place_thumb').removeClass('upload_error'); }, 2000)
         }
     })
@@ -3230,22 +3226,22 @@ function update_uploader(){
 Все сторонние функции
 
 */
-
-function transliterate(engToRus) {
-    var     rus = "щ   ш  ч  ц  ю  я  ё  ж  ъ  ы  э  а б в г д е з и й к л м н о п р с т у ф х ь".split(/ +/g),
-            eng = "shh sh ch cz yu ya yo zh `` y' e` a b v g d e z i j k l m n o p r s t u f x `".split(/ +/g);
-        return function(text, engToRus) {
-            var x;
-            for(x = 0; x < rus.length; x++) {
-                text = text.split(engToRus ? eng[x] : rus[x]).join(engToRus ? rus[x] : eng[x]);
-                text = text.split(engToRus ? eng[x].toUpperCase() : rus[x].toUpperCase()).join(engToRus ? rus[x].toUpperCase() : eng[x].toUpperCase());
-            }
-            return text;
-        }
-}
+//
+// function transliterate(engToRus) {
+//     var     rus = "щ   ш  ч  ц  ю  я  ё  ж  ъ  ы  э  а б в г д е з и й к л м н о п р с т у ф х ь".split(/ +/g),
+//             eng = "shh sh ch cz yu ya yo zh `` y' e` a b v g d e z i j k l m n o p r s t u f x `".split(/ +/g);
+//         return function(text, engToRus) {
+//             var x;
+//             for(x = 0; x < rus.length; x++) {
+//                 text = text.split(engToRus ? eng[x] : rus[x]).join(engToRus ? rus[x] : eng[x]);
+//                 text = text.split(engToRus ? eng[x].toUpperCase() : rus[x].toUpperCase()).join(engToRus ? rus[x].toUpperCase() : eng[x].toUpperCase());
+//             }
+//             return text;
+//         }
+// }
 function translit(text){
-    var arrru = new Array ('Я','я','Ю','ю','Ч','ч','Ш','ш','Щ','щ','Ж','ж','А','а','Б','б','В','в','Г','г','Д','д','Е','е','Ё','ё','З','з','И','и','Й','й','К','к','Л','л','М','м','Н','н', 'О','о','П','п','Р','р','С','с','Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ы','ы','Ь','ь','Ъ','ъ','Э','э'),
-        arren = new Array ('Ya','ya','Yu','yu','Ch','ch','Sh','sh','Sh','sh','Zh','zh','A','a','B','b','V','v','G','g','D','d','E','e','E','e','Z','z','I','i','J','j','K','k','L','l','M','m','N','n', 'O','o','P','p','R','r','S','s','T','t','U','u','F','f','H','h','C','c','Y','y','`','`','\'','\'','E', 'e');
+    var arrru = ['Я','я','Ю','ю','Ч','ч','Ш','ш','Щ','щ','Ж','ж','А','а','Б','б','В','в','Г','г','Д','д','Е','е','Ё','ё','З','з','И','и','Й','й','К','к','Л','л','М','м','Н','н', 'О','о','П','п','Р','р','С','с','Т','т','У','у','Ф','ф','Х','х','Ц','ц','Ы','ы','Ь','ь','Ъ','ъ','Э','э'],
+        arren = ['Ya','ya','Yu','yu','Ch','ch','Sh','sh','Sh','sh','Zh','zh','A','a','B','b','V','v','G','g','D','d','E','e','E','e','Z','z','I','i','J','j','K','k','L','l','M','m','N','n', 'O','o','P','p','R','r','S','s','T','t','U','u','F','f','H','h','C','c','Y','y','`','`','\'','\'','E', 'e'];
 
     for(var i=0; i<arrru.length; i++){
         var reg = new RegExp(arrru[i], "g");
