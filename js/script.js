@@ -35,7 +35,7 @@ var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     },
 
     logos = {
-        'default': ['Без логотипа', '/misc/nologo.png?ww', 'bottom-right'],
+        'default': ['Без логотипа', '', 'bottom-right'],
         'nvs': ['НВС', '/misc/lgo.png', 'bottom-right'],
         'pinmix': ['Пин-Микс', '/misc/pin-mix.png', 'top-right'],
         'jolly': ['Пин-Микс + JW', '/misc/jw.png', 'top-right'],
