@@ -434,7 +434,7 @@ div.col-6 {
 
 #editor_left_plank.active .viewer-buttons {
   display: none;
-  
+
 }
 .bar_text {
     float: left;
@@ -579,13 +579,13 @@ div#sub_plank_stickers {
 .sticker_thumb div {
     content: ' ';
     position: absolute;left:0px;top:0px;width:48px;height:48px;
-    background: url(/misc/stickers/stickers.svg) 0px 0px no-repeat;
+    background: url(../misc/stickers/stickers.svg) 0px 0px no-repeat;
     background-size: cover;
 }
 .button {
   display: inline-block;
   background: #333;padding: 6px 10px;
-  font-family:'RalewayBold';
+  font-family: 'RalewayBold', serif;
   border-radius: 2px;cursor:pointer;
   font-size:0.8em;color: #fff;
   box-sizing: border-box;
@@ -1252,7 +1252,7 @@ b.key {
 }
 
 .sticker_bugrinsky_bridge {
-    background-image: url(/misc/stickers/bridge.svg?zddd);
+    background-image: url(../misc/stickers/bridge.svg?zddd);
     width: 230px;
     height: 150px;
 }
@@ -1440,7 +1440,7 @@ b.key {
     top: -36px;
     left: -36px;
     z-index: 4;
-    background: url(/misc/stickers/stickers.svg) 0px 0px;
+    background: url(../misc/stickers/stickers.svg) 0px 0px;
 }
 
 .sticker_gap {
@@ -1465,15 +1465,15 @@ b.key {
 }
 
 .sticker_image.sticker_forest {
-    background: url(/misc/stickers/stickers.svg) -72px 0px;
+    background: url(../misc/stickers/stickers.svg) -72px 0px;
 }
 
 .sticker_image.sticker_bridge {
-    background: url(/misc/stickers/stickers.svg) -144px 0px;
+    background: url(../misc/stickers/stickers.svg) -144px 0px;
 }
 
 .sticker_image.sticker_alex {
-    background: url(/misc/stickers/stickers.svg) -216px 0px;
+    background: url(../misc/stickers/stickers.svg) -216px 0px;
 }
 
 
@@ -1687,7 +1687,7 @@ a#store_address_url span {
     position: absolute;
     left: 0px;
     bottom: 0px;
-    background: url(/misc/stickers/hero.svg) 0% 100% no-repeat;
+    background: url(../misc/stickers/hero.svg) 0% 100% no-repeat;
     width: 400px;
     height: 260px;
     /*
@@ -1701,7 +1701,7 @@ a#store_address_url span {
 #elbow {
     width: 34px;
     height: 84px;
-    background: url(/misc/stickers/hero.svg) -400px 100% no-repeat;
+    background: url(../misc/stickers/hero.svg) -400px 100% no-repeat;
     position: absolute;
     left: 32px;
     top: 160px;
@@ -1712,7 +1712,7 @@ a#store_address_url span {
 #palm {
     width: 38px;
     height: 84px;
-    background: url(/misc/stickers/hero.svg) -435px 100% no-repeat;
+    background: url(../misc/stickers/hero.svg) -435px 100% no-repeat;
     position: absolute;
     left: -10px;
     top: -69px;

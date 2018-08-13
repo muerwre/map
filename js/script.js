@@ -14,9 +14,9 @@
 */
 
 
-/*jslint browser: true */
-
-/*global L, $, jQuery, alert, middle_latlng, findDistance,console */
+/* jslint browser: true */
+// noinspection JSJQueryEfficiency
+/* global L, $, jQuery, alert, middle_latlng, findDistance,console */
 
 var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
     dgis, current_logo, current_zoom, can_i_store = false,
@@ -174,7 +174,7 @@ function test_fetch_tiles(inp){
 }
 function latlng_to_tile(latlng) {
     var zoom = map.getZoom(),
-        xtile = parseInt(Math.floor( (latlng.lng + 180) / 360 * (1<<zoom) ));
+        xtile = parseInt(Math.floor((latlng.lng + 180) / 360 * (1 << zoom)));
         ytile = parseInt(Math.floor( (1 - Math.log(Math.tan(latlng.lat * Math.PI / 180) + 1 / Math.cos(latlng.lat * Math.PI / 180)) / Math.PI) / 2 * (1<<zoom) ));
     return {x: xtile, y: ytile, z: zoom};
 }
@@ -402,7 +402,8 @@ function get_route_array() {
     'use strict';
     return poly.toGeoJSON().geometry.coordinates;
 }
-function update_overlays() {
+
+function update_overlays(e) {
     'use strict';
     km_marks.clearLayers();
     var route = get_route_array(),
@@ -434,7 +435,7 @@ function update_overlays() {
                 distance = findDistance(latlngs[i - 1].lat, latlngs[i - 1].lng, latlngs[i].lat, latlngs[i].lng);
 
                 if (distance > 1) {
-                    km_marks.addLayer(L.marker([middle.lat, middle.lng], { icon: L.divIcon({ html: '<div style="transform: scale(' + (map.getZoom() / 13) + ');"><img src="/misc/arr.png" style="transform: translateX(-4px) translateY(-4px) rotate(' + (270 + rotation) + 'deg);"></div>', className: 'arr_mark' }) }));
+                    km_marks.addLayer(L.marker([middle.lat, middle.lng], { icon: L.divIcon({ html: '<div style="transform: scale(' + (map.getZoom() / 13) + ');"><img src="misc/arr.png" style="transform: translateX(-4px) translateY(-4px) rotate(' + (270 + rotation) + 'deg);"></div>', className: 'arr_mark' }) }));
                 }
 
             }
@@ -1043,7 +1044,7 @@ function key_down(e) {
         //console.log(e.keyCode);
     if(can_i_edit){
         if (( $(e.target).is('input') || $(e.target).is('textarea') ) && (e.keyCode !== 27 && e.keyCode !== 13)) { return; }
-        if(e.shiftKey && mode == 'none'){
+        if(e.shiftKey && mode === 'none'){
             $('#sub_plank_stickers').addClass('preview active');
         }
         if (e.keyCode === 88) {
@@ -1239,8 +1240,9 @@ function image_prefetcher(callback) {
   $('#shot_status_text').html('Подгружаем тайлы ('+tiles.loaded+'/'+tiles.raw.length+')');
 
   $('#shot_status_bar span').stop().animate({'width':(tiles.loaded/tiles.raw.length)*85+'%'},150)
-  current_flows = 0;
-  for(i = 0;i<tiles.raw.length;i++) {
+  let current_flows = 0;
+
+  for(let i = 0; i < tiles.raw.length; i++) {
     // Перебираем все тайлы
     b = tiles.raw[i];
     if (current_flows < tile_max_flows && b.loaded === false) {
@@ -1363,7 +1365,7 @@ function image_composer(tiles, callback){
 }
 
 function engage_cropper() {
-    // Отправляет параметры обрезки изображения скрипту, который отправляет в ответ скачиваемую картинку.
+  // Отправляет параметры обрезки изображения скрипту, который отправляет в ответ скачиваемую картинку.
   geo = $('#crop_image').cropper('getData');
   window.open('/engine/cropper.php?name='+$('#store_name').val()+'&src='+$('#crop_image').attr('src')+'&'+$.param({'geo':geo, 'logo':[current_logo,logos[current_logo][2]]})+'&');
   toggle_none();
@@ -1373,21 +1375,21 @@ function insert_vertex(e) {
   // Добавляет редактирующую ручку по щелчку
   // если щелчок по кривой, а не по ручке И если ломаная в режиме редактирования. Иначе - перейти к редактированию
   if ($(e.originalEvent.target).is('path') && poly.editor._enabled) {
-    //console.log('aaa');
     // если щелкнуть по кривой во время редактирования, editable не должно рисовать новую точку
-    if (e.type === 'editable:drawing:click') {
-      e.cancel();
-    }
-    latlngs=poly.getLatLngs(); // набор точек ломанной
-    best=10000;pos=[]; // переменные для определения принадлежности точки отрезку на ломанной
-    for(i=0;i<latlngs.length-1;i++) {
+    if (e.type === 'editable:drawing:click') e.cancel();
+
+    let latlngs = poly.getLatLngs(); // набор точек ломанной
+    let best = 10000;
+    let pos = []; // переменные для определения принадлежности точки отрезку на ломанной
+
+    for(let i=0; i<latlngs.length-1; i++) {
       // Дальше определяем, лежит ли точка на отрезке ломаной перебором этих отрезков
-      x=e.latlng['lat'];
-      x1 = latlngs[i]['lat'];
-      x2 = latlngs[i+1]['lat'];
-      y = e.latlng['lng'];
-      y1 = latlngs[i]['lng'];
-      y2 = latlngs[i+1]['lng'];
+      const x = e.latlng['lat'];
+      const x1 = latlngs[i]['lat'];
+      const x2 = latlngs[i+1]['lat'];
+      const y = e.latlng['lng'];
+      const y1 = latlngs[i]['lng'];
+      const y2 = latlngs[i+1]['lng'];
 
       // эта странная конструкция определяет, лежит ли вообще точка между двумя соседями на отрезке
       if ((
@@ -1405,13 +1407,15 @@ function insert_vertex(e) {
           )
         ) {
           // если да, то проверяем, далеко ли точка от самого отрезка между двумя точками
-          dx1 = x2 - x1;  dy1 = y2 - y1;
-          dx = x - x1;    dy = y - y1;
-          result = Math.abs(dx1 * dy - dx * dy1);
-          if (result<best) {
+          let dx1 = x2 - x1;
+          let dy1 = y2 - y1;
+          let dx = x - x1;
+          let dy = y - y1;
+          let result = Math.abs((dx1 * dy) - (dx * dy1));
+          if (result < best) {
             // это - не очень-то точная функция. Но по клику она определяет, по какому отрезку мы кликнули
             best = result;
-            pos = [i,i+1];
+            pos = [i, i+1];
            }
         }
     }
@@ -1485,8 +1489,8 @@ function point_drop(e,pnt_id) {
     //console.log(e);
     //L.DomEvent.preventDefault(e);
     //e.preventDefault();
-    obj = point_array.point_to_id[pnt_id];
-    console.log(obj);
+    let obj = point_array.point_to_id[pnt_id];
+
     if (typeof(obj)!=='undefined' && obj>0) {
         point_array.pairs[obj].remove();
         delete point_array.pairs[obj];
@@ -1497,12 +1501,11 @@ function point_drop(e,pnt_id) {
 }
 
 function on_vertex_drag(e) {
-//console.log('Up!');
-  obj = e.layer;
+  let obj = e.layer;
   //console.log();
-  m = point_array.pairs[obj._leaflet_id];
+  let m = point_array.pairs[obj._leaflet_id];
   if (typeof(m)!=='undefined') {
-    latlngs = obj.getLatLngs();
+    let latlngs = obj.getLatLngs();
     m.setLatLng(latlngs[1]);
     //console.log(latlngs[0].lng-latlngs[1].lng);
     if(latlngs[0].lng<latlngs[1].lng){
@@ -1675,11 +1678,11 @@ function prepare_map() {
     */
     //map.on('dragend', function (e) { });
     // добавление точек по щелчку
-    map.on('click', function (e) {
+    map.on('click', e => {
+      console.log('mapClick');
         // map_click
-
-        if (e.type == 'click' && can_i_edit && !is_dragged) {
-            //console.log('drag: ', is_dragged);
+        if (e.type === 'click' && can_i_edit && !is_dragged) {
+            // console.log('drag: ', is_dragged);
             L.DomEvent.preventDefault(e);
             if ($(e.originalEvent.target).attr('id') === 'map') {
                 if(mode === 'point'){
@@ -1702,43 +1705,67 @@ function prepare_map() {
     });
 
     // Если на карте что-то меняется, пересчитать километражи
-    map.editTools.addEventListener('editable:drawing:mouseup', function (e) { update_overlays(e); });
-    map.editTools.addEventListener('editable:vertex:dragend', function (e) { update_overlays(e); });
-    // Добавлять точек в полилинию по щелчку
-    map.editTools.addEventListener('editable:drawing:click', function (e) { insert_vertex(e, 'editable'); });
-    map.editTools.addEventListener('editable:drawing:clicked', function (e) { update_overlays(e); });
-    poly.on('click', function (e) {
-        if(can_i_edit){
-            route_state('active');
-        }
+    map.editTools.addEventListener('editable:drawing:mouseup', update_overlays);
+    map.editTools.addEventListener('editable:vertex:dragend', update_overlays);
+
+    // map.editTools.addEventListener('editable:vertex:rawclick', e => {
+    //   console.log('rawclick', e);
+    //   // poly.editor.continueForward();
+    //   // e.cancel();
+    // });
+    //
+
+    // map.editTools.addEventListener('editable:vertex:click', e => {
+    // });
+
+    map.editTools.addEventListener('editable:vertex:deleted', e => {
+      console.log('deleted', e);
+      poly.editor.continueForward();
+      update_overlays(e);
     });
+
+    // Добавлять точек в полилинию по щелчку
+    map.editTools.addEventListener('editable:drawing:click', insert_vertex);
+    map.editTools.addEventListener('editable:drawing:clicked', update_overlays);
+
+    // poly.on('click', () => {
+    //     if (can_i_edit){
+    //         route_state('active');
+    //     }
+    // });
     // Это для точек. При перетаскивании конца указателя тащим точку
-    map.editTools.addEventListener('editable:vertex:drag', function (e) { on_vertex_drag(e); });
+    map.editTools.addEventListener('editable:vertex:drag', on_vertex_drag);
+
     // this is a hack to continue drawing on dblclick
     // BTW ON CHANGING MODES ADD HERE CHECK FOR MODE
     // хз, что это, возможно, можно удалить
-    map.editTools.addEventListener('editable:drawing:end', function (e) {
-        if (!force_stop) {
-            //setTimeout(function () { poly.editor.continueForward(); }, 100);
-        }
-    });
+    // map.editTools.addEventListener('editable:drawing:end', function (e) {
+    //     if (!force_stop) {
+    //         //setTimeout(function () { poly.editor.continueForward(); }, 100);
+    //     }
+    // });
+
     // при перетаскивании ручек убирать все отметки километров
     map.editTools.addEventListener('editable:vertex:dragstart', function (e) { km_marks.clearLayers(); });
+
     // при масштабировании карты масштабировать стрелки
     map.on('zoom', function (e) {
         $('.arr_mark >div').css('transform', 'scale(' + (map.getZoom()/13) + ')');
     });
-    map.on('zoomanim', function (e) {
-        var current_zoom = map.getZoom(),
-            new_zoom = e.zoom;
-        //console.log(new_zoom);
-        // $('.sticker').removeClass('sticker_zoom_' + current_zoom).addClass('sticker_zoom_' + new_zoom);
-        // $('.sticker').css('transform','scale(' + parseFloat(map.getZoomScale(new_zoom,15)) + ')');
-    })
-    map.on('zoomend', function (e) {
-        //console.log(e.target._zoom);
-        current_zoom = map.getZoom();
-    });
+    //
+    // map.on('zoomanim', function (e) {
+    //     var current_zoom = map.getZoom(),
+    //         new_zoom = e.zoom;
+    //     //console.log(new_zoom);
+    //     // $('.sticker').removeClass('sticker_zoom_' + current_zoom).addClass('sticker_zoom_' + new_zoom);
+    //     // $('.sticker').css('transform','scale(' + parseFloat(map.getZoomScale(new_zoom,15)) + ')');
+    // })
+
+    // map.on('zoomend', function (e) {
+    //     //console.log(e.target._zoom);
+    //     current_zoom = map.getZoom();
+    // });
+
     // добавление точки для теста
     //point('55.00184125785578', '82.91845321655275', 'Точка!');
     L.DomEvent.addListener(document, 'keydown', key_down, map);
@@ -2527,19 +2554,19 @@ function apply_route(){
 function local_recover_data(){
        if (store && can_i_load) {
         //console.log('local recover');
-        var storedRoute, storedPoints, storedStickers, routeLatLngs, i;
+        let storedRoute, storedPoints, storedStickers, routeLatLngs;
+
         try {
             storedRoute = JSON.parse(localStorage.getItem("route"));
         } catch(e) {
-            console.log('!! упс, неправильный формат роута')
             storedRoute = null;
         }
+
         if (typeof (map_list[localStorage.getItem("map_style")]) !== 'undefined') {
             current_map_style = localStorage.getItem("map_style");
             change_map(current_map_style);
-        }else{
-          console.log("error map_style ", localStorage.getItem("map_style"));
         }
+
         if(localStorage.getItem("logo") !== 'undefined' && typeof(logos[localStorage.getItem("logo")]) !==  'undefined'){
             current_logo = localStorage.getItem("logo");
         }else{
@@ -2561,6 +2588,7 @@ function local_recover_data(){
             poly.editor.options.skipMiddleMarkers = true;
             poly.editor.disable().enable();
             poly.on('click', function (e) {
+              console.log('clck');
                 if(can_i_edit){
                     route_state('active');
                 }
