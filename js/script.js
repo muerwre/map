@@ -225,8 +225,7 @@ function sticker_label_update(id){
     }
 
     // Обновляет текст в баллуне стикера
-
-    var text = $('#sticker_' + id).find('.sticker_text'),
+    let text = $('#sticker_' + id).find('.sticker_text'),
         label = text.find('.sticker_label'),
         input = text.find('textarea');
 
