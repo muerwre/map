@@ -1,43 +1,59 @@
+<?php 
+
+/*
+
+  - Гуглокарты / любые другие спутниковые
+  - Табличка о том, что необходимо войти, чтобы добавлять места / комментарии
+  - Дезактивация мест (status = 0 для удалённых пользователем, status = 1 для деактивированных, status = 2 для рабочих)
+
+*/
+
+?>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="initial-scale=1, maximum-scale=0.8">
-    <link rel="icon" href="favicon.png?d" type="image/png" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=0.8">    
 
     <title>Маршрут покатушки | Независимое Велосообщество</title>
+    
+    <? if($_SERVER['HTTP_HOST'] == 'alpha-map.vault48.org'){ 
+        // В продакшне используем минимизированную версию скрипта
+    ?>
+      <script src="/js/dist/theseus.min.js?v=4.0.<?=rand(0,65535);?>"></script>
+      <link type="text/css" rel="stylesheet" media="all" href="/css/style.min.css?v=4.0.<?=rand(0,65535);?>" />
 
-    <script src="/js/jquery-3.1.1.min.js"></script>
-    <!--script src="/js/jquery-3.1.1.min.js"></script-->
-    <!--script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.css" />
-    <!--script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script-->
-    <!--script src="/js/leaflet.js"></script-->
-    <script src="/js/leaflet-src.js"></script>
-    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-alpha2/html2canvas.min.js"></script-->
-    <!--script src="js/easy-button.js"></script-->
-    <script src="/js/Leaflet.Editable.js"></script>
-    <script src="/js/leaflet.geometryutil.js"></script>
-    <script src="/js/leaflet-routing-machine.js"></script>
-    <!--script src="https://rawgithub.com/emikhalev/leaflet-2gis/master/dgis.js"></script-->
-    <!--script src="http://maps.api.2gis.ru/1.0" type="text/javascript"></script-->
-    <script src="/js/cropper.min.js"></script>
-    <script src="/js/uploader/jquery.fine-uploader.min.js"></script>
-    <script src="/js/common.js"></script>
-    <script src="/js/leaflet.markercluster.js"></script>
-    <script src="/js/script.js?v=4.0.<?=rand(0,65535);?>"></script>
-    <!--link type="text/css" rel="stylesheet" media="all" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" /-->
-    <link type="text/css" rel="stylesheet" media="all" href="/css/style.css?v=4.0.<?=rand(0,65535);?>" />
-    <link type="text/css" rel="stylesheet" media="all" href="/css/cropper.min.css" />
+    <? }else{ 
+        // А в девелопменте - отдельно скрипт, отдельно всё остальное
+    ?>
+      <script src="/js/dist/theseus.js?v=4.0.<?=rand(0,65535);?>"></script>
+      <script src="/js/src/script.js"></script>  
+      <link type="text/css" rel="stylesheet" media="all" href="/css/leaflet.css" />
+      <link type="text/css" rel="stylesheet" media="all" href="/css/cropper.min.css" />
+      <link rel="stylesheet" type="text/css" href="/css/leaflet-routing-machine.css" />
+      <link rel="stylesheet" type="text/css" href="/css/MarkerCluster.Default.css" />
+      <link rel="stylesheet" type="text/css" href="/css/MarkerCluster.css" />
+
+      <link type="text/css" rel="stylesheet" media="all" href="/css/style.css?v=4.0.<?=rand(0,65535);?>" />
+
+      <!--script src="/js/src/leaflet-src.js"></script>
+      <script src="/js/src/Leaflet.Editable.js"></script>
+      <script src="/js/src/leaflet.geometryutil.js"></script>
+      <script src="/js/src/leaflet-routing-machine.js"></script>
+      <script src="/js/src/cropper.min.js"></script>
+      <script src="/js/src/uploader/jquery.fine-uploader.min.js"></script>
+      <script src="/js/src/common.js"></script>
+      <script src="/js/src/leaflet.markercluster.js"></script>
+      <script src="/js/src/script.js?v=4.0.<?=rand(0,65535);?>"></script-->
+    <? } ?>   
 
     <link rel="stylesheet" type="text/css" href="/css/font-awesome.css?d" />
     <link rel="stylesheet" type="text/css" href="/css/fonts.css" />
-    <link rel="stylesheet" type="text/css" href="/css/leaflet-routing-machine.css" />
-    <link rel="stylesheet" type="text/css" href="/css/MarkerCluster.Default.css" />
-    <link rel="stylesheet" type="text/css" href="/css/MarkerCluster.css" />
+    
+    <link rel="icon" href="<?=$_SERVER['HTTP_HOST'] == 'map.vault48.org' ? 'favicon.png?d' : 'favicon_dev.png?dred';?>"  />
+    <meta property="og:image" content="none">
+    <!--meta content="/misc/vk_preview.png"-->
+    <meta content="none">
 
-    <link rel="shortcut icon" href="/favicon.png?wd" type="image/png">
-    <meta property="og:image" content="/misc/vk_preview.png" />
-    <meta content="/misc/vk_preview.png">
 </head>
 <body>
     <div id="store_helper">
@@ -107,6 +123,8 @@
         <!-- Общая информация -->
         <div id="place_info">
           <div id="place_thumb">
+            <div id="place_thumb_image"></div>
+            <img id="place_img_loader" src="" onload="$('#place_thumb').addClass('is_loaded');">
             <span class="fa fa-camera"></span>
             <div id="place_thumb_uploader"></div>
           </div>
@@ -387,16 +405,10 @@
         </div>
         <div class="map_type_option">
           <a onclick="change_map('ysat');"></a>
-          <div class="map_type_thumb"><img src="https://sat02.maps.yandex.net/tiles?l=sat&v=3.330.0&x=5983&y=2590&z=13&lang=ru_RU"></div>
+          <div class="map_type_thumb"><img src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/13/2590/5983"></div>
           <div class="map_type_name">YSAT</div>
-          <div class="map_type_desc">Спутниковый яндекс</div>
+          <div class="map_type_desc">Спутниковая карта</div>
         </div>
-        <!--div class="map_type_option">
-          <a onclick="change_map('sat');"></a>
-          <div class="map_type_thumb"><img src="https://sat01.maps.yandex.net/tiles?l=sat&x=5983&y=2590&z=13"></div>
-          <div class="map_type_name">YSAT</div>
-          <div class="map_type_desc">Спутниковая карта от Яндекс.</div>
-        </div-->
       </div>
       <div id="bar-1" class="bar">
         <!--div class="editor-title grid-30">РЕДАКТОР</div-->
@@ -459,3 +471,16 @@
         </div>
     </script>
 </body>
+
+
+<? /* OBSOLETE HEADER 
+    <!--script src="/js/jquery-3.1.1.min.js"></script-->
+    <!--script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script-->
+    <!--script src="https://rawgithub.com/emikhalev/leaflet-2gis/master/dgis.js"></script-->
+    <!--script src="http://maps.api.2gis.ru/1.0" type="text/javascript"></script-->
+    <!--script src="https://unpkg.com/leaflet@1.0.0-rc.3/dist/leaflet.js"></script-->
+    <!--script src="/js/leaflet.js"></script-->
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-alpha2/html2canvas.min.js"></script-->
+    <!--script src="js/easy-button.js"></script-->
+
+*/ ?>

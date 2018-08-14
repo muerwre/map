@@ -1,30 +1,30 @@
 {
-  "name": "map",
+  "name": "theseus",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "js/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/muerwre/map.git"
+    "url": "ssh://derek@vault48.org:22522/opt/git/map"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-contrib-watch": "^1.0.0"
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/muerwre/map/issues"
-  },
-  "homepage": "https://github.com/muerwre/map#readme",
-  "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb": "^17.0.0",
-    "eslint-plugin-import": "^2.13.0",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.10.0"
-  },
   "dependencies": {
-    "leaflet": "^1.3.3",
-    "leaflet-editable": "^1.1.0"
-  }
+    "grunt-cli": "^1.2.0"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "description": ""
 }
