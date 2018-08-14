@@ -1,0 +1,3 @@
+export const MAP_ACTIONS = {
+  UPDATE_POLY_CORDS: 'UPDATE_POLY_CORDS',
+};
