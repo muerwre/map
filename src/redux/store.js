@@ -70,6 +70,7 @@ export const store = createStore(
   combineReducers({
     auth: persistReducer(authPersistConfig, authReducer),
     map: persistReducer(mapPersistConfig, mapReducer),
+    // map: mapReducer,
     // chat: persistReducer(chatPersistConfig, chatReducer),
     // game: persistReducer(gamePersistConfig, gameReducer),
     // modal: modalReducer,

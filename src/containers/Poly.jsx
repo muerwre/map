@@ -28,12 +28,9 @@ export class PolyComponent extends React.Component {
 
 function mapStateToProps(state) {
   const {
-    map: {
-      poly
-    }
+    map: { poly }
   } = state;
 
-  console.log('got poly!', poly);
 
   return {
     poly

@@ -2776,7 +2776,7 @@ function change_mode(hash){
 
 $(document).ready(function () {
     'use strict';
-	prepare_map();
+	  prepare_map();
     prepare_stickers();
 
     if ("onhashchange" in window) {
@@ -2786,7 +2786,6 @@ $(document).ready(function () {
     }
 
     change_mode(location.hash);
-
 });
 
 function make_bigger_shot(size){

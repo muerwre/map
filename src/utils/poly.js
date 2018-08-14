@@ -178,13 +178,15 @@ export const bindPolyEvents = ({ updatePolyCoords }) => {
 
 export const updatePoly = (latlngs) => {
   // const route = latlngs.map(([lat, lng]) => new L.latLng(lat, lng));
+  if (!latlngs || latlngs.length < 2) return;
+
   poly.setLatLngs(createLatLngs(latlngs));
   poly.addTo(map);
   poly.setStyle({ color: '#ff3333', weight: '5' });
   poly.editor.options.skipMiddleMarkers = true;
   poly.editor.disable().enable();
   poly.editor.continueForward();
-  // if (latlngs && latlngs.length) poly.editor.disable().enable();
+  //
 };
 
 export const createLatLngs = latlngs => latlngs.map(({ lat, lng }) => new L.LatLng(lat, lng));
@@ -204,7 +206,6 @@ const restorePoly = latlngs => {
   result.editor.options.skipMiddleMarkers = true;
 
   result.editor.reset();
-  updateMarks();
 
   return result;
 };
@@ -212,11 +213,11 @@ const restorePoly = latlngs => {
 export const preparePoly = ({ updatePolyCoords, latlngs }) => {
   map.addLayer(km_marks);
 
-  if (latlngs && latlngs.length) console.log('got poly');
-
   poly = (latlngs && latlngs.length)
     ? restorePoly(latlngs)
     : createPoly();
+
+  updateMarks();
 
   poly.setStyle({ color: '#ff3333', weight: '5' });
 
