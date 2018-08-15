@@ -51,6 +51,1420 @@ function translit(a) {
     return a;
 }
 
+function test_fetch_tiles(a) {
+    $.get("fetcher.php", a, function(a) {
+        window.open(a.image);
+    }, "json");
+}
+
+function latlng_to_tile(a) {
+    var b = map.getZoom();
+    return {
+        x: parseInt(Math.floor((a.lng + 180) / 360 * (1 << b))),
+        y: parseInt(Math.floor((1 - Math.log(Math.tan(a.lat * Math.PI / 180) + 1 / Math.cos(a.lat * Math.PI / 180)) / Math.PI) / 2 * (1 << b))),
+        z: b
+    };
+}
+
+function tile_to_latlng(a) {
+    var b = map.getZoom(), c = a.x / Math.pow(2, b) * 360 - 180, d = Math.PI - 2 * Math.PI * a.y / Math.pow(2, b);
+    return {
+        lat: 180 / Math.PI * Math.atan(.5 * (Math.exp(d) - Math.exp(-d))),
+        lng: c
+    };
+}
+
+function set_sticker(a) {
+    var b = stickers.src[a.data("sticker")];
+    sticker_style = a.data("sticker"), void 0 === b.latlng || void 0 !== b.active ? (toggle_none(), 
+    mode = "sticker", $("#map").addClass("cross")) : (add_sticker(b.latlng), b.active = !0, 
+    map.setView(b.latlng, map.getZoom(), {
+        animate: !0,
+        pan: {
+            duration: .5
+        }
+    }));
+}
+
+function prepare_stickers() {
+    var a, b = $("#sub_plank_stickers").find(".sub_plank_sticker_list");
+    for (a = stickers.src.length - 1; a >= 0; a -= 1) b.prepend('<div class="sticker_thumb" data-sticker="' + a + '"><div style="background-position: -' + parseInt(48 * stickers.src[a].off) + 'px 0px;"></div></div>');
+    $(".sticker_thumb").on("click", function() {
+        set_sticker($(this));
+    });
+}
+
+function sticker_label_update(a) {
+    "number" != typeof a && (a = $(a.target).parent().parent().data("sticker"));
+    var b = $("#sticker_" + a).find(".sticker_text"), c = b.find(".sticker_label"), d = b.find("textarea");
+    c.text(d.val() + "--"), b.css("top", -1 * parseInt(b.height()) / 2), void 0 !== stickers.savedata[a] && (stickers.savedata[a].text = d.val()), 
+    local_store_data();
+}
+
+function sticker_drag_label(a) {
+    var b = 50, c = a.pageX - active_sticker.pos.x, d = a.pageY - active_sticker.pos.y, e = Math.atan2(d, c), f = Math.cos(e) * b - 30, g = Math.sin(e) * b - 30;
+    $(active_sticker.container).css("left", 6 + f - parseInt(active_sticker.ctrl.css("left"))).css("top", 6 + g - parseInt(active_sticker.ctrl.css("top"))), 
+    active_sticker.gap.css("transform", "rotate(" + (parseFloat(e) + 2.35619) + "rad)"), 
+    active_sticker.ang = e, f < -50 && !active_sticker.container.hasClass("invert") ? active_sticker.container.addClass("invert") : f > -10 && active_sticker.container.hasClass("invert") && active_sticker.container.removeClass("invert");
+}
+
+function drop_sticker(a) {
+    if (can_i_edit) {
+        var b = a.parent().parent().data("sticker"), c = a.parent().parent().data("style");
+        stickers.objects[b].remove(), delete stickers.savedata[b], local_store_data(), void 0 !== stickers.src[c].active && delete stickers.src[c].active;
+    }
+}
+
+function add_sticker(a, b, c) {
+    var d = b || stickers.src[sticker_style].title_long, e = '<div class="sticker_labeled' + (can_i_edit ? " sticker_editable" : "") + '" id="sticker_' + sticker_id + '" data-sticker="' + sticker_id + '" data-style="' + sticker_style + '"><div class="sticker_pos"></div><div class="sticker_image" style="background-position: -' + 72 * stickers.src[sticker_style].off + 'px 0px;"></div><div class="sticker_gap"></div><div class="sticker_text"><div class="sticker_del"></div><div class="sticker_label"></div><textarea>' + d + "</textarea></div></div>", f = L.divIcon({
+        html: e,
+        className: "sticker"
+    }), g = L.marker(a, {
+        icon: f
+    });
+    if (stickers.layers.addLayer(g), can_i_edit && g.enableEdit(), c) {
+        var h = 50, i = Math.cos(c) * h - 30, j = Math.sin(c) * h - 30, k = $("#sticker_" + sticker_id).find(".sticker_pos");
+        $("#sticker_" + sticker_id).css("left", 6 + i - parseInt(k.css("left"))).css("top", 6 + j - parseInt(k.css("top"))), 
+        $("#sticker_" + sticker_id).find(".sticker_gap").css("transform", "rotate(" + (parseFloat(c) + 2.35619) + "rad)"), 
+        i < -50 && !$("#sticker_" + sticker_id).hasClass("invert") ? $("#sticker_" + sticker_id).addClass("invert") : i > -10 && $("#sticker_" + sticker_id).hasClass("invert") && $("#sticker_" + sticker_id).removeClass("invert");
+    }
+    $("#sticker_" + sticker_id).find("textarea").on("keydown keyup", function(a) {
+        sticker_label_update(a);
+    }), $("#sticker_" + sticker_id).find(".sticker_del").on("click", function() {
+        drop_sticker($(this));
+    }), sticker_label_update(sticker_id), stickers.objects[sticker_id] = g, stickers.layer_to_object[g._leaflet_id] = sticker_id, 
+    g.on("editable:drag", function(a) {
+        active_sticker && active_sticker.object && active_sticker.latlng ? (active_sticker.object.setLatLng(active_sticker.latlng), 
+        stickers.savedata[stickers.layer_to_object[a.layer._leaflet_id]].latlng = active_sticker.latlng) : stickers.savedata[stickers.layer_to_object[a.layer._leaflet_id]].latlng = a.latlng;
+    }), g.on("editable:dragend", function(a) {
+        local_store_data();
+    }), $(".sticker_pos").on("mousedown", function(a) {
+        is_dragged = !0, active_sticker = {}, active_sticker.id = $(a.target).parent().data("sticker"), 
+        active_sticker.object = stickers.objects[active_sticker.id], active_sticker.latlng = active_sticker.object.getLatLng(), 
+        active_sticker.pos = map.latLngToContainerPoint(active_sticker.latlng), active_sticker.container = $("#sticker_" + active_sticker.id), 
+        active_sticker.ctrl = active_sticker.container.find(".sticker_pos"), active_sticker.gap = active_sticker.container.find(".sticker_gap"), 
+        active_sticker.ang;
+    }), stickers.savedata[sticker_id] = {
+        latlng: a,
+        text: d,
+        style: sticker_style,
+        ang: c || -1.037952439175508,
+        x: 72 * stickers.src[sticker_style].off
+    }, local_store_data(), sticker_id += 1, void 0 !== stickers.src[sticker_style].latlng && (sticker_style = null), 
+    can_i_store && !engaged_by_shift && (toggle_none(), toggle_stickers()), engaged_by_shift = !1;
+}
+
+function get_route_array() {
+    return poly.toGeoJSON().geometry.coordinates;
+}
+
+function update_overlays(a) {
+    km_marks.clearLayers();
+    var b, c, d, e, f, g, h = get_route_array(), i = poly.getLatLngs();
+    if (h.length > 0) if (b = h[0], c = h[h.length - 1], km_marks.addLayer(L.marker([ b[1], b[0] ], {
+        icon: L.divIcon({
+            html: '<div style="transform: scale(' + map.getZoom() / 13 + ');"><div class="arr_start"></div></div>',
+            className: "arr_mark"
+        })
+    })), h.length > 1) {
+        d = L.GeometryUtil.accumulatedLengths(poly), km_marks.addLayer(L.marker([ c[1], c[0] ], {
+            icon: L.divIcon({
+                html: Math.round(d[d.length - 1] / 1e3) + "&nbsp;км",
+                className: "end_mark"
+            })
+        })), $("#text_route_length").text(Math.round(d[d.length - 1] / 1e3) + "км");
+        for (var e = 1; e < i.length; e += 1) f = L.GeometryUtil.bearing(i[e - 1], i[e]), 
+        g = middle_latlng(i[e], i[e - 1]), findDistance(i[e - 1].lat, i[e - 1].lng, i[e].lat, i[e].lng) > 1 && km_marks.addLayer(L.marker([ g.lat, g.lng ], {
+            icon: L.divIcon({
+                html: '<div style="transform: scale(' + map.getZoom() / 13 + ');"><img src="misc/arr.png" style="transform: translateX(-4px) translateY(-4px) rotate(' + (270 + f) + 'deg);"></div>',
+                className: "arr_mark"
+            })
+        }));
+    } else $("#text_route_length").text("0 км");
+    local_store_data();
+}
+
+function local_store_data() {
+    if (store && can_i_store && can_i_edit) {
+        var a = poly.getLatLngs(), b = [], c = [], d = [];
+        $.each(a, function(a, c) {
+            b.push({
+                lat: c.lat,
+                lng: c.lng
+            });
+        }), $.each(point_array.savedata, function(a, b) {
+            c.push(b);
+        }), $.each(stickers.savedata, function(a, b) {
+            d.push(b);
+        }), localStorage.setItem("route", JSON.stringify(b)), localStorage.setItem("points", JSON.stringify(c)), 
+        localStorage.setItem("stickers", JSON.stringify(d)), void 0 !== current_map_style && current_map_style && localStorage.setItem("map_style", current_map_style), 
+        void 0 !== current_logo && localStorage.setItem("logo", current_logo);
+    }
+}
+
+function remote_store_data(a) {
+    $("#sub_plank_remote_store").removeClass("success error renaming overwriting").addClass("storing");
+    var b = get_token(), c = poly.getLatLngs(), d = [], e = [], f = [];
+    $.each(c, function(a, b) {
+        d.push({
+            lat: b.lat,
+            lng: b.lng
+        });
+    }), $.each(point_array.savedata, function(a, b) {
+        e.push(b);
+    }), $.each(stickers.savedata, function(a, b) {
+        var c = {
+            ang: b.ang,
+            latlng: {},
+            style: b.style,
+            text: b.text,
+            x: b.x
+        };
+        f.push(c), Array.isArray(b.latlng) ? c.latlng = {
+            lat: b.latlng[0],
+            lng: b.latlng[1]
+        } : c.latlng = {
+            lat: b.latlng.lat,
+            lng: b.latlng.lng
+        };
+    }), $.post("/engine/auth.php", {
+        action: "store",
+        logo: current_logo,
+        route: d,
+        points: e,
+        stickers: f,
+        id: b.id,
+        token: b.token,
+        name: $("#store_name").val(),
+        force: a,
+        map_style: current_map_style
+    }, function(a) {
+        a.success ? (void 0 !== a.description && a.description && $("#store_status").text(a.description), 
+        $("#sub_plank_remote_store").removeClass("error recheck storing renaming overwriting").addClass("success"), 
+        $("#store_name").val(a.name), update_store_url(), check_token()) : ($("#sub_plank_remote_store").removeClass("error recheck success storing renaming overwriting"), 
+        void 0 !== a.description && a.description && $("#store_status").text(a.description), 
+        void 0 !== a.mode && a.mode && ($("#sub_plank_remote_store").addClass("error " + a.mode), 
+        "recheck" === a.mode && check_token(), $("#store_name").focus()));
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "remote_store_data"), $("#store_status").text("Произошла ошибка, и мы записали её в журнал. Пожалуйста, свяжитесь с нами для её исправления."), 
+        $("#sub_plank_remote_store").removeClass("storing success renaming overwriting").addClass("error");
+    });
+}
+
+function report_xhr_error(a, b) {
+    $.get("/engine/report_error.php", {
+        readyState: a.readyState,
+        responseText: a.responseText,
+        status: a.status,
+        statusText: a.statusText,
+        url: "/engine/auth.php",
+        function: b
+    }, "json");
+}
+
+function gen_guest_token(a) {
+    a = "function" == typeof a && a ? a : null, $.get("/engine/auth.php", {
+        action: "gen_guest_token"
+    }, function(b) {
+        set_token(b.id, b.token, b.role), 0 === $("#store_name").val().length && void 0 !== b.random_url && ($("#store_name").val(b.random_url), 
+        update_store_url()), check_token(a);
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "gen_guest_token");
+    });
+}
+
+function check_token(a) {
+    a = "function" == typeof a && a ? a : null;
+    var b, c = get_token();
+    void 0 !== c.id && c.id && void 0 !== c.token && c.token ? $.get("/engine/auth.php", {
+        action: "check_token",
+        id: c.id,
+        token: c.token,
+        last_message: get_cookie("last_message")
+    }, function(d) {
+        d.success ? (0 === $("#store_name").val().length && void 0 !== d.random_url && ($("#store_name").val(d.random_url), 
+        update_store_url()), "guest" == d.role ? ($("#user_login_logged").hide(), $("#user_login_unauthorized").show(), 
+        $(".btn-places").removeClass("enabled").addClass("inactive"), $("#place_left_slide").removeClass("can_comment")) : (d.userdata.photo && $(".field_user_avatar").css("background-image", "url('" + d.userdata.photo + "')"), 
+        $(".btn-places").removeClass("inactive").addClass("enabled"), $(".field_user_id").html('<span class="fa fa-vk"></span> <b>' + c.id.replace("vk:", "") + "</b>"), 
+        $(".field_user_name").text(d.userdata.name), $("#user_login_unauthorized").hide(), 
+        $("#user_login_logged").show(), $("#place_left_slide").addClass("can_comment")), 
+        $("#user_route_list").html(""), $("#menu_user_route_count").hide(), d.routes_count > 0 ? ($("#menu_user_routes_item").addClass("not_empty"), 
+        $("#menu_user_route_count").show().text(d.routes_count), $("#editor_left_slide").addClass("not_empty"), 
+        $.each(d.routes, function(a, b) {
+            $("#user_route_list").append('<div class="menu-item route_item" data-route="' + b.id + '"><a></a><div class="fa fa-trash-o route_list_delete"></div><i class="fa fa-file"></i><b>' + b.id + '</b><br><small class="gray">' + b.created + "</small></div>");
+        }), $(".route_list_delete").bind("click", function(a) {
+            var b = $(a.target).parent();
+            b.hasClass("confirm") ? (remote_drop_route(b.data("route")), b.remove()) : b.addClass("confirm");
+        }), $(".route_item a").bind("click", function(a) {
+            editor_load($(a.target).parent().data("route"));
+        }), (b < $("#user_route_list .menu-item").length || d.routes.length < d.routes_count) && $("#user_route_more").show()) : ($("#menu_user_route_count").text(""), 
+        $("#editor_left_slide").removeClass("not_empty")), d.new_messages > 0 && $("#menu_user_chat_count").text(d.new_messages).addClass("active"), 
+        d.place_types && (place_types = d.place_types, $("#place_type_options").html(""), 
+        $("#places-view-checkboxes").html(""), $.each(d.place_types, function(a, b) {
+            $("#place_type_options").append('<div class="place-type-' + a + '" data-pick="' + a + '" onclick="place_change_type(event);">' + b + "</div>"), 
+            $("#places-view-checkboxes").append('<label for="places-toggle-' + a + '"><input type="checkbox" class="checkbox-type-' + a + '" id="places-toggle-' + a + '" data-type="' + a + '">' + b + "</label>"), 
+            $("#places-view-checkboxes .checkbox-type-" + a).on("change", function() {
+                select_place_type(event, a);
+            });
+        })), place_types_selected = "undefined" != typeof localStorage ? localStorage.getItem("place_types") ? localStorage.getItem("place_types").split(",") : [ "favs", "building", "nature", "cult" ] : [ "favs" ], 
+        $.each(place_types_selected, function(a, b) {
+            $(".checkbox-type-" + b).attr("checked", !0);
+        }), places_show = "undefined" != typeof localStorage && localStorage.getItem("places_show") ? localStorage.getItem("places_show").split(",") : [ 1, 1 ], 
+        decide_toggle_places(), a && a()) : gen_guest_token(a);
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "check_token");
+    }) : gen_guest_token();
+}
+
+function set_token(a, b, c) {
+    if (store) localStorage.setItem("user_id", a), localStorage.setItem("user_token", b), 
+    localStorage.setItem("user_role", c); else {
+        var d = new Date(new Date().getTime() + 14089e6);
+        document.cookie = "user_id=" + a + "; path=/; expires=" + d.toUTCString(), document.cookie = "user_token=" + b + "; path=/; expires=" + d.toUTCString(), 
+        document.cookie = "user_role=" + c + "; path=/; expires=" + d.toUTCString();
+    }
+}
+
+function get_token() {
+    var a, b, c;
+    return store ? (a = localStorage.getItem("user_id"), b = localStorage.getItem("user_token"), 
+    c = localStorage.getItem("user_role")) : (a = get_cookie("user_id"), b = get_cookie("user_token"), 
+    c = get_cookie("user_role")), {
+        id: a,
+        token: b,
+        role: c
+    };
+}
+
+function get_cookie(a) {
+    var b = document.cookie.match(new RegExp("(?:^|; )" + a.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/gi, "\\$1") + "=([^;]*)"));
+    return b ? decodeURIComponent(b[1]) : void 0;
+}
+
+function set_cookie(a, b) {
+    var c = new Date(new Date().getTime() + 14089e6);
+    document.cookie = a + "=" + b + "; path=/; expires=" + c.toUTCString();
+}
+
+function redraw_map() {
+    var a = {
+        center: map.getCenter(),
+        zoom: map.getZoom(),
+        poly: poly.getLatLngs(),
+        km_marks: km_marks
+    };
+    map.setZoom(a.zoom).panTo(a.center), map_layer.remove(), map_layer = L.tileLayer(map_list[current_map_style], {
+        attribution: "Независимое Велосообщество",
+        maxNativeZoom: 18,
+        maxZoom: 18
+    }).addTo(map).redraw();
+}
+
+function set_logo(a) {
+    logos[a] || (a = "default", console.log("it happened!")), $(".logo_select_list").html(null), 
+    $.each(logos, function(b, c) {
+        $(".logo_select_list").append("<div" + (b === a ? ' class="active"' : "") + " onclick=\"set_logo('" + b + "')\">" + c[0] + "</div>");
+    }), current_logo = a, $("#logo_container").html('<img src="' + logos[a][1] + '">'), 
+    $("#logo_composer").removeClass("top-right top-left bottom-right bottom-left active").addClass(logos[a][2]).css("background-image", "url(" + logos[a][1] + ")"), 
+    $("#sub_plank_select_logo").removeClass("active"), set_crop_logo(a), update_overlays();
+}
+
+function toggle_route_drop(a) {
+    $(".sub_plank").removeClass("active"), $("#sub_plank_route_drop").addClass("active"), 
+    mode = "route_drop_dialog", $("#map").removeClass("cross");
+}
+
+function toggle_shot() {
+    "shot_dialog" !== mode ? (toggle_none(), $("#sub_plank_shot_size").addClass("active"), 
+    btn_toggle(".btn-publish"), mode = "shot_dialog") : make_a_shot();
+}
+
+function reverse_route() {
+    if (void 0 !== poly && poly) {
+        var a = poly.getLatLngs();
+        a.reverse(), poly.setLatLngs(a), update_overlays();
+    }
+}
+
+function btn_toggle(a) {
+    $("#plank .btn").removeClass("active"), void 0 !== a && $(a).addClass("active");
+}
+
+function route_state(a) {
+    "active" === a ? (clear_router(), btn_toggle(".btn-poly"), $(".sub_plank").removeClass("active"), 
+    $("#sub_plank_route").addClass("active"), poly || (poly = map.editTools.startPolyline(), 
+    poly.setStyle({
+        color: "#ff3333",
+        weight: "5"
+    })), poly.editor.enable(), poly.editor.continueForward(), force_stop = !1, mode = "route") : ($(".sub_plank").removeClass("active"), 
+    force_stop = !0, poly.editor.endDrawing(), poly.editor.disable(), force_stop = !1, 
+    btn_toggle(), mode = "none");
+}
+
+function toggle_route(a) {
+    route_state("route" !== mode ? "active" : "off");
+}
+
+function drop_route() {
+    clear_router(), poly && (poly.remove(), poly = map.editTools.startPolyline(), poly.setStyle({
+        color: "#ff3333",
+        weight: "5"
+    }), poly.editor.disable(), "route" === mode ? (toggle_none(), toggle_route()) : toggle_none(), 
+    toggle_none(), $("#text_route_length").text("0 км"), update_overlays());
+}
+
+function drop_stickers() {
+    $.each(stickers.objects, function(a, b) {
+        delete stickers.layer_to_object[b._leaflet_id], delete stickers.objects[a], delete stickers.savedata[a], 
+        map.removeLayer(b);
+    });
+}
+
+function drop_points() {
+    point_array.points.clearLayers(), point_array.vectors.clearLayers(), $.each(point_array.pairs, function(a, b) {
+        delete point_array.pairs[a];
+    }), $.each(point_array.point_to_id, function(a, b) {
+        delete point_array.point_to_id[a];
+    }), $.each(point_array.savedata, function(a, b) {
+        delete point_array.savedata[a];
+    });
+}
+
+function point_state(a) {
+    "active" === a ? (route_state("off"), btn_toggle(".btn-point"), mode = "point", 
+    $("#map").addClass("cross")) : (btn_toggle(), mode = "none");
+}
+
+function toggle_stickers() {
+    $(".sub_plank").removeClass("active"), "sticker" === mode ? ($("#sub_plank_stickers").addClass("active"), 
+    route_state("off"), btn_toggle(".btn-sticker")) : "sticker_dialog" !== mode ? (mode = "sticker_dialog", 
+    btn_toggle(".btn-sticker"), $("#sub_plank_stickers").addClass("active")) : toggle_none();
+}
+
+function toggle_places_add() {
+    enable_places(), $(".btn-places").hasClass("enabled") && ("placing" === mode ? ($("#sub_plank_places").removeClass("active"), 
+    $(".btn-places").removeClass("active"), toggle_none(), mode = "none") : ($("#sub_plank_places").addClass("active"), 
+    $(".btn-places").addClass("active"), mode = "placing", $("#map").addClass("cross")));
+}
+
+function toggle_store() {
+    $(".sub_plank").removeClass("active"), "store_dialog" !== mode ? (toggle_none(), 
+    mode = "store_dialog", $("#sub_plank_remote_store").removeClass("success recheck storing renaming overwriting"), 
+    $("#sub_plank_remote_store h2").text(phrases[Math.floor(Math.random() * phrases.length)]), 
+    $("#sub_plank_remote_store").addClass("active"), $("#store_name").focus(), $("#store_status").text("Вы можете задать своё название маршрута, а значит и адрес, по которому он будет доступен.")) : (toggle_none(), 
+    console.log(mode));
+}
+
+function toggle_point() {
+    point_state("point" !== mode ? "active" : "off");
+}
+
+function toggle_none() {
+    clearTimeout(tile_iterator), mode = "none", point_state("off"), route_state("off"), 
+    $(".sub_plank").removeClass("active"), $("#crop_image").cropper("destroy"), $(".crop_canvas").removeClass("active"), 
+    $("#image_cropper").hide(), $("#logo_composer").removeClass("active"), $("#map").removeClass("cross");
+}
+
+function toggle_map() {
+    "map" === mode ? ($(".btn").removeClass("active"), toggle_none()) : (point_state("off"), 
+    route_state("off"), $(".sub_plank").removeClass("active"), $("#sub_plank_map").addClass("active"), 
+    $(".btn").removeClass("active"), $(".btn-map").addClass("active"), mode = "map");
+}
+
+function toggle_crop() {
+    "crop" === mode ? toggle_none() : ($(".sub_plank").removeClass("active"), $("#sub_plank_crop").addClass("active"), 
+    mode = "crop");
+}
+
+function key_up(a) {
+    $("#sub_plank_stickers").hasClass("preview") && $("#sub_plank_stickers").removeClass("preview active");
+}
+
+function key_down(a) {
+    var b;
+    if (can_i_edit) {
+        if (($(a.target).is("input") || $(a.target).is("textarea")) && 27 !== a.keyCode && 13 !== a.keyCode) return;
+        if (a.shiftKey && "none" === mode && $("#sub_plank_stickers").addClass("preview active"), 
+        88 === a.keyCode) {
+            if (!1 === map.editTools._drawingEditor) return;
+            redoBuffer.length && map.editTools._drawingEditor.push(redoBuffer.pop()), update_overlays(a);
+        } else if (27 === a.keyCode || 13 === a.keyCode) $(a.target).is("input") || $(a.target).is("textarea") ? 13 === a.keyCode && $(a.target).is("textarea") || $(a.target).blur() : "routing" == mode && router.A && router.B && 13 === a.keyCode ? apply_route() : ($("#editor_left_slide").removeClass("active"), 
+        close_chat(), close_place(), $("#store_helper").hide(), clear_router(), toggle_none()); else if (46 !== a.keyCode || $(a.target).is("input") || $(a.target).is("textarea")) if (90 === a.keyCode) {
+            if (!map.editTools._drawingEditor) return;
+            redo_latlng = map.editTools._drawingEditor.pop(), redo_latlng && redoBuffer.push(redo_latlng), 
+            update_overlays(a);
+        } else 81 === a.keyCode ? toggle_routing() : 87 === a.keyCode ? route_state("active") : 69 === a.keyCode ? point_state("active") : 82 === a.keyCode ? toggle_stickers() : 84 === a.keyCode ? toggle_map() : 89 === a.keyCode ? $("#sub_plank_select_logo").toggleClass("active") : 85 === a.keyCode ? make_a_shot() : (a.keyCode <= 57 && a.keyCode >= 49 || 48 === a.keyCode) && a.shiftKey && (b = 48 === a.keyCode ? 39 : 49, 
+        sticker_style = parseInt(a.keyCode) - b, stickers.src[sticker_style].latlng && (engaged_by_shift = !0, 
+        map.setView(stickers.src[sticker_style].latlng, map.getZoom(), {
+            animate: !0,
+            pan: {
+                duration: .5
+            }
+        }), add_sticker(stickers.src[sticker_style].latlng))); else "route_drop_dialog" === mode ? (drop_route(), 
+        drop_stickers(), drop_points(), clear_router(), update_overlays()) : toggle_route_drop();
+    } else 27 === a.keyCode && ($("#store_helper").hide(), $(a.target).is("input") || $(a.target).is("textarea") ? (console.log(a.target), 
+    13 === a.keyCode && $(a.target).is("textarea") || $(a.target).blur()) : ($("#editor_left_slide").removeClass("active"), 
+    close_chat(), close_place(), toggle_none()));
+}
+
+function pan_zoom() {
+    map && poly && void 0 !== poly.getBounds() && map.fitBounds(poly.getBounds(), {
+        padding: [ 10, 10 ]
+    });
+}
+
+function get_tile_placement() {
+    var a = $("#map").width(), b = $("#map").height(), c = latlng_to_tile(map.getBounds()._southWest), d = latlng_to_tile(map.getBounds()._northEast), e = tile_to_latlng(c), f = (tile_to_latlng(d), 
+    map.latLngToContainerPoint(e)), g = map.latLngToContainerPoint(map.getBounds()._southWest);
+    return {
+        min_x: c.x,
+        min_y: d.y,
+        max_x: d.x,
+        max_y: c.y,
+        sh_x: f.x - g.x,
+        sh_y: b + f.y - g.y,
+        size: 256,
+        width: a,
+        height: b,
+        zoom: map.getZoom(),
+        provider: current_map_style
+    };
+}
+
+function set_crop_logo(a) {
+    logos[a] || (a = "default", console.log("On crop logo")), current_logo = a, store && localStorage.setItem("logo", a), 
+    $("#logo_select_list").html(null), $.each(logos, function(a, b) {
+        $("#logo_select_list").append("<div" + (a === current_logo ? ' class="active"' : "") + " onclick=\"set_crop_logo('" + a + "')\">" + b[0] + "</div>");
+    }), $("#crop_image_logo").html('<img src="' + logos[current_logo][1] + '">'), $("#crop_image_logo img").addClass(logos[current_logo][2]).css("transform", "scale(" + parseFloat(parseInt($("#crop_image_canvas").width()) / $(window).width()) + ")");
+}
+
+function make_a_shot(a) {
+    mode = "prefetching", $("#sk-status").text("ЗАГРУЗКА"), $(".sub_plank").removeClass("active"), 
+    $("#sub_plank_shot").addClass("active"), $("#image_cropper").show(), tiles = {
+        raw: [],
+        loaded: 0
+    };
+    var b, c, d = get_tile_placement();
+    for (b = d.min_x; b <= d.max_x; b++) for (c = d.min_y; c <= d.max_y; c++) tiles.raw.push({
+        x: b,
+        y: c,
+        provider: d.provider,
+        z: d.zoom,
+        charged: null,
+        loaded: !1
+    });
+    image_prefetcher(a);
+}
+
+function image_prefetcher(a) {
+    $("#shot_status_text").html("Подгружаем тайлы (" + tiles.loaded + "/" + tiles.raw.length + ")"), 
+    $("#shot_status_bar span").stop().animate({
+        width: tiles.loaded / tiles.raw.length * 85 + "%"
+    }, 150);
+    for (var b = 0, d = 0; d < tiles.raw.length; d++) {
+        var e = tiles.raw[d];
+        b < tile_max_flows && !1 === e.loaded && (Date.now() - e.charged > 1e4 && (e.charged = Date.now(), 
+        $.get("/engine/prefetch.php", {
+            url: e,
+            index: d
+        }, function(a) {
+            a.success ? (c = tiles.raw[a.index], c.loaded = !0, tiles.loaded += 1) : console.log(a.error);
+        }, "json").fail(function(a, b, c) {
+            report_xhr_error(a, "image_prefetcher");
+        })), b++);
+    }
+    tile_iteration++, tiles.raw.length <= tiles.loaded || tile_iteration >= tile_max_iterations ? (image_composer(tiles.raw, a), 
+    clearTimeout(tile_iterator)) : tile_iterator = setTimeout(image_prefetcher, 100);
+}
+
+function image_composer(a, b) {
+    $("#sk-status").text("ОТРИСОВКА"), mode = "composing", $("#shot_status_text").html("Обработка на сервере"), 
+    $("#shot_status_bar span").css("width", "85%").animate({
+        width: "97%"
+    }, 3e3), active_tile_pan = null, $.each($(".leaflet-tile-container"), function(a, b) {
+        trans = $(b).css("transform"), trans.match(/^matrix\(1\,/) && (active_tile_pan = trans);
+    }), $.post("/engine/composer.php", {
+        tiles: a.raw,
+        path: new_prepare_route(),
+        points: new_prepare_dots(),
+        stickers: new_prepare_stickers(),
+        placement: get_tile_placement(),
+        size: [ parseInt($("#map").width()), parseInt($("#map").height()) ]
+    }, function(a) {
+        a.success && "composing" === mode && ($("#image_cropper .crop_canvas").addClass("active"), 
+        $("#shot_status_text").html("Готово!"), $("#shot_status_bar span").stop().css("width", "100%"), 
+        $("#crop_image_canvas").css("height", $(".crop_pan").height()), $("#crop_image_canvas").html('<img id="crop_image" src="" style="max-width:100%;max-height:100%;">'), 
+        $("#crop_image").one("load", function() {
+            setTimeout(function() {
+                $("#crop_image").show().css("opacity", 1), $("#crop_image").cropper({
+                    viewMode: 3,
+                    zoomable: !1,
+                    scalable: !1,
+                    rotatable: !1,
+                    ready: function() {
+                        $("#crop_image").cropper("setData", {
+                            x: 0,
+                            y: 0,
+                            width: 2e3,
+                            height: 2e3
+                        }), $("#crop_image_canvas .cropper-crop-box").prepend("<div onclick=\"$('#logo_select_btn').toggleClass('active');\" id=\"crop_image_logo\"" + (void 0 !== logos[current_logo][2] ? ' class="' + logos[current_logo][2] + '"' : "") + "></div>"), 
+                        set_crop_logo(current_logo), toggle_crop();
+                    }
+                });
+            }, 300);
+        }).each(function() {
+            this.complete && $(this).load();
+        }), $("#crop_image").attr("src", a.image), $("#sub_plank_shot").removeClass("active"), 
+        $("#map").css("width", "100%").css("height", "100%"), setTimeout(function() {
+            map.invalidateSize(), map.panTo(map.getCenter());
+        }, 400));
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "image_composer");
+    });
+}
+
+function engage_cropper() {
+    geo = $("#crop_image").cropper("getData"), window.open("/engine/cropper.php?name=" + $("#store_name").val() + "&src=" + $("#crop_image").attr("src") + "&" + $.param({
+        geo: geo,
+        logo: [ current_logo, logos[current_logo][2] ]
+    }) + "&"), toggle_none();
+}
+
+function insert_vertex(a) {
+    if ($(a.originalEvent.target).is("path") && poly.editor._enabled) {
+        "editable:drawing:click" === a.type && a.cancel();
+        for (var b = poly.getLatLngs(), c = 1e4, d = [], e = 0; e < b.length - 1; e++) {
+            const f = a.latlng.lat, g = b[e].lat, h = b[e + 1].lat, i = a.latlng.lng, j = b[e].lng, k = b[e + 1].lng;
+            if ((g < h && f > g && f < h || g > h && f < g && f > h || g === h && Math.abs(f - g) > .001) && (j < k && i > j && i < k || j > k && i < j && i > k || j === k && Math.abs(i - j) > .001)) {
+                var l = h - g, m = k - j, n = f - g, o = i - j, p = Math.abs(l * o - n * m);
+                p < c && (c = p, d = [ e, e + 1 ]);
+            }
+        }
+        d.length > 1 && (poly.editor.disable(), b.splice(d[1], 0, a.latlng), poly.setLatLngs(b), 
+        poly.editor.initVertexMarkers(), poly.editor.enable());
+    } else redoBuffer = [], route_state("active");
+}
+
+function point(a, b) {
+    var c, d, e, f, g;
+    if (void 0 === a || Array.isArray(a)) {
+        if (!Array.isArray(a)) return;
+        c = parseFloat(a[0].lat), d = parseFloat(a[0].lng), e = parseFloat(a[1].lat), g = parseFloat(a[1].lng);
+    } else f = map.getZoom(), c = parseFloat(a.lat), d = parseFloat(a.lng), e = c + .032 / f, 
+    g = d + .032 / f;
+    pnt_id++;
+    var b = void 0 === typeof b ? "Точка " + pnt_id : b, h = '<div class="point_live" id="point_' + pnt_id + '"><div class="point_drop" onclick="point_drop(event, ' + pnt_id + ');"></div><div class="point_label" id="point_label_' + pnt_id + '">' + b + '--</div><input onkeyup="update_point_text(' + pnt_id + ');" type="text" value="' + b + '" id="point_input_' + pnt_id + '" class="point_input"></div>', i = L.divIcon({
+        html: h,
+        className: "mark"
+    }), j = L.marker([ e, g ], {
+        icon: i
+    }), k = L.polyline([ L.latLng(c, d), L.latLng(e, g) ], {
+        color: "#444444"
+    });
+    point_array.points.addLayer(j), point_array.vectors.addLayer(k), can_i_edit && (k.enableEdit(), 
+    k.editor.disable(), k.editor.options.skipMiddleMarkers = !0, k.editor.enable(), 
+    k.editor.skipMiddleMarkers = !0), point_array.pairs[k._leaflet_id] = j, point_array.savedata[k._leaflet_id] = {
+        latlngs: [ {
+            lat: c,
+            lng: d
+        }, {
+            lat: e,
+            lng: g
+        } ],
+        text: b
+    }, point_array.point_to_id[pnt_id] = k._leaflet_id, point_array.id_to_point[k._leaflet_id] = pnt_id, 
+    local_store_data(), j.on("click", function() {
+        return !1;
+    });
+}
+
+function point_drop(a, b) {
+    var c = point_array.point_to_id[b];
+    void 0 !== c && c > 0 && (point_array.pairs[c].remove(), delete point_array.pairs[c], 
+    point_array.vectors.getLayer(c).remove(), delete point_array.savedata[c], local_store_data());
+}
+
+function on_vertex_drag(a) {
+    var b = a.layer, c = point_array.pairs[b._leaflet_id];
+    if (void 0 !== c) {
+        var d = b.getLatLngs();
+        c.setLatLng(d[1]), d[0].lng < d[1].lng ? $("#point_" + point_array.id_to_point[b._leaflet_id]).removeClass("inverse") : $("#point_" + point_array.id_to_point[b._leaflet_id]).addClass("inverse"), 
+        point_array.savedata[b._leaflet_id].latlngs = [ {
+            lat: d[0].lat,
+            lng: d[0].lng
+        }, {
+            lat: d[1].lat,
+            lng: d[1].lng
+        } ], local_store_data();
+    }
+}
+
+function update_point_text(a) {
+    $("#point_label_" + a).html($("#point_input_" + a).val().replace(/\s/gi, "&nbsp;") + "-"), 
+    point_array.savedata[point_array.point_to_id[a]].text = $("#point_input_" + a).val(), 
+    local_store_data();
+}
+
+function change_map(a) {
+    current_map_style = a, map_layer.setUrl(map_list[a]), toggle_none(), update_overlays();
+}
+
+function publish_map() {
+    $("#shader").fadeIn();
+    var a = !!poly.editor.enabled();
+    a && poly.editor.disable(), redraw_map(), $(".leaflet-control-container").attr("data-html2canvas-ignore", "true"), 
+    setTimeout(function() {
+        new_publish_map(function() {
+            $("#shader").fadeOut(), a && poly.editor.enable();
+        });
+    }, 500);
+}
+
+function prepare_paths() {
+    return paths = [], $("path").each(function(a, b) {
+        paths.push({
+            path: $(b).attr("d"),
+            color: $(b).attr("stroke"),
+            width: $(b).attr("stroke-width")
+        });
+    }), paths;
+}
+
+function new_prepare_route() {
+    var a = [];
+    return $.each(poly.getLatLngs(), function(b, c) {
+        var d = map.latLngToContainerPoint(c);
+        a.push({
+            x: d.x,
+            y: d.y
+        });
+    }), {
+        path: a,
+        color: "#ff4433",
+        width: 5
+    };
+}
+
+function new_prepare_dots() {
+    var a = [];
+    return $.each(point_array.savedata, function(b, c) {
+        var d = map.latLngToContainerPoint(c.latlngs[0]), e = map.latLngToContainerPoint(c.latlngs[1]);
+        a.push({
+            latlngs: [ {
+                x: d.x,
+                y: d.y
+            }, {
+                x: e.x,
+                y: e.y
+            } ],
+            text: c.text
+        });
+    }), a;
+}
+
+function new_prepare_stickers() {
+    var a = [];
+    return $.each(stickers.savedata, function(b, c) {
+        var d = map.latLngToContainerPoint(c.latlng);
+        a.push({
+            latlng: {
+                x: d.x,
+                y: d.y
+            },
+            ang: c.ang,
+            style: c.style,
+            text: c.text,
+            x: c.x
+        });
+    }), a;
+}
+
+function prepare_dots() {
+    return markers = [], $(".mark").each(function(a, b) {
+        val = $(b).find(".point_input").val(), val = "undefined" != typeof val ? val : null, 
+        col = $(b).find(".point_live").css("backgroundColor"), col = "undefined" != typeof col ? col : null, 
+        matrix = $(b).css("transform").match(/(\s?\d+)\,(\s?\d+)\)$/), "undefined" != typeof matrix && matrix && matrix.length >= 2 && markers.push({
+            pos: [ matrix[1], matrix[2] ],
+            text: val,
+            color: col
+        });
+    }), markers;
+}
+
+function prepare_map() {
+    $("#map").css("width", "100%").css("height", "100%"), map = L.map("map", {
+        editable: !0,
+        layers: [ points, km_marks, point_array.points, point_array.vectors, stickers.layers ]
+    }).setView([ 55.0153275, 82.9071235 ], 13), map.doubleClickZoom.disable(), map_layer = L.tileLayer(map_list[current_map_style], {
+        attribution: "Независимое Велосообщество",
+        maxNativeZoom: 18,
+        maxZoom: 18
+    }).addTo(map), places_layer = L.markerClusterGroup({
+        maxClusterRadius: 20
+    }), poly = map.editTools.startPolyline(), poly.setStyle({
+        color: "#ff3333",
+        weight: "5"
+    }), poly.editor.options.skipMiddleMarkers = !0, poly.editor.disable(), map.on("click", function(a) {
+        console.log("mapClick"), "click" === a.type && can_i_edit && !is_dragged ? (L.DomEvent.preventDefault(a), 
+        "map" === $(a.originalEvent.target).attr("id") && ("point" === mode ? point(a.latlng, "Точка") : "sticker" === mode || "sticker_dialog" === mode && sticker_style ? add_sticker(a.latlng) : "routing" === mode ? update_router(a) : "placing" === mode && add_place(a.latlng))) : is_dragged = !1;
+    }), map.editTools.addEventListener("editable:drawing:mouseup", update_overlays), 
+    map.editTools.addEventListener("editable:vertex:dragend", update_overlays), map.editTools.addEventListener("editable:vertex:deleted", function(a) {
+        console.log("deleted", a), poly.editor.continueForward(), update_overlays(a);
+    }), map.editTools.addEventListener("editable:drawing:click", insert_vertex), map.editTools.addEventListener("editable:drawing:clicked", update_overlays), 
+    map.editTools.addEventListener("editable:vertex:drag", on_vertex_drag), map.editTools.addEventListener("editable:vertex:dragstart", function(a) {
+        km_marks.clearLayers();
+    }), map.on("zoom", function(a) {
+        $(".arr_mark >div").css("transform", "scale(" + map.getZoom() / 13 + ")");
+    }), L.DomEvent.addListener(document, "keydown", key_down, map), L.DomEvent.addListener(document, "keyup", key_up, map), 
+    original_bounds = map.getBounds()._southWest, original_shift = tile_to_latlng(latlng_to_tile(original_bounds));
+}
+
+function show_places() {
+    token = get_token(), clear_all_places(), places_layer.addTo(map), $.get("/engine/auth.php", {
+        action: "places_get",
+        id: token.id,
+        token: token.token,
+        filter: place_types_selected
+    }, function(a) {
+        a.success && (clear_all_places(), $.each(a.places, function(a, b) {
+            place(b.lat, b.lng, b.id, b.title, b.type, b.owned);
+        }));
+    }, "json").fail(function(a, b, c) {});
+}
+
+function clear_all_places() {
+    places_layer.clearLayers(), $.each(places, function(a, b) {
+        drop_place(a);
+    });
+}
+
+function hide_places() {
+    places_layer.clearLayers().removeFrom(map);
+}
+
+function place(a, b, c, d, e, f) {
+    if (void 0 !== c) {
+        var g = '<div id="place-' + c + '" data-id="' + c + '" class="type-' + e + '" onclick="click_place(event);"><span></span><b>' + d + "</b></div>", h = L.divIcon({
+            html: g,
+            className: "place"
+        }), i = L.marker(new L.latLng(a, b), {
+            editable: !0,
+            icon: h
+        });
+        i.on("dragend", function(a) {
+            console.log("m moved to: " + i.getLatLng(), a.target._latlng), active_place == places_lids[a.target._leaflet_id] && ($("#place-input-lat").val(a.target._latlng.lat), 
+            $("#place-input-lng").val(a.target._latlng.lng)), setTimeout(function() {
+                $("#place-" + c).addClass("active");
+            }, 100);
+        }), places_objects[c] = i, places[c] = {
+            title: d,
+            type: e,
+            lat: a,
+            lng: b,
+            owned: f,
+            loaded: !1
+        }, places_layer.addLayer(i), places_lids[i._leaflet_id] = c;
+    }
+}
+
+function click_place(a) {
+    target = $(a.target), target.data("id") && show_place(target.data("id"));
+}
+
+function show_place(a, b) {
+    if (b = !(void 0 === b || !b) && b, place_stop_editing(), active_place > 0 && (places_objects[active_place].disableEdit(), 
+    $("#place-" + active_place).removeClass("active")), void 0 === places[a] || !places[a]) return void load_single_place(a, function() {
+        show_place(a);
+    });
+    active_place = a, close_chat(), $("#store_helper").hide(), !0 === places[active_place].owned ? $("#place_left_slide").addClass("can_edit").removeClass("cannot_edit") : $("#place_left_slide").removeClass("can_edit").addClass("cannot_edit"), 
+    $("div#place-" + a).length <= 0 ? (map.once("moveend zoomend", function() {
+        $("#place-" + active_place).addClass("active");
+    }), map.setView(places_objects[active_place].getLatLng(), 17)) : (map.setView(places_objects[active_place].getLatLng()), 
+    $("#place-" + active_place).addClass("active")), $("#place_left_slide").addClass("active loading"), 
+    load_place_data(a, b);
+}
+
+function load_single_place(a, b) {
+    token = get_token(), void 0 !== places[a] || places[a] || $.get("/engine/auth.php", {
+        action: "load_single_place",
+        id: token.id,
+        token: token.token,
+        filter: place_types_selected,
+        place: a
+    }, function(a) {
+        a.success && (place(parseFloat(a.places.lat), parseFloat(a.places.lng), parseInt(a.places.id), a.places.title, a.places.type, a.places.owned), 
+        "function" == typeof b && b());
+    }, "json").fail(function(a, b, c) {});
+}
+
+function place_toggle_editing() {
+    $("#place_left_slide").hasClass("editing") ? place_stop_editing() : place_start_editing();
+}
+
+function place_start_editing() {
+    if (!active_place || void 0 === places[active_place] || !places[active_place] || !places[active_place].owned) return void console.log("U can't edit me!");
+    places_objects[active_place].enableEdit(), $("#place_left_slide").addClass("editing"), 
+    $("#place-input-title").focus(), $("#place_type_options").removeClass("expanded"), 
+    check_input_desc(), check_input_title();
+}
+
+function place_stop_editing() {
+    active_place && places_objects[active_place].disableEdit(), $("#place_left_slide").removeClass("editing");
+}
+
+function close_place() {
+    active_place && ($("#place_left_slide").hasClass("editing") ? place_stop_editing() : ($("#place-" + active_place).removeClass("active"), 
+    $("#place_left_slide").removeClass("active"), places_objects[active_place].disableEdit(), 
+    active_place = 0));
+}
+
+function load_place_data(a, b) {
+    b = !(void 0 === b || !b) && b, place_loading = a, $.get("/engine/auth.php", {
+        action: "place_get_info",
+        place: a,
+        id: token.id,
+        token: token.token
+    }, function(a) {
+        if (a.success && a.place.id == place_loading) {
+            if ($("#place_title").html(a.place.title), $("#place_owner").html(a.place.owner_name), 
+            $("#place_description").html(a.place.desc.replace(/\n/gi, "<br />")), $("#place_left_slide").removeClass("loading"), 
+            a.place.uuid && a.place.filename ? $("#place_thumb").removeClass("no_thumb").css("background-image", "url(/misc/thumbs/" + a.place.uuid + "/" + a.place.filename) : $("#place_thumb").addClass("no_thumb").css("background-image", "none"), 
+            $("#place_thumb").removeClass("upload_started upload_success upload_error"), $("#place-input-title").val(a.place.title), 
+            $("#place-input-desc").val(a.place.desc.replace(/\<br \/\>/gi, "\n")), $("#place-input-lat").val(a.place.lat), 
+            $("#place-input-lng").val(a.place.lng), $("#place_type_options > div").removeClass("active"), 
+            $("div.place-type-" + a.place.type).addClass("active"), $("#place-input-type").val(a.place.type), 
+            $("#place_history").find(".chat_msg").remove(), a.comments && a.comments.length > 0) for (var c = 0; c < a.comments.length; c++) $("#place_history_buffer").after(a.comments[c]);
+            update_uploader(), b && place_start_editing();
+        } else $("#place_left_slide").removeClass("active loading");
+    }, "json").fail(function(a, b, c) {
+        $("#place_left_slide").removeClass("active loading");
+    });
+}
+
+function place_change_type(a) {
+    pick = $(a.target).data("pick"), $("#place_type_options > div").removeClass("active"), 
+    $("div.place-type-" + pick).addClass("active"), $("#place-input-type").val(pick);
+}
+
+function save_place_data() {
+    if (token = get_token(), active_place && places[active_place] && places[active_place].owned && "guest" !== role && place_check_input()) {
+        places[active_place].title = $("#place-input-title").val().substr(0, 64), places[active_place].desc = $("#place-input-desc").val().substr(0, 400).replace("<", "&lt;").replace("<", "&gt;").replace(/\n/gi, "<br />"), 
+        places[active_place].type = $("#place-input-type").val(), places[active_place].lat = $("#place-input-lat").val(), 
+        places[active_place].lng = $("#place-input-lng").val(), $("#place_title").html($("#place-input-title").val().substr(0, 64)), 
+        $("#place_description").html($("#place-input-desc").val().substr(0, 400).replace("<", "&lt;").replace("<", "&gt;").replace(/\n/gi, "<br />"));
+        var a = places[active_place];
+        drop_place(active_place), console.log(a), place(a.lat, a.lng, active_place, a.title, a.type, a.owned), 
+        $("#place-" + active_place).addClass("active"), $.get("/engine/auth.php", {
+            action: "place_set_info",
+            place: active_place,
+            id: token.id,
+            token: token.token,
+            title: $("#place-input-title").val().substr(0, 64),
+            desc: $("#place-input-desc").val().substr(0, 400),
+            type: $("#place-input-type").val(),
+            lat: $("#place-input-lat").val(),
+            lng: $("#place-input-lng").val()
+        }, function(a) {}, "json").fail(function(a, b, c) {}), place_stop_editing();
+    }
+}
+
+function add_place(a) {
+    place(a.lat, a.lng, 0, "...", "none", !0), lock_map(), can_i_edit = !1, $.get("/engine/auth.php", {
+        action: "place_add",
+        lat: a.lat,
+        lng: a.lng,
+        id: token.id,
+        token: token.token
+    }, function(a) {
+        a.success ? (place(a.place.lat, a.place.lng, a.place.id, "...", "none", !0), drop_place(0), 
+        can_i_edit = !0, unlock_map(), show_place(a.place.id, !0)) : (console.log("Ошибка добавления места (php): ", a), 
+        drop_place(0), can_i_edit = !0, unlock_map());
+    }, "json").fail(function(a, b, c) {
+        console.log("Ошибка добавления места (xhr): ", a), drop_place(0), can_i_edit = !0, 
+        unlock_map();
+    });
+}
+
+function drop_place(a) {
+    void 0 !== places_objects[a] && void 0 !== places_lids[places_objects[a]._leaflet_id] && (places_layer.removeLayer(places_objects[a]), 
+    delete places_lids[places_objects[a]._leaflet_id]), void 0 !== places[a] && delete places[a];
+}
+
+function lock_map() {
+    map.dragging.disable(), map.touchZoom.disable(), map.scrollWheelZoom.disable(), 
+    map.boxZoom.disable(), map.keyboard.disable(), map.tap && map.tap.disable(), document.getElementById("map").style.cursor = "default";
+}
+
+function unlock_map() {
+    map.dragging.enable(), map.touchZoom.enable(), map.scrollWheelZoom.enable(), map.boxZoom.enable(), 
+    map.keyboard.enable(), map.tap && map.tap.enable(), document.getElementById("map").style.cursor = "grab";
+}
+
+function enable_editor() {
+    if ($("body").addClass("is_editing"), "#editor" !== location.hash) return location.hash = "editor", 
+    !0;
+    $("#left_plank").removeClass("active"), poly.getLatLngs().length <= 0 && Object.keys(stickers.objects).length <= 0 && Object.keys(point_array.point_to_id).length <= 0 && local_recover_data(), 
+    $.each(stickers.objects, function(a, b) {
+        b.enableEdit(), $("#sticker_" + stickers.layer_to_object[b._leaflet_id]).addClass("sticker_editable");
+    }), $.each(point_array.vectors.getLayers(), function(a, b) {
+        l = point_array.vectors.getLayer(b._leaflet_id), l.enableEdit(), l.editor.disable(), 
+        l.editor.options.skipMiddleMarkers = !0, l.editor.enable(), l.editor.skipMiddleMarkers = !0;
+    }), parseInt($(window).width()) >= 600 && $("#plank").addClass("active"), $("#editor_left_plank").addClass("active"), 
+    update_overlays(), can_i_edit = !0, can_i_store = !0, store && !localStorage.getItem("hello") && ($("#plank_hello").addClass("active"), 
+    localStorage.setItem("hello", 1)), decide_toggle_places();
+}
+
+function disable_editor() {
+    $("body").removeClass("is_editing"), $("#left_plank").addClass("active"), toggle_none(), 
+    update_overlays(), poly.editor.disable(), $("#plank").removeClass("active"), $("#editor_left_plank").removeClass("active"), 
+    can_i_edit = !1, $.each(stickers.objects, function(a, b) {
+        b.disableEdit(), $("#sticker_" + stickers.layer_to_object[b._leaflet_id]).removeClass("sticker_editable");
+    }), $.each(point_array.vectors.getLayers(), function(a, b) {
+        point_array.vectors.getLayer(b._leaflet_id).disableEdit();
+    }), decide_toggle_places();
+}
+
+function createButton(a, b, c) {
+    var d = L.DomUtil.create("button", c, b);
+    return d.setAttribute("type", "button"), d.innerHTML = a, d;
+}
+
+function update_store_url(a) {
+    var b = translit($("#store_name").val().replace(/[^A-Za-z0-9А-Яа-яЁё\-\_\(\)]/gi, "_").substr(0, 48)), c = '<span class="gray">http://map.vault48.org/#map?</span>' + b, d = "http://map.vault48.org/#map?" + b;
+    $("#store_name").val() != previous_store_name && ($("#store_name").val(b), $("a#store_address_url").attr("href", d).html(c), 
+    $("#sub_plank_remote_store").removeClass("error recheck storing renaming"), previous_store_name = b);
+}
+
+function cool_thanks() {
+    void 0 === get_cookie("hide_store_helper") && ($("#store_helper").show(), expire = new Date(new Date().getTime() + 14089e6), 
+    document.cookie = "hide_store_helper=1; path=/; expires=" + expire.toUTCString()), 
+    location.hash = "map?" + previous_store_name, toggle_none();
+}
+
+function toggle_routing() {
+    "routing" == mode ? toggle_none() : (toggle_none(), $("#map").addClass("cross"), 
+    mode = "routing", update_router(), $("#sub_plank_routing_machine").addClass("active"));
+}
+
+function simplify(a) {
+    for (var b, c = [], d = [], e = 12, f = 0; f < a.length; f += 1) c.push(map.project({
+        lat: a[f].lat,
+        lng: a[f].lng
+    }, e));
+    b = L.LineUtil.simplify(c, .7);
+    for (var f = 0; f < b.length; f += 1) d.push(map.unproject(b[f], e));
+    return d;
+}
+
+function update_router(a) {
+    void 0 !== poly && poly && poly.getLatLngs().length > 0 ? (latlngs = poly.getLatLngs(), 
+    router.A ? void 0 !== a && void 0 !== a.latlng && ($("#sub_plank_routing_tip").attr("class", "routing"), 
+    router.B ? (waypoints = router.object.getWaypoints(), waypoints.push(new L.Routing.Waypoint(a.latlng)), 
+    router.object.setWaypoints(waypoints)) : (router.B = a.latlng, create_router())) : ($("#sub_plank_routing_tip").attr("class", "setb"), 
+    router.A = latlngs[latlngs.length - 1], create_router())) : router.A && !router.B && void 0 !== a && void 0 !== a.latlng ? ($("#sub_plank_routing_tip").attr("class", "routing"), 
+    router.B = a.latlng, create_router()) : void 0 === a || void 0 === a.latlng || router.A ? void 0 !== a && void 0 !== a.latlng ? ($("#sub_plank_routing_tip").attr("class", "routing"), 
+    waypoints = router.object.getWaypoints(), waypoints.push(new L.Routing.Waypoint(a.latlng)), 
+    router.object.setWaypoints(waypoints)) : router.A && router.B ? $("#sub_plank_routing_tip").attr("class", "routing") : $("#sub_plank_routing_tip").attr("class", "seta") : ($("#sub_plank_routing_tip").attr("class", "setb"), 
+    router.A = a.latlng, create_router());
+}
+
+function create_router() {
+    if (router.object) {
+        if (router.A && router.B) {
+            var a = [];
+            router.A && a.push(router.A), router.B && a.push(router.B), router.object.setWaypoints([ router.A, router.B ]);
+        }
+    } else {
+        router.object = L.Routing.control({
+            serviceUrl: "http://vault48.org:5000/route/v1",
+            profile: "bike",
+            fitSelectedRoutes: !1,
+            lineOptions: {
+                styles: [ {
+                    color: "black",
+                    opacity: .15,
+                    weight: 9
+                }, {
+                    color: "white",
+                    opacity: .8,
+                    weight: 6
+                }, {
+                    color: "#4597d0",
+                    opacity: 1,
+                    weight: 4,
+                    dashArray: "15,10"
+                } ]
+            },
+            altLineOptions: {
+                styles: [ {
+                    color: "#4597d0",
+                    opacity: 1,
+                    weight: 3
+                } ]
+            },
+            show: !1,
+            plan: null,
+            routeWhileDragging: !0
+        }).addTo(map), router.object.on("routesfound", function(a) {
+            router.coordinates = {
+                latlngs: a.routes[0].coordinates,
+                dist: a.routes[0].summary.totalDistance
+            };
+        });
+        var a = [];
+        router.A && a.push(router.A), router.B && a.push(router.B), router.object.setWaypoints(a);
+    }
+}
+
+function clear_router() {
+    void 0 !== router.object && router.object && (router.object.spliceWaypoints(0, 65535), 
+    router.A = router.B = router.object = null);
+}
+
+function apply_route() {
+    var a = simplify(router.coordinates.latlngs), b = poly.getLatLngs();
+    a.length > 0 && b.length > 0 && (a = b.concat(a)), poly.setLatLngs(a), clear_router(), 
+    poly.addTo(map), poly.editor.options.skipMiddleMarkers = !0, poly.editor.disable().enable(), 
+    toggle_none(), update_overlays();
+}
+
+function local_recover_data() {
+    if (store && can_i_load) {
+        var a, b, c, d;
+        try {
+            a = JSON.parse(localStorage.getItem("route"));
+        } catch (b) {
+            a = null;
+        }
+        void 0 !== map_list[localStorage.getItem("map_style")] && (current_map_style = localStorage.getItem("map_style"), 
+        change_map(current_map_style)), "undefined" !== localStorage.getItem("logo") && void 0 !== logos[localStorage.getItem("logo")] ? current_logo = localStorage.getItem("logo") : (current_logo = "default", 
+        console.log("Here!", localStorage.getItem("logo"))), void 0 !== a && a && a.length > 1 && (d = [], 
+        $.each(a, function(a, b) {
+            d.push(new L.latLng(b.lat, b.lng));
+        }), poly.setLatLngs(d), poly.addTo(map), poly.editor.options.skipMiddleMarkers = !0, 
+        poly.editor.disable().enable(), poly.on("click", function(a) {
+            console.log("clck"), can_i_edit && route_state("active");
+        }), map.fitBounds(poly.getBounds()));
+        try {
+            b = JSON.parse(localStorage.getItem("points"));
+        } catch (a) {
+            console.log("!! упс, неправильный формат точек"), b = null;
+        }
+        void 0 !== b && b && b.length > 0 && $.each(b, function(a, b) {
+            void 0 !== b.latlngs && void 0 !== b.text && point(b.latlngs, b.text);
+        });
+        try {
+            c = JSON.parse(localStorage.getItem("stickers"));
+        } catch (a) {
+            console.log("!! упс, неправильный формат стикеров"), c = null;
+        }
+        void 0 !== c && c && c.length > 0 && $.each(c, function(a, b) {
+            void 0 !== b.latlng && void 0 !== b.text && void 0 !== b.style && (sticker_style = b.style, 
+            add_sticker(b.latlng, b.text, b.ang), current_sticker = null);
+        }), update_overlays(), set_logo(current_logo);
+    }
+    can_i_store = !0;
+}
+
+function remote_load_data(a) {
+    if (a) {
+        var b, c, d, e;
+        can_i_load = !1, $.get("/engine/auth.php", {
+            name: decodeURI(a),
+            action: "load"
+        }, function(f) {
+            f.success && (drop_route(), drop_stickers(), drop_points(), can_i_store = !1, current_logo = void 0 !== f.data.logo && void 0 !== logos[f.data.logo] ? f.data.logo : "default", 
+            b = f.data.route, void 0 !== b && b && b.length > 1 && (e = [], $.each(b, function(a, b) {
+                e.push(new L.latLng(b.lat, b.lng));
+            }), poly.setLatLngs(e), poly.addTo(map), poly.editor.options.skipMiddleMarkers = !0, 
+            poly.editor.disable(), poly.on("click", function(a) {
+                can_i_edit && route_state("active");
+            }), map.fitBounds(poly.getBounds()), $("#store_name").val(a), update_store_url()), 
+            c = f.data.points, void 0 !== c && c && c.length > 0 && $.each(c, function(a, b) {
+                void 0 !== b.latlngs && void 0 !== b.text && point(b.latlngs, b.text);
+            }), d = f.data.stickers, void 0 !== d && d && d.length > 0 && $.each(d, function(a, b) {
+                void 0 !== b.latlng && void 0 !== b.text && void 0 !== b.style && (sticker_style = b.style, 
+                add_sticker(b.latlng, b.text, b.ang), current_sticker = null);
+            }), void 0 !== f.data.map_style && current_map_style !== f.data.map_style && (map_list[f.data.map_style], 
+            change_map(f.data.map_style)), can_i_edit && (can_i_store = !0), update_overlays(), 
+            set_logo(current_logo));
+        }, "json").fail(function(a, b, c) {
+            report_xhr_error(a, "remote_load_data");
+        });
+    }
+}
+
+function change_mode(a) {
+    a = a.substr(1).split(/[:\/\?]+/), "map" == a[0] && a[1] ? (can_i_load = !1, can_i_edit && disable_editor(), 
+    can_i_store = !1, remote_load_data(a[1]), check_token(function() {
+        disable_places();
+    })) : "editor" == a[0] ? (enable_editor(), check_token(), can_i_store = !0, local_store_data()) : "place" == a[0] ? check_token(function() {
+        show_place(a[1]);
+    }) : (check_token(), disable_editor(), can_i_store = !1), init_uploader();
+}
+
+function make_bigger_shot(a) {
+    (a < 900 || a > 2e3) && (a = 1200);
+    var b = map.getCenter();
+    $("#map").css("width", a + "px").css("height", a + "px"), setTimeout(function() {
+        map.invalidateSize(), map.panTo(b), make_a_shot();
+    }, 400);
+}
+
+function show_user_routes() {
+    $("#menu_user_routes_item").hasClass("not_empty") ? $("#menu_user_routes_item").toggleClass("active") : $("#menu_user_routes_item").removeClass("active");
+}
+
+function show_user() {
+    $("#sub_plank_user").toggleClass("active");
+}
+
+function editor_load(a) {
+    enable_editor(), remote_load_data(a);
+}
+
+function get_gpx() {
+    var a = poly.getLatLngs(), b = [];
+    $.each(a, function(a, c) {
+        b.push({
+            lat: c.lat,
+            lng: c.lng
+        });
+    }), b.length > 0 && $.post("/engine/auth.php", {
+        action: "put_gpx",
+        name: $("#store_name").val(),
+        route: b
+    }, function(a) {
+        console.log(a), a.success && a.result_id && window.open("/engine/auth.php?action=get_gpx&name=" + $("#store_name").val() + "&result_id=" + a.result_id);
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "put_gpx");
+    });
+}
+
+function open_oauth_frame(a) {
+    var b = parseInt($(window).width()), c = parseInt($(window).height());
+    oauth_window = window.open("https://oauth.vk.com/authorize?client_id=5987644&scope=&redirect_uri=http://" + a + "/engine/oauth.php&response_type=code", "socialPopupWindow", "location=no,width=700,height=370,scrollbars=no,top=" + (c - 370) / 2 + ",left=" + (b - 700) / 2 + ",resizable=no");
+}
+
+function do_login(a) {
+    old_data = get_token(), oauth_window && oauth_window.close(), oauth_window = null, 
+    $.get("/engine/auth.php", {
+        action: "move_data",
+        old_id: old_data.id,
+        old_token: old_data.token,
+        new_id: a.id,
+        new_token: a.token
+    }, function(b) {
+        place_stop_editing(), close_place(), set_token(a.id, a.token, "vk"), check_token(function() {
+            show_places();
+        });
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "move_data");
+    });
+}
+
+function do_logout() {
+    place_stop_editing(), close_place(), $("#sub_plank_user").removeClass("active"), 
+    set_token(null, null, null), gen_guest_token(function() {
+        show_places();
+    });
+}
+
+function remote_drop_route(a) {
+    token = get_token(), $.get("/engine/auth.php", {
+        action: "drop_route",
+        id: token.id,
+        token: token.token,
+        route: a
+    }, function(a) {
+        check_token();
+    }, "json").fail(function(a, b, c) {
+        report_xhr_error(a, "drop_route");
+    });
+}
+
+function open_route_list() {
+    $("#chat_left_slide").removeClass("active"), $("#editor_left_slide").toggleClass("active");
+}
+
+function open_chat() {
+    close_place(), $("#chat_left_slide").hasClass("active") ? close_chat() : ($("#chat_input_box").focus(), 
+    $("#editor_left_slide").removeClass("active"), $("#chat_left_slide").addClass("active"), 
+    chat_get(), $("#menu_user_chat_count").removeClass("active"), $("#chat_left_slide").addClass("active"), 
+    chat_timer = setInterval(chat_get, 3e4));
+}
+
+function close_chat() {
+    $("#chat_left_slide").removeClass("active"), clearInterval(chat_timer);
+}
+
+function chat_get() {
+    token = get_token(), chat_hold || $.get("/engine/auth.php", {
+        action: "chat_get",
+        id: token.id,
+        last_message: last_message
+    }, function(a) {
+        a.success && ($("#chat_history_buffer").before(a.messages), a.last_message && (last_message = a.last_message, 
+        set_cookie("last_message", a.last_message))), chat_hold = !1;
+    }, "json");
+}
+
+function chat_put() {
+    token = get_token(), msg = $("#chat_input_box").val().replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;").replace(new RegExp(">", "g"), "<br>"), 
+    chat_hold = !0, msg.length > 0 && ($("#chat_input .button").addClass("active"), 
+    setTimeout(function() {
+        $("#chat_input .button").removeClass("active");
+    }, 500), $("#chat_history_buffer").append('<div class="chat_msg chat_own_msg"><i class="fa fa-circle-o-notch fa-spin fa-fw pull-right"></i>' + msg + "</div>"), 
+    $.get("/engine/auth.php", {
+        action: "chat_put",
+        id: token.id,
+        token: token.token,
+        message: msg,
+        last_message: last_message
+    }, function(a) {
+        a.success && ($("#chat_history_buffer").html(""), $("#chat_history_buffer").before(a.messages), 
+        a.last_message && (console.log("initated"), set_cookie("last_message", a.last_message), 
+        last_message = a.last_message)), chat_hold = !1;
+    }, "json").fail(function(a, b, c) {
+        chat_hold = !1, report_xhr_error(a, "chat_put");
+    })), $("#chat_input_box").val("").focus();
+}
+
+function chat_watch_enter(a) {
+    void 0 !== a && "keyup" === a.type && 13 === a.keyCode && chat_put();
+}
+
+function check_input_title(a) {
+    a = void 0 !== a ? a : void 0 !== window.event ? window.event : null, obj = $("#place-input-title"), 
+    obj.val().length > 32 && obj.val(obj.val().substr(0, 32)), $("#place_title_progress .bar").css("width", parseInt(obj.val().length / 32 * 100) + "%");
+}
+
+function input_title_enter(a) {
+    (a = void 0 !== a ? a : void 0 !== window.event ? window.event : null) && a.keyCode && 13 === a.keyCode && (a.preventDefault(), 
+    save_place_data());
+}
+
+function check_input_desc(a) {
+    a = void 0 !== a ? a : void 0 !== window.event ? window.event : null, obj = $("#place-input-desc"), 
+    obj.val().length > 400 && obj.val(obj.val().substr(0, 400)), $("#place_desc_progress .bar").css("width", parseInt(obj.val().length / 420 * 100) + "%");
+}
+
+function input_desc_ctrlenter(a) {
+    (a = void 0 !== a ? a : void 0 !== window.event ? window.event : null) && a.keyCode && 13 === a.keyCode && a.ctrlKey && (a.preventDefault(), 
+    save_place_data());
+}
+
+function place_check_input() {
+    return obj = $("#place-input-title"), obj.val().replace(/\s/, "").length >= 2 ? ($("#place_error_container .place_error_title").hide(), 
+    !0) : ($("#place_error_container .place_error_title").show(), !1);
+}
+
+function select_place_type(a, b) {
+    if ((a = void 0 !== a ? a : void 0 !== window.event ? window.event : null) && place_types[b]) {
+        for (obj = $(a.target), place_types_selected.splice(0, place_types_selected.length), 
+        checkboxes = $("#places-view-checkboxes").find("input").get(), index = 0; index < checkboxes.length; index++) value = checkboxes[index], 
+        void 0 !== place_types[$(value).data("type")] && $(value).prop("checked") && place_types_selected.push($(value).data("type"));
+        "undefined" != typeof localStorage && localStorage.setItem("place_types", place_types_selected.join(",")), 
+        $(".btn-places-view").hasClass("inactive") && place_types_selected.length > 0 ? enable_places() : 0 == place_types_selected.length ? disable_places() : show_places();
+    }
+}
+
+function toggle_places() {
+    $(".btn-places-view").length <= 0 || ($(".btn-places-view").hasClass("inactive") ? enable_places() : disable_places());
+}
+
+function enable_places() {
+    $(".btn-places-view").removeClass("inactive"), $("#places-toggle-" + (can_i_edit ? "editor" : "viewer")).prop("checked", !0), 
+    $("span.places-view-tooltip").removeClass("inactive"), places_show[can_i_edit ? 1 : 0] = 1, 
+    store_places_view(), show_places();
+}
+
+function disable_places() {
+    $(".btn-places-view").addClass("inactive"), $("#places-toggle-" + (can_i_edit ? "editor" : "viewer")).prop("checked", !1), 
+    $("span.places-view-tooltip").addClass("inactive"), places_show[can_i_edit ? 1 : 0] = 0, 
+    store_places_view(), hide_places();
+}
+
+function store_places_view() {
+    "undefined" != typeof localStorage && localStorage.setItem("places_show", places_show.join(","));
+}
+
+function decide_toggle_places() {
+    places_show && (can_i_edit && 1 == places_show[1] || !can_i_edit && 1 == places_show[0] ? enable_places() : disable_places());
+}
+
+function select_place_view(a) {
+    (a = void 0 !== a ? a : void 0 !== window.event ? window.event : null) && (obj = $(a.target), 
+    places_show["editor" == obj.data("type") ? 1 : 0] = obj.prop("checked") ? 1 : 0, 
+    decide_toggle_places());
+}
+
+function place_comment_put() {
+    token = get_token(), msg = $("#place_comment_input_box").val().replace(new RegExp("<", "g"), "&lt;").replace(new RegExp(">", "g"), "&gt;").replace(new RegExp(">", "g"), "<br>"), 
+    chat_hold = !0, msg.length > 0 && ($("#place_comment .button").addClass("active"), 
+    setTimeout(function() {
+        $("#place_comment .button").removeClass("active");
+    }, 500), $("#place_history_buffer").append('<div class="chat_msg chat_own_msg"><i class="fa fa-circle-o-notch fa-spin fa-fw pull-right"></i>' + msg + "</div>"), 
+    $("#place_comment_input_box").val(""), $.get("/engine/auth.php", {
+        action: "place_comment",
+        id: token.id,
+        token: token.token,
+        message: msg,
+        place: active_place
+    }, function(a) {
+        a.success && ($("#place_history_buffer").html(""), $("#place_history_buffer").before(a.message)), 
+        chat_hold = !1;
+    }, "json").fail(function(a, b, c) {
+        chat_hold = !1, report_xhr_error(a, "place_comment");
+    })), $("#chat_input_box").val("").focus();
+}
+
+function place_comment_watch_enter(a) {
+    void 0 !== a && "keyup" === a.type && 13 === a.keyCode && place_comment_put();
+}
+
+function init_uploader() {
+    $("#place_thumb_uploader").fineUploader({
+        debug: !1,
+        request: {
+            endpoint: "/put/endpoint.php"
+        },
+        retry: {}
+    }).on("complete", function(a, b, c, d) {
+        d && !d.error && d.uuid && d.uploadName ? ($("#place_thumb").removeClass("upload_started upload_error").addClass("upload_success"), 
+        setTimeout(function() {
+            $("#place_thumb").removeClass("upload_success");
+        }, 2e3), $("#place_thumb").css("background-image", "url('/misc/thumbs/" + d.uuid + "/" + d.uploadName + "')"), 
+        $("#place_thumb").removeClass("no_thumb")) : ($("#place_thumb").removeClass("upload_started upload_success").addClass("upload_error"), 
+        setTimeout(function() {
+            $("#place_thumb").removeClass("upload_error");
+        }, 2e3));
+    }).on("submitted", function(a, b, c) {
+        $("#place_thumb").removeClass("upload_success upload_error").addClass("upload_started");
+    }).on("error", function(a, b, c) {
+        $("#place_thumb").removeClass("upload_started upload_success").addClass("upload_error"), 
+        setTimeout(function() {
+            $("#place_thumb").removeClass("upload_error");
+        }, 2e3);
+    });
+}
+
+function update_uploader() {
+    console.log("fire!"), token = get_token(), $("#place_thumb_uploader").fineUploader("setParams", {
+        id: token.id,
+        token: token.token,
+        place: active_place
+    });
+}
+
+function translit(a) {
+    for (var b = [ "Я", "я", "Ю", "ю", "Ч", "ч", "Ш", "ш", "Щ", "щ", "Ж", "ж", "А", "а", "Б", "б", "В", "в", "Г", "г", "Д", "д", "Е", "е", "Ё", "ё", "З", "з", "И", "и", "Й", "й", "К", "к", "Л", "л", "М", "м", "Н", "н", "О", "о", "П", "п", "Р", "р", "С", "с", "Т", "т", "У", "у", "Ф", "ф", "Х", "х", "Ц", "ц", "Ы", "ы", "Ь", "ь", "Ъ", "ъ", "Э", "э" ], c = [ "Ya", "ya", "Yu", "yu", "Ch", "ch", "Sh", "sh", "Sh", "sh", "Zh", "zh", "A", "a", "B", "b", "V", "v", "G", "g", "D", "d", "E", "e", "E", "e", "Z", "z", "I", "i", "J", "j", "K", "k", "L", "l", "M", "m", "N", "n", "O", "o", "P", "p", "R", "r", "S", "s", "T", "t", "U", "u", "F", "f", "H", "h", "C", "c", "Y", "y", "`", "`", "'", "'", "E", "e" ], d = 0; d < b.length; d++) {
+        var e = new RegExp(b[d], "g");
+        a = a.replace(e, c[d]);
+    }
+    return a;
+}
+
 !function(a, b) {
     "object" == typeof module && "object" == typeof module.exports ? module.exports = a.document ? b(a, !0) : function(a) {
         if (!a.document) throw new Error("jQuery requires a window with a document");
@@ -18724,3 +20138,185 @@ function translit(a) {
         }
     });
 }(window, document);
+
+var map, poly, point_btn, map_layer, mode, map_layer, is_dragged, dgis, current_logo, current_zoom, can_i_store = !1, can_i_edit = !1, can_i_load = !0, previous_store_name, engaged_by_shift = !1, token, current_sticker, point_array = {
+    points: L.layerGroup(),
+    vectors: L.layerGroup(),
+    handles: L.layerGroup(),
+    pairs: {},
+    point_to_id: {},
+    id_to_point: {},
+    savedata: {}
+}, logos = {
+    default: [ "Без логотипа", "", "bottom-right" ],
+    nvs: [ "НВС", "/misc/lgo.png", "bottom-right" ],
+    pinmix: [ "Пин-Микс", "/misc/pin-mix.png", "top-right" ],
+    jolly: [ "Пин-Микс + JW", "/misc/jw.png", "top-right" ],
+    pedals: [ "Усталые Педальки", "/misc/pedals.png", "bottom-right" ],
+    rider: [ "Райдер", "/misc/rider.png", "bottom-right" ],
+    rider_evening: [ "Вечерние городские", "/misc/rider_evening.png", "top-right" ],
+    fas: [ "Алкоспорт", "/misc/fas.png", "bottom-right" ]
+}, points = L.layerGroup(), km_marks = L.layerGroup(), pnt_id = 0, store = !1, force_stop = !1, mode = "none", current_map_style = "default", Z = 90, redo_latlng, redoBuffer = [], tiles = {
+    raw: [],
+    loaded: []
+}, tile_max_iterations = 400, tile_max_flows = 12, tile_iteration = 0, tile_iterator, original_bounds, original_shift, map_list = {
+    watercolor: "http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.jpg",
+    darq: "http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
+    default: "https://tile1.maps.2gis.com/tiles?x={x}&y={y}&z={z}&v=1",
+    osm: "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    hot: "http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    blank: "http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+    sat: "http://mt0.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}",
+    ymap: "https://vec03.maps.yandex.net/tiles?l=map&v=17.04.16-0&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
+    ysat: "https://sat02.maps.yandex.net/tiles?l=sat&v=3.330.0&x={x}&y={y}&z={z}&lang=ru_RU"
+}, stickers = {
+    objects: {},
+    layers: L.layerGroup(),
+    savedata: {},
+    layer_to_object: {},
+    src: [ {
+        off: 5,
+        title: "Александр 3",
+        title_long: "Парк Городское Начало",
+        latlng: [ 55.01275, 82.92368 ]
+    }, {
+        off: 9,
+        title: "пл.Калинина",
+        title_long: "пл.Калинина",
+        latlng: [ 55.06019, 82.91316 ]
+    }, {
+        off: 4,
+        title: "Мост",
+        title_long: "Мост",
+        latlng: [ 55.00511, 82.93073 ]
+    }, {
+        off: 7,
+        title: "Икея",
+        title_long: "Парковка ТЦ Мега",
+        latlng: [ 54.96494, 82.93138 ]
+    }, {
+        off: 8,
+        title: "Бугринка",
+        title_long: "Та самая коса\n(культовое место Усталых Педалек)",
+        latlng: [ 54.97626, 82.95703 ]
+    }, {
+        off: 10,
+        title: "ГПНТБ",
+        title_long: "ГПНТБ",
+        latlng: [ 55.01665, 82.94629 ]
+    }, {
+        off: 18,
+        title: "Оперный",
+        title_long: "Оперный театр",
+        latlng: [ 55.03027, 82.92292 ]
+    }, {
+        off: 1,
+        title: "Лес",
+        title_long: "Берёзовая роща",
+        latlng: [ 55.04572, 82.95 ]
+    }, {
+        off: 19,
+        title: "Пусто",
+        title_long: "Пока что пусто 1"
+    }, {
+        off: 20,
+        title: "Пусто",
+        title_long: "Пока что пусто 2"
+    }, {
+        off: 2,
+        title: "Трасса",
+        title_long: "Дорога"
+    }, {
+        off: 3,
+        title: "Курочка",
+        title_long: "Курочка"
+    }, {
+        off: 6,
+        title: "Палатка",
+        title_long: "Палаточный лагерь"
+    }, {
+        off: 11,
+        title: "Фастфуд",
+        title_long: "Двухколёсное ожирение"
+    }, {
+        off: 12,
+        title: "Пивко",
+        title_long: "В Питере - пить!"
+    }, {
+        off: 13,
+        title: "Шаварма",
+        title_long: "Вкусная шаурма"
+    }, {
+        off: 14,
+        title: "Камни",
+        title_long: "Кааааммммуушшшки"
+    }, {
+        off: 15,
+        title: "Болото",
+        title_long: "Пошла ты,\nтрясина грёбаная!"
+    }, {
+        off: 16,
+        title: "Роджер",
+        title_long: "Может не надо?"
+    }, {
+        off: 17,
+        title: "Какашка",
+        title_long: "Нехорошее место"
+    }, {
+        off: 21,
+        title: "Старт",
+        title_long: "Старт здесь"
+    }, {
+        off: 22,
+        title: "1",
+        title_long: "Первая точка"
+    }, {
+        off: 23,
+        title: "2",
+        title_long: "Вторая точка"
+    }, {
+        off: 24,
+        title: "3",
+        title_long: "Третья точка"
+    }, {
+        off: 25,
+        title: "4",
+        title_long: "Четвёртая точка"
+    }, {
+        off: 26,
+        title: "5",
+        title_long: "Пятая точка"
+    }, {
+        off: 27,
+        title: "7",
+        title_long: "Шестая точка"
+    }, {
+        off: 28,
+        title: "Финиш",
+        title_long: "Финиш здесь"
+    }, {
+        off: 29,
+        title: "Осторожно!",
+        title_long: "Осторожно!"
+    }, {
+        off: 30,
+        title: "Вопрос",
+        title_long: "Что тут?"
+    } ]
+}, sticker_style, active_sticker, sticker_id = 0, router = {
+    A: null,
+    B: null,
+    object: null,
+    coordinates: null
+}, phrases = [ "Карта! Твоё время пришло!", "Она живая! Живаааяяя!", "Я сотворил монстра!", "Время явить тебя миру!", "Май карта из рэди!", "Это было легко!", "Вот она, только руку протяни", "Ого! Время публиковать!", "Это должны видеть все!", "Итак, вот оно. Публикация.", "Поздравляем. Вот и оно.", "Эта карта прекрасна!", "Вперёд, Могучие Рэйнджеры!" ], oauth_window, last_message, chat_hold = !1, chat_timer, places_layer, places = {}, places_objects = {}, active_place = 0, place_loading = 0, places_lids = {}, place_types, place_types_selected, places_show;
+
+$(document).on("mousemove", function(a) {
+    active_sticker && can_i_edit && sticker_drag_label(a);
+}), $(document).on("mouseup", function(a) {
+    active_sticker && (stickers.savedata[active_sticker.id].ang = active_sticker.ang, 
+    active_sticker = null, local_store_data());
+}), "undefined" != typeof localStorage && (store = !0), $(document).ready(function() {
+    prepare_map(), prepare_stickers(), "onhashchange" in window && $(window).bind("hashchange", function(a) {
+        change_mode(location.hash);
+    }), change_mode(location.hash);
+});

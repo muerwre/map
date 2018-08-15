@@ -18,10 +18,10 @@
 // noinspection JSJQueryEfficiency
 /* global L, $, jQuery, alert, middle_latlng, findDistance,console */
 
-var map, poly, point_btn, map_layer, mode, map_layer, is_dragged,
+var map, poly, point_btn, map_layer, is_dragged,
     dgis, current_logo, current_zoom, can_i_store = false,
     can_i_edit = false, can_i_load=true, previous_store_name, engaged_by_shift = false,
-    token,
+    token, current_sticker,
 
     // В этой штуке мы храним точки и выноски, их связки и всё такое
     point_array = {
@@ -174,13 +174,13 @@ function test_fetch_tiles(inp){
 }
 function latlng_to_tile(latlng) {
     var zoom = map.getZoom(),
-        xtile = parseInt(Math.floor((latlng.lng + 180) / 360 * (1 << zoom)));
+        xtile = parseInt(Math.floor((latlng.lng + 180) / 360 * (1 << zoom))),
         ytile = parseInt(Math.floor( (1 - Math.log(Math.tan(latlng.lat * Math.PI / 180) + 1 / Math.cos(latlng.lat * Math.PI / 180)) / Math.PI) / 2 * (1<<zoom) ));
     return {x: xtile, y: ytile, z: zoom};
 }
 
 function tile_to_latlng(point){
-    var z   = map.getZoom();
+    var z   = map.getZoom(),
         lon = (point.x/Math.pow(2,z)*360-180),
         n   = Math.PI-2*Math.PI*point.y/Math.pow(2,z),
         lat = (180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n))));
@@ -210,9 +210,9 @@ function set_sticker(obj) {
 
 function prepare_stickers() {
     'use strict';
-    var obj = $('#sub_plank_stickers').find('.sub_plank_sticker_list'),i;
+    var obj = $('#sub_plank_stickers').find('.sub_plank_sticker_list'), i;
 
-    for (i=stickers.src.length-1;i>=0;i=i-1) {
+    for (i = stickers.src.length - 1; i>=0; i=i-1) {
         obj.prepend('<div class="sticker_thumb" data-sticker="' + i + '"><div style="background-position: -' + parseInt(stickers.src[i].off * 48) + 'px 0px;"></div></div>');
     };
     $('.sticker_thumb').on('click', function () { set_sticker($(this)) })
@@ -284,19 +284,22 @@ function add_sticker(latlng,text_over,angle_over){
     //latlng = {lat: 54.96943602216546, lng: 82.95441627502443};
     //text = "Ох ёпт, Боря\nне этого ли мы ждали?";
     var text = text_over || stickers.src[sticker_style].title_long;
-        over =  '<div class="sticker_labeled' + (can_i_edit ? ' sticker_editable' : '') + '" id="sticker_' + sticker_id + '" data-sticker="'
+    var over =  '<div class="sticker_labeled' + (can_i_edit ? ' sticker_editable' : '') + '" id="sticker_' + sticker_id + '" data-sticker="'
                 + sticker_id + '" data-style="' + sticker_style + '">' +
                 '<div class="sticker_pos"></div>' +
                 '<div class="sticker_image" style="background-position: -' + (stickers.src[sticker_style].off * 72) + 'px 0px;"></div><div class="sticker_gap"></div>' +
                 '<div class="sticker_text"><div class="sticker_del"></div><div class="sticker_label"></div>' +
                 '<textarea>' + text + '</textarea>' +
-                '</div></div>',
-        myIcon = L.divIcon({ html: over, className: 'sticker' }),
-        m = L.marker(latlng, { icon: myIcon });
+                '</div></div>';
+    var myIcon = L.divIcon({ html: over, className: 'sticker' });
+    var m = L.marker(latlng, { icon: myIcon });
+
     stickers.layers.addLayer(m);
+
     if(can_i_edit){
         m.enableEdit();
     }
+
     if(angle_over){
         //console.log('over'+angle_over);
         var rad = 50,
@@ -409,7 +412,6 @@ function update_overlays(e) {
         start_latlng,
         end_latlng,
         segs,
-        i,
         rotation,
         middle,
         distance;
@@ -427,7 +429,7 @@ function update_overlays(e) {
             //console.log('get set go');
             // arrows
             //console.log(segs);
-            for (i = 1; i < latlngs.length; i += 1) {
+            for (var i = 1; i < latlngs.length; i += 1) {
                 rotation = L.GeometryUtil.bearing(latlngs[i - 1], latlngs[i]);
                 middle = middle_latlng(latlngs[i], latlngs[i - 1]);
                 distance = findDistance(latlngs[i - 1].lat, latlngs[i - 1].lng, latlngs[i].lat, latlngs[i].lng);
@@ -467,74 +469,73 @@ function local_store_data(){
 }
 
 function remote_store_data(force){
-    if (true) {
-        $('#sub_plank_remote_store').removeClass('success error renaming overwriting').addClass('storing');
-        var userdata = get_token(),
-            latlngs = poly.getLatLngs(),
-            route = [],
-            points_to_save = [],
-            stickers_to_save = [];
-        $.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); });
-        $.each(point_array.savedata, function (a,b) { points_to_save.push(b); });
-        //$.each(stickers.savedata, function (a,b) {  });
-        $.each(stickers.savedata, function (a,b) {
 
-            var c = {ang: b.ang, latlng: {}, style: b.style, text: b.text, x: b.x};
-            stickers_to_save.push(c);
-            if(Array.isArray(b.latlng)){
-                c.latlng = {lat: b.latlng[0], lng: b.latlng[1]};
-            }else{
-                c.latlng = {lat: b.latlng.lat, lng: b.latlng.lng};
-            }
-            //console.log('--', );
-        });
-        //console.log('stickerzzz');
-        //console.log(stickers_to_save);
-        //return;
-        $.post('/engine/auth.php',
-            {   'action': 'store',
-                'logo': current_logo,
-                'route': route,
-                'points': points_to_save,
-                'stickers': stickers_to_save,
-                'id': userdata.id,
-                'token': userdata.token,
-                'name': $('#store_name').val(),
-                'force': force,
-                'map_style': current_map_style},
-            function(data){
+$('#sub_plank_remote_store').removeClass('success error renaming overwriting').addClass('storing');
+var userdata = get_token(),
+  latlngs = poly.getLatLngs(),
+  route = [],
+  points_to_save = [],
+  stickers_to_save = [];
+$.each(latlngs, function (a,b) { route.push({lat: b.lat, lng: b.lng}); });
+$.each(point_array.savedata, function (a,b) { points_to_save.push(b); });
+//$.each(stickers.savedata, function (a,b) {  });
+$.each(stickers.savedata, function (a,b) {
 
-                if(data.success){
-                    if(typeof(data.description) !== 'undefined' && data.description){
-                        $('#store_status').text(data.description);
-                    }
-                    $('#sub_plank_remote_store').removeClass('error recheck storing renaming overwriting').addClass('success');
-                    $('#store_name').val(data.name);
-                    update_store_url();
-                    check_token();
-                }else{
+  var c = {ang: b.ang, latlng: {}, style: b.style, text: b.text, x: b.x};
+  stickers_to_save.push(c);
+  if(Array.isArray(b.latlng)){
+      c.latlng = {lat: b.latlng[0], lng: b.latlng[1]};
+  }else{
+      c.latlng = {lat: b.latlng.lat, lng: b.latlng.lng};
+  }
+  //console.log('--', );
+});
+//console.log('stickerzzz');
+//console.log(stickers_to_save);
+//return;
+$.post('/engine/auth.php',
+  {   'action': 'store',
+      'logo': current_logo,
+      'route': route,
+      'points': points_to_save,
+      'stickers': stickers_to_save,
+      'id': userdata.id,
+      'token': userdata.token,
+      'name': $('#store_name').val(),
+      'force': force,
+      'map_style': current_map_style},
+  function(data){
 
-                    $('#sub_plank_remote_store').removeClass('error recheck success storing renaming overwriting');
-                    if(typeof(data.description) !== 'undefined' && data.description){
-                        $('#store_status').text(data.description);
-                    }
-                    if(typeof(data.mode) !== 'undefined' && data.mode){
-                        $('#sub_plank_remote_store').addClass('error '+data.mode);
-                        if(data.mode === 'recheck'){
-                            //console.log(":from remote_store_data 2");
-                            check_token();
-                        }
-                        $('#store_name').focus();
-                    }
-                }
-            },'json').fail(
-                function(a,b,c){
-                    report_xhr_error(a,'remote_store_data');
-                    $('#store_status').text('Произошла ошибка, и мы записали её в журнал. Пожалуйста, свяжитесь с нами для её исправления.');
-                    $('#sub_plank_remote_store').removeClass('storing success renaming overwriting').addClass('error');
-                }
-            );
-    }
+      if(data.success){
+          if(typeof(data.description) !== 'undefined' && data.description){
+              $('#store_status').text(data.description);
+          }
+          $('#sub_plank_remote_store').removeClass('error recheck storing renaming overwriting').addClass('success');
+          $('#store_name').val(data.name);
+          update_store_url();
+          check_token();
+      }else{
+
+          $('#sub_plank_remote_store').removeClass('error recheck success storing renaming overwriting');
+          if(typeof(data.description) !== 'undefined' && data.description){
+              $('#store_status').text(data.description);
+          }
+          if(typeof(data.mode) !== 'undefined' && data.mode){
+              $('#sub_plank_remote_store').addClass('error '+data.mode);
+              if(data.mode === 'recheck'){
+                  //console.log(":from remote_store_data 2");
+                  check_token();
+              }
+              $('#store_name').focus();
+          }
+      }
+  },'json').fail(
+      function(a,b,c){
+          report_xhr_error(a,'remote_store_data');
+          $('#store_status').text('Произошла ошибка, и мы записали её в журнал. Пожалуйста, свяжитесь с нами для её исправления.');
+          $('#sub_plank_remote_store').removeClass('storing success renaming overwriting').addClass('error');
+      }
+  );
 }
 
 function report_xhr_error(a,b){
@@ -708,7 +709,7 @@ function check_token(callback){
     }
 }
 
-function set_token(id,token,role){
+function set_token(id, token, role){
     if(store){
         localStorage.setItem("user_id", id);
         localStorage.setItem("user_token", token );
@@ -723,7 +724,7 @@ function set_token(id,token,role){
 }
 
 function get_token(){
-    var id, token;
+    var id, token, role;
     if(store){
         id = localStorage.getItem("user_id");
         token = localStorage.getItem("user_token");
@@ -733,7 +734,7 @@ function get_token(){
         token = get_cookie("user_token");
         role = get_cookie("user_role");
     }
-    return ({'id': id, 'token': token, 'role': role});
+    return ({ 'id': id, 'token': token, 'role': role });
 }
 
 function get_cookie(name) {
@@ -1161,10 +1162,10 @@ function pan_zoom() {
 function get_tile_placement(){
     var w  = $('#map').width(),h = $('#map').height(),
         sw = latlng_to_tile(map.getBounds()._southWest),
-        ne = latlng_to_tile(map.getBounds()._northEast)
+        ne = latlng_to_tile(map.getBounds()._northEast),
         zsw= tile_to_latlng(sw),
         zne= tile_to_latlng(ne),
-        rsw=map.latLngToContainerPoint(zsw);
+        rsw=map.latLngToContainerPoint(zsw),
         msw=map.latLngToContainerPoint(map.getBounds()._southWest);
         //console.log({x: rsw.x-msw.x, y: h+rsw.y-msw.y, orig_x: sw.x, orig_y: sw.y})
         //console.log('going from '+sw.x+','+sw.y+' to '+ne.x+','+ne.y+' shift '+(rsw.x-msw.x)+','+(h+rsw.y-msw.y));
@@ -1220,7 +1221,7 @@ function make_a_shot(callback) {
   // Запуск переборщика
   image_iterator();
   */
-  var tile_placement = get_tile_placement(),i,v;
+  var tile_placement = get_tile_placement(), i, v;
     for(i=tile_placement.min_x;i<=tile_placement.max_x;i++){
         for(v=tile_placement.min_y;v<=tile_placement.max_y;v++){
             tiles.raw.push({ x: i, y: v, provider: tile_placement.provider, z: tile_placement.zoom, 'charged':null, 'loaded':false})
@@ -1242,7 +1243,7 @@ function image_prefetcher(callback) {
 
   for(var i = 0; i < tiles.raw.length; i++) {
     // Перебираем все тайлы
-    b = tiles.raw[i];
+    var b = tiles.raw[i];
     if (current_flows < tile_max_flows && b.loaded === false) {
       // (1) если итак грузится много файлов, просто скипаем
       // (2) если файл уже загружен, скипаем
@@ -1433,15 +1434,19 @@ function insert_vertex(e) {
   }
 }
 
-function point(latlng,text) {
+function point(latlng, text) {
     // Добавляет точку
     // console.log(typeof(latlng),latlng);return;
+    var lat, lng, new_lat, zoom, new_lng;
+
     if (typeof(latlng) !== 'undefined' && !Array.isArray(latlng)) {
         //console.log('dmg');
         zoom = map.getZoom();
-        lat = parseFloat(latlng.lat); lng = parseFloat(latlng.lng); //координаты клика
-        new_lat = lat+0.002*16/zoom;
-        new_lng = lng+0.002*16/zoom;
+        lat = parseFloat(latlng.lat);
+        lng = parseFloat(latlng.lng); //координаты клика
+        new_lat = lat + ((0.002 * 16) / zoom);
+        new_lng = lng + ((0.002 * 16) / zoom);
+
     } else if (Array.isArray(latlng)) {
         //console.log('zmg');
         lat = parseFloat(latlng[0].lat); lng = parseFloat(latlng[0].lng); //координаты клика
@@ -1451,11 +1456,11 @@ function point(latlng,text) {
         return;
     }
     pnt_id++;
-    text     = typeof text === undefined ? 'Точка '+pnt_id : text;
-    over    = '<div class="point_live" id="point_'+pnt_id+'"><div class="point_drop" onclick="point_drop(event, '+pnt_id+');"></div><div class="point_label" id="point_label_'+pnt_id+'">'+text+'--</div><input onkeyup="update_point_text('+pnt_id+');" type="text" value="'+text+'" id="point_input_'+pnt_id+'" class="point_input"></div>'
+    text = typeof text === undefined ? 'Точка ' + pnt_id : text;
+    var over = '<div class="point_live" id="point_'+pnt_id+'"><div class="point_drop" onclick="point_drop(event, '+pnt_id+');"></div><div class="point_label" id="point_label_'+pnt_id+'">'+text+'--</div><input onkeyup="update_point_text('+pnt_id+');" type="text" value="'+text+'" id="point_input_'+pnt_id+'" class="point_input"></div>'
     var myIcon = L.divIcon({ html: over, className: 'mark' });
-    m = L.marker([new_lat,new_lng], { icon: myIcon });
-    l = L.polyline([L.latLng(lat,lng),L.latLng(new_lat,new_lng)], { color: '#444444' });
+    var m = L.marker([new_lat,new_lng], { icon: myIcon });
+    var l = L.polyline([L.latLng(lat,lng),L.latLng(new_lat,new_lng)], { color: '#444444' });
 
     //console.log([L.latLng(lat,lng),L.latLng(parseInt(lat)+0.000001,parseInt(lng)+0.000001)]);
     point_array.points.addLayer(m);
@@ -1676,7 +1681,7 @@ function prepare_map() {
     */
     //map.on('dragend', function (e) { });
     // добавление точек по щелчку
-    map.on('click', e => {
+    map.on('click', function(e)  {
       console.log('mapClick');
         // map_click
         if (e.type === 'click' && can_i_edit && !is_dragged) {
@@ -1706,17 +1711,17 @@ function prepare_map() {
     map.editTools.addEventListener('editable:drawing:mouseup', update_overlays);
     map.editTools.addEventListener('editable:vertex:dragend', update_overlays);
 
-    // map.editTools.addEventListener('editable:vertex:rawclick', e => {
+    // map.editTools.addEventListener('editable:vertex:rawclick', function(e)  {
     //   console.log('rawclick', e);
     //   // poly.editor.continueForward();
     //   // e.cancel();
     // });
     //
 
-    // map.editTools.addEventListener('editable:vertex:click', e => {
+    // map.editTools.addEventListener('editable:vertex:click', function(e)  {
     // });
 
-    map.editTools.addEventListener('editable:vertex:deleted', e => {
+    map.editTools.addEventListener('editable:vertex:deleted', function(e)  {
       console.log('deleted', e);
       poly.editor.continueForward();
       update_overlays(e);
@@ -1835,9 +1840,9 @@ function place(lat, lng, id, title, type, owned){
       typeof(id)  !== 'undefined'  // Вот это потому, что при добавлении места мы делаем место с id = 0
     ){
 
-    over = '<div id="place-'+id+'" data-id="'+id+'" class="type-'+type+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
-    myIcon = L.divIcon({ html: over, className: 'place' }),
-    m = L.marker(new L.latLng(lat, lng), {editable: true, icon: myIcon}); // L-объект с местом
+    var over = '<div id="place-'+id+'" data-id="'+id+'" class="type-'+type+'" onclick="click_place(event);"><span></span><b>'+title+'</b></div>';
+    var myIcon = L.divIcon({ html: over, className: 'place' });
+    var m = L.marker(new L.latLng(lat, lng), {editable: true, icon: myIcon}); // L-объект с местом
 
     // При перетаскивании метка места теряет класс active. Этот хак его восстанавливает:
     m.on('dragend', function (e) {
@@ -2056,7 +2061,7 @@ function load_place_data(id, edit_mode){
             // Комментарии
             $('#place_history').find('.chat_msg').remove();
             if(data.comments && data.comments.length>0){
-                for( i=0; i<data.comments.length; i++){
+                for(var i = 0; i<data.comments.length; i++){
                     $('#place_history_buffer').after(data.comments[i]);
                 }
 
@@ -2344,14 +2349,15 @@ function toggle_routing(){
 
 //map.project(poly.getLatLngs()[0],0);
 function simplify(latlngs){
-    var points=[], simplified, target_latlngs=[],zl=12;
-    for(i=0;i<latlngs.length;i += 1){
+    var points=[], simplified, target_latlngs=[], zl=12, i;
+
+    for(i = 0;i < latlngs.length; i += 1){
         //console.log({ lat: latlngs[i].lat, lng: latlngs[i].lng});
         points.push( map.project({ lat: latlngs[i].lat, lng: latlngs[i].lng}, zl) );
     }
     //L.LineUtil.simplify(points,0.7);
     simplified=L.LineUtil.simplify(points,0.7);
-    for(i=0;i<simplified.length;i += 1){
+    for(i = 0; i < simplified.length; i += 1){
         //console.log({ lat: latlngs[i].lat, lng: latlngs[i].lng});
         target_latlngs.push( map.unproject(simplified[i],zl) );
     }
@@ -2450,6 +2456,8 @@ function update_router(e){
 
 function create_router(){
     //console.log('create router called',router.A,router.B);
+    var waypoints = [];
+
     if(!router.object){
         router.object=L.Routing.control({
                                 serviceUrl: 'http://vault48.org:5000/route/v1',
@@ -2475,12 +2483,11 @@ function create_router(){
             //console.log(e);
             // viewbox  81.63116,55.57524,84.21295,54.47323
         })
-        var waypoints = [];
+
         if(router.A){ waypoints.push(router.A); }
         if(router.B){ waypoints.push(router.B); }
         router.object.setWaypoints(waypoints);
     }else if(router.A && router.B){
-        var waypoints = [];
         if(router.A){ waypoints.push(router.A); }
         if(router.B){ waypoints.push(router.B); }
         router.object.setWaypoints([router.A, router.B]);
@@ -2528,9 +2535,10 @@ function update_router(){
 }
 */
 function apply_route(){
-    var a,b,c,latlngs=simplify(router.coordinates.latlngs);
-    poly_latlngs=poly.getLatLngs();
-    if(latlngs.length>0){
+    var latlngs = simplify(router.coordinates.latlngs);
+    var poly_latlngs = poly.getLatLngs();
+
+    if(latlngs.length > 0){
         if(poly_latlngs.length>0){
             //latlngs.unshift(poly_latlngs);
             latlngs=poly_latlngs.concat(latlngs);
