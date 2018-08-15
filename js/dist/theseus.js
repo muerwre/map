@@ -160,23 +160,23 @@ function get_route_array() {
 
 function update_overlays(a) {
     km_marks.clearLayers();
-    var b, c, d, e, f, g, h = get_route_array(), i = poly.getLatLngs();
-    if (h.length > 0) if (b = h[0], c = h[h.length - 1], km_marks.addLayer(L.marker([ b[1], b[0] ], {
+    var b, c, d, e, f, g = get_route_array(), h = poly.getLatLngs();
+    if (g.length > 0) if (b = g[0], c = g[g.length - 1], km_marks.addLayer(L.marker([ b[1], b[0] ], {
         icon: L.divIcon({
             html: '<div style="transform: scale(' + map.getZoom() / 13 + ');"><div class="arr_start"></div></div>',
             className: "arr_mark"
         })
-    })), h.length > 1) {
+    })), g.length > 1) {
         d = L.GeometryUtil.accumulatedLengths(poly), km_marks.addLayer(L.marker([ c[1], c[0] ], {
             icon: L.divIcon({
                 html: Math.round(d[d.length - 1] / 1e3) + "&nbsp;км",
                 className: "end_mark"
             })
         })), $("#text_route_length").text(Math.round(d[d.length - 1] / 1e3) + "км");
-        for (var e = 1; e < i.length; e += 1) f = L.GeometryUtil.bearing(i[e - 1], i[e]), 
-        g = middle_latlng(i[e], i[e - 1]), findDistance(i[e - 1].lat, i[e - 1].lng, i[e].lat, i[e].lng) > 1 && km_marks.addLayer(L.marker([ g.lat, g.lng ], {
+        for (var i = 1; i < h.length; i += 1) e = L.GeometryUtil.bearing(h[i - 1], h[i]), 
+        f = middle_latlng(h[i], h[i - 1]), findDistance(h[i - 1].lat, h[i - 1].lng, h[i].lat, h[i].lng) > 1 && km_marks.addLayer(L.marker([ f.lat, f.lng ], {
             icon: L.divIcon({
-                html: '<div style="transform: scale(' + map.getZoom() / 13 + ');"><img src="misc/arr.png" style="transform: translateX(-4px) translateY(-4px) rotate(' + (270 + f) + 'deg);"></div>',
+                html: '<div style="transform: scale(' + map.getZoom() / 13 + ');"><img src="misc/arr.png" style="transform: translateX(-4px) translateY(-4px) rotate(' + (270 + e) + 'deg);"></div>',
                 className: "arr_mark"
             })
         }));
@@ -561,14 +561,14 @@ function image_prefetcher(a) {
     $("#shot_status_bar span").stop().animate({
         width: tiles.loaded / tiles.raw.length * 85 + "%"
     }, 150);
-    for (var b = 0, d = 0; d < tiles.raw.length; d++) {
-        var e = tiles.raw[d];
+    for (var b = 0, c = 0; c < tiles.raw.length; c++) {
+        var d, e = tiles.raw[c];
         b < tile_max_flows && !1 === e.loaded && (Date.now() - e.charged > 1e4 && (e.charged = Date.now(), 
         $.get("/engine/prefetch.php", {
             url: e,
-            index: d
+            index: c
         }, function(a) {
-            a.success ? (c = tiles.raw[a.index], c.loaded = !0, tiles.loaded += 1) : console.log(a.error);
+            a.success ? (d = tiles.raw[a.index], d.loaded = !0, tiles.loaded += 1) : console.log(a.error);
         }, "json").fail(function(a, b, c) {
             report_xhr_error(a, "image_prefetcher");
         })), b++);
@@ -581,8 +581,11 @@ function image_composer(a, b) {
     $("#sk-status").text("ОТРИСОВКА"), mode = "composing", $("#shot_status_text").html("Обработка на сервере"), 
     $("#shot_status_bar span").css("width", "85%").animate({
         width: "97%"
-    }, 3e3), active_tile_pan = null, $.each($(".leaflet-tile-container"), function(a, b) {
-        trans = $(b).css("transform"), trans.match(/^matrix\(1\,/) && (active_tile_pan = trans);
+    }, 3e3);
+    var c = null;
+    $.each($(".leaflet-tile-container"), function(a, b) {
+        var d = $(b).css("transform");
+        d.match(/^matrix\(1\,/) && (c = d);
     }), $.post("/engine/composer.php", {
         tiles: a.raw,
         path: new_prepare_route(),
@@ -652,8 +655,8 @@ function point(a, b) {
         c = parseFloat(a[0].lat), d = parseFloat(a[0].lng), e = parseFloat(a[1].lat), g = parseFloat(a[1].lng);
     } else f = map.getZoom(), c = parseFloat(a.lat), d = parseFloat(a.lng), e = c + .032 / f, 
     g = d + .032 / f;
-    pnt_id++;
-    var b = void 0 === typeof b ? "Точка " + pnt_id : b, h = '<div class="point_live" id="point_' + pnt_id + '"><div class="point_drop" onclick="point_drop(event, ' + pnt_id + ');"></div><div class="point_label" id="point_label_' + pnt_id + '">' + b + '--</div><input onkeyup="update_point_text(' + pnt_id + ');" type="text" value="' + b + '" id="point_input_' + pnt_id + '" class="point_input"></div>', i = L.divIcon({
+    pnt_id++, b = void 0 === typeof b ? "Точка " + pnt_id : b;
+    var h = '<div class="point_live" id="point_' + pnt_id + '"><div class="point_drop" onclick="point_drop(event, ' + pnt_id + ');"></div><div class="point_label" id="point_label_' + pnt_id + '">' + b + '--</div><input onkeyup="update_point_text(' + pnt_id + ');" type="text" value="' + b + '" id="point_input_' + pnt_id + '" class="point_input"></div>', i = L.divIcon({
         html: h,
         className: "mark"
     }), j = L.marker([ e, g ], {
@@ -1007,8 +1010,9 @@ function enable_editor() {
     $.each(stickers.objects, function(a, b) {
         b.enableEdit(), $("#sticker_" + stickers.layer_to_object[b._leaflet_id]).addClass("sticker_editable");
     }), $.each(point_array.vectors.getLayers(), function(a, b) {
-        l = point_array.vectors.getLayer(b._leaflet_id), l.enableEdit(), l.editor.disable(), 
-        l.editor.options.skipMiddleMarkers = !0, l.editor.enable(), l.editor.skipMiddleMarkers = !0;
+        var c = point_array.vectors.getLayer(b._leaflet_id);
+        c.enableEdit(), c.editor.disable(), c.editor.options.skipMiddleMarkers = !0, c.editor.enable(), 
+        c.editor.skipMiddleMarkers = !0;
     }), parseInt($(window).width()) >= 600 && $("#plank").addClass("active"), $("#editor_left_plank").addClass("active"), 
     update_overlays(), can_i_edit = !0, can_i_store = !0, store && !localStorage.getItem("hello") && ($("#plank_hello").addClass("active"), 
     localStorage.setItem("hello", 1)), decide_toggle_places();
@@ -1047,13 +1051,13 @@ function toggle_routing() {
 }
 
 function simplify(a) {
-    for (var b, c = [], d = [], e = 12, f = 0; f < a.length; f += 1) c.push(map.project({
-        lat: a[f].lat,
-        lng: a[f].lng
-    }, e));
-    b = L.LineUtil.simplify(c, .7);
-    for (var f = 0; f < b.length; f += 1) d.push(map.unproject(b[f], e));
-    return d;
+    var b, c, d = [], e = [], f = 12;
+    for (c = 0; c < a.length; c += 1) d.push(map.project({
+        lat: a[c].lat,
+        lng: a[c].lng
+    }, f));
+    for (b = L.LineUtil.simplify(d, .7), c = 0; c < b.length; c += 1) e.push(map.unproject(b[c], f));
+    return e;
 }
 
 function update_router(a) {
@@ -1069,51 +1073,44 @@ function update_router(a) {
 }
 
 function create_router() {
-    if (router.object) {
-        if (router.A && router.B) {
-            var a = [];
-            router.A && a.push(router.A), router.B && a.push(router.B), router.object.setWaypoints([ router.A, router.B ]);
-        }
-    } else {
-        router.object = L.Routing.control({
-            serviceUrl: "http://vault48.org:5000/route/v1",
-            profile: "bike",
-            fitSelectedRoutes: !1,
-            lineOptions: {
-                styles: [ {
-                    color: "black",
-                    opacity: .15,
-                    weight: 9
-                }, {
-                    color: "white",
-                    opacity: .8,
-                    weight: 6
-                }, {
-                    color: "#4597d0",
-                    opacity: 1,
-                    weight: 4,
-                    dashArray: "15,10"
-                } ]
-            },
-            altLineOptions: {
-                styles: [ {
-                    color: "#4597d0",
-                    opacity: 1,
-                    weight: 3
-                } ]
-            },
-            show: !1,
-            plan: null,
-            routeWhileDragging: !0
-        }).addTo(map), router.object.on("routesfound", function(a) {
-            router.coordinates = {
-                latlngs: a.routes[0].coordinates,
-                dist: a.routes[0].summary.totalDistance
-            };
-        });
-        var a = [];
-        router.A && a.push(router.A), router.B && a.push(router.B), router.object.setWaypoints(a);
-    }
+    var a = [];
+    router.object ? router.A && router.B && (router.A && a.push(router.A), router.B && a.push(router.B), 
+    router.object.setWaypoints([ router.A, router.B ])) : (router.object = L.Routing.control({
+        serviceUrl: "http://vault48.org:5000/route/v1",
+        profile: "bike",
+        fitSelectedRoutes: !1,
+        lineOptions: {
+            styles: [ {
+                color: "black",
+                opacity: .15,
+                weight: 9
+            }, {
+                color: "white",
+                opacity: .8,
+                weight: 6
+            }, {
+                color: "#4597d0",
+                opacity: 1,
+                weight: 4,
+                dashArray: "15,10"
+            } ]
+        },
+        altLineOptions: {
+            styles: [ {
+                color: "#4597d0",
+                opacity: 1,
+                weight: 3
+            } ]
+        },
+        show: !1,
+        plan: null,
+        routeWhileDragging: !0
+    }).addTo(map), router.object.on("routesfound", function(a) {
+        router.coordinates = {
+            latlngs: a.routes[0].coordinates,
+            dist: a.routes[0].summary.totalDistance
+        };
+    }), router.A && a.push(router.A), router.B && a.push(router.B), router.object.setWaypoints(a));
 }
 
 function clear_router() {
@@ -20139,7 +20136,7 @@ function translit(a) {
     });
 }(window, document);
 
-var map, poly, point_btn, map_layer, mode, map_layer, is_dragged, dgis, current_logo, current_zoom, can_i_store = !1, can_i_edit = !1, can_i_load = !0, previous_store_name, engaged_by_shift = !1, token, current_sticker, point_array = {
+var map, poly, point_btn, map_layer, is_dragged, dgis, current_logo, current_zoom, can_i_store = !1, can_i_edit = !1, can_i_load = !0, previous_store_name, engaged_by_shift = !1, token, current_sticker, point_array = {
     points: L.layerGroup(),
     vectors: L.layerGroup(),
     handles: L.layerGroup(),
