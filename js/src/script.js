@@ -1304,7 +1304,7 @@ function image_composer(tiles, callback){
     var active_tile_pan = null;
     // Ищем её перебором
     $.each($('.leaflet-tile-container'), function (x,y) {
-      trans = $(y).css('transform');
+      var trans = $(y).css('transform');
       if (trans.match(/^matrix\(1\,/)) active_tile_pan = trans;
     });
     $.post('/engine/composer.php',

@@ -68,8 +68,8 @@
       <file leaf-file-name="script.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/src/script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="214">
-              <caret line="2249" column="12" selection-start-line="2249" selection-start-column="12" selection-end-line="2249" selection-end-column="12" />
+            <state relative-caret-position="259">
+              <caret line="1306" column="39" lean-forward="true" selection-start-line="1306" selection-start-column="39" selection-end-line="1306" selection-end-column="39" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -121,7 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>poly =</find>
       <find>data(</find>
       <find>poly.set</find>
       <find>poly.setLat</find>
@@ -151,6 +150,7 @@
       <find>c=</find>
       <find>tiles.raw[</find>
       <find>l = point_arra</find>
+      <find>active_tile_pan</find>
     </findStrings>
     <replaceStrings>
       <replace>(../misc/</replace>
@@ -288,7 +288,7 @@
       <option name="presentableId" value="Default" />
       <updated>1533887334007</updated>
       <workItem from="1533887335203" duration="6138000" />
-      <workItem from="1534129298330" duration="35210000" />
+      <workItem from="1534129298330" duration="35393000" />
     </task>
     <task id="LOCAL-00001" summary="added index.html">
       <created>1533887581189</created>
@@ -374,11 +374,25 @@
       <option name="project" value="LOCAL" />
       <updated>1534304702325</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="fixed l">
+      <created>1534304753232</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1534304753232</updated>
+    </task>
+    <task id="LOCAL-00014" summary="fixed active_tile_pans">
+      <created>1534304907738</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1534304907738</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41348000" />
+    <option name="totallyTimeSpent" value="41531000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
@@ -428,7 +442,9 @@
     <MESSAGE value="everything's up to grunt" />
     <MESSAGE value="fixed gitignore" />
     <MESSAGE value="fixed c?" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed c?" />
+    <MESSAGE value="fixed l" />
+    <MESSAGE value="fixed active_tile_pans" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed active_tile_pans" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/index.php">
@@ -799,8 +815,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/src/script.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="2249" column="12" selection-start-line="2249" selection-start-column="12" selection-end-line="2249" selection-end-column="12" />
+        <state relative-caret-position="259">
+          <caret line="1306" column="39" lean-forward="true" selection-start-line="1306" selection-start-column="39" selection-end-line="1306" selection-end-column="39" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
