@@ -5,455 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2c6b50e-15ea-4d85-b994-fda51e9f1ca8" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/map.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gruntfile.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/index.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/theme/header.tpl.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bigicon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/MarkerCluster.Default.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/MarkerCluster.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/arr.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/cropper.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/font-awesome.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/FontAwesome.otf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/Raleway.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayBlack/RalewayBlack.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayBlack/RalewayBlack.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayBlack/RalewayBlack.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayBold/RalewayBold.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayBold/RalewayBold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayBold/RalewayBold.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayExtraBold/RalewayExtraBold.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayExtraBold/RalewayExtraBold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayExtraBold/RalewayExtraBold.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayExtraLight/RalewayExtraLight.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayExtraLight/RalewayExtraLight.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayExtraLight/RalewayExtraLight.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayLight/RalewayLight.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayLight/RalewayLight.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayLight/RalewayLight.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayMedium/RalewayMedium.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayMedium/RalewayMedium.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayMedium/RalewayMedium.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayRegular/RalewayRegular.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayRegular/RalewayRegular.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayRegular/RalewayRegular.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewaySemiBold/RalewaySemiBold.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewaySemiBold/RalewaySemiBold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewaySemiBold/RalewaySemiBold.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayThin/RalewayThin.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayThin/RalewayThin.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/RalewayThin/RalewayThin.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/fontawesome-webfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/fontawesome-webfont.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/fontawesome-webfont.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/fontawesome-webfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/fonts/fontawesome-webfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/leaflet-routing-machine.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/pixmaps.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/css/style.min.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/CNAME" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/bundle.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/bundle.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/bundle.raw.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/css/fonts.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/css/leaflet.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/css/site.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/arrows.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/arrows.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/arrows@2x.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/arrows@2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/LICENSE.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/README.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/mapbox-gl-dev.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/mapbox-gl.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/mapbox-gl.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/mapbox-gl.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/svg/mapboxgl-ctrl-compass.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/svg/mapboxgl-ctrl-geolocate.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/svg/mapboxgl-ctrl-zoom-in.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/svg/mapboxgl-ctrl-zoom-out.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/debug/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-condbold-webfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-condbold-webfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-condbold-webfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-condlight-webfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-condlight-webfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-condlight-webfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-regular-webfont.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-regular-webfont.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/fonts/opensans-regular-webfont.woff2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/gh-pages.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/i18n/de.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/i18n/en.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/i18n/es.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/i18n/fr.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/i18n/sv.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/crosshairs.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/flags.ai" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/flags.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/layers.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/leaflet.routing.icons.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/leaflet.routing.icons.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/marker-end-icon-2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/marker-icon-2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/marker-start-icon-2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/marker-via-icon-2x.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/measurements.ai" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/measurements.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons-blue.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons-purp.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.color.ai" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.color.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.toolbar.icons.ai" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.toolbar.icons.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.toolbar.icons.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/osrm_logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/images/throbber.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/geocoder.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/index.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/itinerary_builder.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/leaflet_options.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/libs/leaflet-label.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/links.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/localization.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/lrm_options.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/polyfill.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/state.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dbg/src/tools.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dev.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/2273e3d8ad9264b7daa5bdbf8e6b47f8.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/391c1f839fca3b08f2e165fcc788fb24.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/4f0283c6ce28e888000e978e537a6a56.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/6a4cb3e140b8393c96464660048f19bd.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/a6137456ed160d7606981aa57c559898.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/app.[githash].css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/app.[githash].css.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/app.bundle.523c510.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/app.bundle.523c510.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/ea7ec57f94d6646f09c436220c9b913e.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/loader.bundle.523c510.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/loader.bundle.523c510.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/download.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/RalewayBold.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/_composer.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/_fetcher.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/ajax_proxy.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/auth.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/composer.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/composer_v2.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/cropper.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/new_render.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/oauth.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/prefetch.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/proxy_test.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/render.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/report_error.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/settings.inc.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/engine/test_image.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/favicon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/info.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/dist/script.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/dist/script.js.map" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/dist/theseus.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/dist/theseus.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/12065690011948842370nicubunu_TShirt_Template.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/easy-button.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/flashcanvas.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/html2canvas.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/html2canvas.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/jquery.plugin.html2canvas.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/leaflet-1.0.3.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/leaflet-1.0.3.src.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/leaflet-routing-machine.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/leaflet.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/simplify.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/uploader/fine-uploader.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/obsolete/uploader/fine-uploader.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/Leaflet.Editable.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/common.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/cropper.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/jquery-3.1.1.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/jquery.fine-uploader.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/leaflet-routing-machine.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/leaflet-src.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/leaflet.geometryutil.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/leaflet.markercluster.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/script.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/simplify.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/uploader/fine-uploader.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/uploader/fine-uploader.zip" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/src/uploader/jquery.fine-uploader.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:38:53.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:39:08.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:01.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:18.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:23.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:30.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:33.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:40.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:46.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:49.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:40:53.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:41:02.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:41:08.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:42:04.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:42:10.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:42:19.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:42:39.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:42:45.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:42:55.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:43:33.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:43:39.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:44:03.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:44:08.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:44:14.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:44:32.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:44:49.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:44:59.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:45:04.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:45:12.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:45:14.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:45:23.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:45:42.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:45:46.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:46:16.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:46:49.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:46:55.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:47:00.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:47:13.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:47:37.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:47:47.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 15:50:00.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:09:50.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:11:40.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:11:44.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:12:03.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:14:19.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:14:25.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:14:29.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:15:21.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:15:49.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:16:28.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:17:10.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-17 16:17:48.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 14:12:18.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 16:25:41.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 16:25:42.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 16:25:43.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 16:25:44.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 16:25:45.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-18 16:26:00.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-19 12:59:09.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-19 13:22:05.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logs/2017-07-19 13:25:35.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/marker-icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/marker-shadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/arr.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/fas.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/jw.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/lgo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/logo_pin_big.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/mmap.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/nologo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/pedals.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/pin-mix.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/pin-mix.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/pixmaps.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/pixmaps.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/rect5089.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/rider.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/rider_evening.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/bridge.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/bridge_layer.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/bugr_forest.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/bugrinsky_bridge.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/bugrinsky_bridge_big.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/cyclist.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/g5657.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/hero.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/pin-mix.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/rect6632.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/stickers.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/stickers/stickers.svg.2017_02_21_15_34_06.0.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/030595d2-ffc4-445f-a6bc-d0fb2cf801a7/arctic61c.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/0513c2dc-99ee-4328-8fa6-155d1baf04ba/20171022-AutumnFrond_ROW10660506248_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/084f25e9-6c05-4f37-b7af-2398c67b5a22/2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/0b24cbe6-3679-4e31-a111-dc1b073f4c0d/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/0db8c25d-a370-4e7d-af51-8c3472dcd967/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/11217c3b-9321-4a6d-9346-b9d1b2d691be/2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/11b4e6ed-6a24-4487-9513-ce84d87f15c2/patriot_881e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/17d76f39-67d3-4e02-aa3f-2ad677a16157/20171022-AutumnFrond_ROW10660506248_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/1f6da4ea-e344-4386-9ecf-d7703300569c/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/213e52de-0158-48df-bf18-9c9ecd1df668/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/2466ffa9-12a9-4435-b262-1f0f13f5d559/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/29edc587-776b-4e64-87a4-e33fb014b5b3/patriot_2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/2c99cb50-aaf3-4292-a35a-511a08539fcb/3d1a9bf8fca77b6d75bf99d11bf1ce4c.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/30bbae81-d2e6-4946-bd51-ac26896daf1b/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/3102d921-9843-4a89-b236-639277532603/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/3435f69e-c614-4114-8797-54d115e54f31/a3444055909_10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/35a948f1-5851-4359-8994-50795d614c02/a3444055909_10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/36d6c329-17f7-45a9-a108-3df6ea8f988a/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/3e6332f8-9e5e-4104-a2d6-9306399994be/2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/407bff1d-3d20-40ff-810b-01b26f6e99e7/patriot_1401ed.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/40cd50e5-d716-4fea-8df6-54975d17bc91/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/426c676c-bf7c-44b1-98dc-1784dd837684/FCwOUeRFWEs.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/438f7a97-217a-48d3-ba90-ec7e0ca8672d/a3444055909_10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/4481ace3-66df-41e9-bdda-190b123af9c7/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/45bd795d-5a35-4030-b684-74e1603c2713/20171021-HawaiiWave_EN-US12324758618_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/4700d141-2906-4817-905e-86490b6a9bed/2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/49aa44b5-f2e7-49ee-8bf8-4b3079f985e1/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/515a6d60-8c18-407e-b193-b72acd13c07f/a3444055909_10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/522d7f75-548d-42d6-9a13-e3f84c1bc061/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/52d52292-0922-42d2-89a1-ddca451b7cc1/a3444055909_10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/56073a2a-803a-454f-bfd4-180790b82ef8/patriot_2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/5ab0758c-6674-4ed2-88ab-3578fd4f1c34/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/63c03d4a-3b49-4a09-8923-512ad07b69db/8a4ad51cfcea663a714e9a8784fd112e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/6bf7aed2-e994-460d-8118-611a2fbcb372/patriot_1000e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/6e21361d-094c-421b-9d23-de1881d96f8f/patriot_911_ee.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/7338ef6c-d378-4d8a-ba41-7e4b73fde47f/20171021-HawaiiWave_ROW13509210419_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/759f75d2-229b-4fdd-84dc-806c02dfc71a/777s.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/79040b02-b72c-45d2-a40f-4a801539698a/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/79cbd164-674a-4c35-b006-8f1088112577/20171022-AutumnFrond_ROW10660506248_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/79e3a113-adfe-4018-a753-2e74c42a5bec/777s.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/7bb59236-943b-4581-9978-63efce988aea/patriot_2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/7e837917-7fb5-4639-8875-5be59c1dccd7/20171022-AutumnFrond_ROW10660506248_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/7eb26c89-ffb4-48f7-9ef2-426f974464e4/patriot_2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/7ff81ad1-4c4f-419e-96ae-738324389180/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/81198ef6-a99b-4d91-8ae3-a964db1eaa60/2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/82ec73b7-6daf-4e7f-8fb8-9e00a1286d67/patriot_911_ee.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/861b8f29-ab83-47c2-93e2-29721828180a/patriot_911e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/8986d084-dce8-49a5-afe0-562802f7d046/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/8a5876eb-a0fb-4907-a3fd-f79c41e2eced/20171022-AutumnFrond_ROW10660506248_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/8c45519a-3156-4c63-a39b-ae897bcf22dc/a3444055909_10.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/9272edc6-8568-44f9-bffa-0e704a4e2c16/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/93e341ad-52a8-46aa-a9a9-5ce9375bcb6b/Screenshot from 2017-10-22 18-22-10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/964eda04-415b-454f-98a2-7385909a91f6/777s.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/a20e6135-b187-40ea-9eb6-7ed35fa68762/0.09221700 1247645589-9.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/a3f2da9b-fc32-4d61-8661-bdd49e5d52f0/prorab_71.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/a56cda92-ea4e-4c6f-a266-c09661e0f66e/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/a67cf194-79db-4d32-aaef-1776c58ebf36/20171021-HawaiiWave_EN-US12324758618_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/acf7627f-5fa2-4cae-b073-5528d3b1df62/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/b3368a6b-32f1-418f-bf40-92085c23b946/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/ba561ae1-87fc-4841-a895-26dff881908d/20171023-ScreechOwl_ROW9891712244_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/bb1f5327-4c30-45c1-a515-5cacbcccf7c2/Screenshot from 2017-10-22 18-22-10.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/bd5b4e04-b9b9-4458-a82f-328d87a45ddf/patriot_1000e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/bed14a2c-6662-4255-8b40-1a51905e793f/patriot_911_ee.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/bef9d0ae-9014-49af-af0e-29e286edd05b/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/c0dc823f-3db1-43ac-826d-59a87bc58380/kalibr.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/c231c54b-efdb-4563-9a39-fb42f18f7aea/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/c37eade3-ac70-49e5-b93c-641cfe2404c4/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/c6f920f6-f576-4d5c-a42b-d8526172a9b6/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/d6709d28-bcca-4d62-836a-45a9f48eb3cf/2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/dc4b8557-41f2-4460-88d7-db56775effab/20171022-AutumnFrond_ROW10660506248_1920x1080.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/de9aed45-f04c-4943-bb9f-fbad208ae9e7/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/de9e197f-ea70-4fb4-96b9-fb039ee211ed/0.37873000 1247645920-14.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/e051f777-f545-4735-b511-c20349107c43/patriot_1000e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/e3937253-37dd-4856-8f3d-7d69f2826115/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/e70f828f-d575-44f7-b4c2-a7a784fff390/arctic61c.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/ed8f501c-de1a-4efb-a97b-3e29cee1e6a1/Screenshot from 2017-10-29 05-27-55.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/ee1a2f02-f4f6-4c91-87b8-5375fd6b867c/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/f390a5e5-be0f-4153-b7ef-238bcf2ebce0/patriot_911_ee.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/f41eeb03-561f-4877-9ce5-4d3e11a1510e/777s.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/f99b6380-cec8-40cd-b864-4c939d95f43c/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/f99b8476-7e6d-450b-9a1c-bc0de542ebae/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/fc112ad3-1e5a-4835-a02d-4e713c30fd25/1000у.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/thumbs/fcdd7396-3fbb-41fe-a3ad-f05385cf2287/patriot_2200e.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/misc/vk_preview.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/put/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/put/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/put/composer.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/put/endpoint-cors.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/put/endpoint.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/put/handler.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492599576.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492613208.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492615944.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492616123.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492616610.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492617938.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492621795.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492622896.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492623336.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492627249.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492627710.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492631621.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492638246.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492638265.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492639026.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492641156.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492648571.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492648981.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492657220.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492658539.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492660818.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492968012.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1492976552.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500273455.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500276270.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500278699.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500281936.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500284967.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500298718.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500308640.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500310727.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500314640.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500315398.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500324932.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500374417.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500384889.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500384977.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500388010.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500391340.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500391479.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500398691.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500398919.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500401920.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500402000.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500404251.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500404489.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500405014.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500413283.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500416375.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500416844.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500417544.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500418630.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500419168.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500419286.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500423804.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500424401.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500425724.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500479171.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500499144.gpx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500501045.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1500572833.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1501181561.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1508278558.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1508294729.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1508370471.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1508647062.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/result/1508912781.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/MarkerCluster.Default.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/MarkerCluster.Default.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/MarkerCluster.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/MarkerCluster.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/bundle.raw.js" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/bundle.raw.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/css/leaflet.css" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/css/leaflet.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/mapbox-gl-dev.js" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/debug/dist/mapbox-gl-dev.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/debug/dist/svg/mapboxgl-ctrl-compass.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/debug/dist/svg/mapboxgl-ctrl-compass.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/crosshairs.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/crosshairs.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/flags.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/flags.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/layers.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/layers.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/measurements.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/measurements.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.color.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.color.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/osrm.directions.icons.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbg/images/osrm_logo.svg" beforeDir="false" afterPath="$PROJECT_DIR$/dbg/images/osrm_logo.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/obsolete/leaflet-1.0.3.src.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/obsolete/leaflet-1.0.3.src.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/obsolete/uploader/fine-uploader.css" beforeDir="false" afterPath="$PROJECT_DIR$/js/obsolete/uploader/fine-uploader.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/src/leaflet-src.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/src/leaflet-src.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/src/leaflet.markercluster.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/src/leaflet.markercluster.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/src/script.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/src/script.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -495,11 +65,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="script.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="script.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/src/script.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="503">
-              <caret line="511" column="11" selection-start-line="511" selection-start-column="11" selection-end-line="511" selection-end-column="11" />
+            <state relative-caret-position="214">
+              <caret line="2249" column="12" selection-start-line="2249" selection-start-column="12" selection-end-line="2249" selection-end-column="12" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -513,7 +83,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="120">
@@ -551,9 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>map.</find>
-      <find>map.get</find>
-      <find>edita</find>
       <find>poly =</find>
       <find>data(</find>
       <find>poly.set</find>
@@ -581,6 +148,9 @@
       <find>current_stick</find>
       <find>zsw</find>
       <find>b =</find>
+      <find>c=</find>
+      <find>tiles.raw[</find>
+      <find>l = point_arra</find>
     </findStrings>
     <replaceStrings>
       <replace>(../misc/</replace>
@@ -630,9 +200,9 @@
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/Gruntfile.js" />
         <option value="$PROJECT_DIR$/js/script.js" />
-        <option value="$PROJECT_DIR$/js/src/script.js" />
         <option value="$PROJECT_DIR$/dev.html" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/js/src/script.js" />
       </list>
     </option>
   </component>
@@ -718,7 +288,7 @@
       <option name="presentableId" value="Default" />
       <updated>1533887334007</updated>
       <workItem from="1533887335203" duration="6138000" />
-      <workItem from="1534129298330" duration="34883000" />
+      <workItem from="1534129298330" duration="35210000" />
     </task>
     <task id="LOCAL-00001" summary="added index.html">
       <created>1533887581189</created>
@@ -790,11 +360,25 @@
       <option name="project" value="LOCAL" />
       <updated>1534304231775</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fixed gitignore">
+      <created>1534304466943</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1534304466943</updated>
+    </task>
+    <task id="LOCAL-00012" summary="fixed c?">
+      <created>1534304702325</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1534304702325</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41021000" />
+    <option name="totallyTimeSpent" value="41348000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
@@ -842,7 +426,9 @@
     <MESSAGE value="optimised script.js to work with grunt" />
     <MESSAGE value="now everything's is up to grunt officially" />
     <MESSAGE value="everything's up to grunt" />
-    <option name="LAST_COMMIT_MESSAGE" value="everything's up to grunt" />
+    <MESSAGE value="fixed gitignore" />
+    <MESSAGE value="fixed c?" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed c?" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/index.php">
@@ -1197,22 +783,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/src/script.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="511" column="11" selection-start-line="511" selection-start-column="11" selection-end-line="511" selection-end-column="11" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dev.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="483">
@@ -1224,6 +794,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/src/script.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="2249" column="12" selection-start-line="2249" selection-start-column="12" selection-end-line="2249" selection-end-column="12" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

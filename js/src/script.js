@@ -2247,7 +2247,7 @@ function enable_editor(){
     $.each(point_array.vectors.getLayers(), function(a,b){
         //console.log('pnt '+b._leaflet_id);
         // Убираем средний маркер
-        l = point_array.vectors.getLayer(b._leaflet_id);
+        var l = point_array.vectors.getLayer(b._leaflet_id);
         l.enableEdit();
         l.editor.disable();
         l.editor.options.skipMiddleMarkers = true;
