@@ -1243,6 +1243,7 @@ function image_prefetcher(callback) {
 
   for(var i = 0; i < tiles.raw.length; i++) {
     // Перебираем все тайлы
+    var c;
     var b = tiles.raw[i];
     if (current_flows < tile_max_flows && b.loaded === false) {
       // (1) если итак грузится много файлов, просто скипаем
