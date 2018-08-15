@@ -1301,7 +1301,7 @@ function image_composer(tiles, callback){
     $('#shot_status_bar span').css('width', '85%').animate({'width':'97%'},3000);
 
     // Leaflet создаёт несколько tile-панелей с разным scale() между подгрузками тайлов. Нам нужна та, что со scale(1)
-    active_tile_pan = null;
+    var active_tile_pan = null;
     // Ищем её перебором
     $.each($('.leaflet-tile-container'), function (x,y) {
       trans = $(y).css('transform');
