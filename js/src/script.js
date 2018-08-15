@@ -2861,7 +2861,7 @@ function open_oauth_frame(host){
 }
 
 function do_login(input_data){
-    vart old_data = get_token();
+    var old_data = get_token();
 
     if(oauth_window){
         oauth_window.close();
