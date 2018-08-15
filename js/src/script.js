@@ -2861,12 +2861,14 @@ function open_oauth_frame(host){
 }
 
 function do_login(input_data){
-    old_data = get_token();
+    vart old_data = get_token();
+
     if(oauth_window){
         oauth_window.close();
     }
+
     oauth_window = null;
-    //console.log('moving forces');
+
     $.get('/engine/auth.php',
     {   'action': 'move_data',
         'old_id': old_data.id,
