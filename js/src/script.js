@@ -1366,7 +1366,7 @@ function image_composer(tiles, callback){
 
 function engage_cropper() {
   // Отправляет параметры обрезки изображения скрипту, который отправляет в ответ скачиваемую картинку.
-  geo = $('#crop_image').cropper('getData');
+  var geo = $('#crop_image').cropper('getData');
   window.open('/engine/cropper.php?name='+$('#store_name').val()+'&src='+$('#crop_image').attr('src')+'&'+$.param({'geo':geo, 'logo':[current_logo,logos[current_logo][2]]})+'&');
   toggle_none();
 }
