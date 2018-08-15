@@ -1563,7 +1563,7 @@ function publish_map() {
 }
 
 function prepare_paths() {
-  paths = [];
+  var paths = [];
   $('path').each(function (a,b) {
     paths.push({path: $(b).attr('d'), color: $(b).attr('stroke'), width: $(b).attr('stroke-width')});
   });
@@ -1603,13 +1603,15 @@ function new_prepare_stickers(){
 }
 
 function prepare_dots() {
-  markers = [];
+  var markers = [];
   $('.mark').each(function (a,b) {
-    val = $(b).find('.point_input').val();
-    val = typeof(val)!=='undefined'?val:null;
-    col = $(b).find('.point_live').css('backgroundColor');
+    var val = $(b).find('.point_input').val();
+    val = typeof(val) !== 'undefined' ? val : null;
+
+    var col = $(b).find('.point_live').css('backgroundColor');
     col = typeof(col)!=='undefined'?col:null;
-    matrix = $(b).css('transform').match(/(\s?\d+)\,(\s?\d+)\)$/);
+
+    var matrix = $(b).css('transform').match(/(\s?\d+)\,(\s?\d+)\)$/);
     if (typeof(matrix)!=='undefined' && matrix &&  matrix.length>=2) {
         markers.push({pos: [matrix[1],matrix[2]], text: val, color:col});
     }
@@ -1870,7 +1872,7 @@ function place(lat, lng, id, title, type, owned){
 
 function click_place(event){
     // срабатывает по клику на место на карте
-  target = $(event.target);
+  var target = $(event.target);
   //console.log(target);
   if(target.data('id')){
     //console.log('activated ' + target.data('id'));
@@ -2089,7 +2091,7 @@ function load_place_data(id, edit_mode){
 
 function place_change_type(e){
     // Обрабатывает select-бокс в меню редактирования места
-    pick     = $(e.target).data('pick');
+    var pick = $(e.target).data('pick');
     $('#place_type_options > div').removeClass('active');
     $('div.place-type-'+pick).addClass('active');
     $('#place-input-type').val(pick);
@@ -2323,7 +2325,7 @@ function update_store_url(e){
 function cool_thanks(){
     if (typeof(get_cookie('hide_store_helper')) === 'undefined') {
         $('#store_helper').show();
-        expire = new Date(new Date().getTime() + 38600 * 365000);
+        var expire = new Date(new Date().getTime() + 38600 * 365000);
         document.cookie = 'hide_store_helper=1; path=/; expires='+expire.toUTCString();
     }
     location.hash='map?'+previous_store_name;
@@ -2388,7 +2390,7 @@ function update_router(e){
     if(typeof(poly) !== 'undefined' && poly && poly.getLatLngs().length > 0){
         //console.log('pos1');
         // Если маршрут нарисован, продолжаем его.
-        latlngs = poly.getLatLngs();
+        var latlngs = poly.getLatLngs();
         //console.log('Продолжаем полигон');
         if(router.A){
             //console.log('A only');
@@ -2403,7 +2405,7 @@ function update_router(e){
                     create_router();
                 }else{
                     //console.log('gotcha');
-                    waypoints = router.object.getWaypoints();
+                    var waypoints = router.object.getWaypoints();
                     waypoints.push(new L.Routing.Waypoint(e.latlng));
                     router.object.setWaypoints(waypoints);
                 }
@@ -2441,7 +2443,7 @@ function update_router(e){
             // Этот кусок добавляет вэйпоинты
             if(typeof(e) !== 'undefined' && typeof(e.latlng) !== 'undefined'){
                 $('#sub_plank_routing_tip').attr('class','routing');
-                waypoints = router.object.getWaypoints();
+                var waypoints = router.object.getWaypoints();
                 waypoints.push(new L.Routing.Waypoint(e.latlng));
                 router.object.setWaypoints(waypoints);
             }else{
@@ -2960,9 +2962,9 @@ function chat_get(){
 }
 
 function chat_put(){
-    token = get_token();
-    msg = $('#chat_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
-    chat_hold = true;
+    var token = get_token();
+    var msg = $('#chat_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
+    var chat_hold = true;
     if(msg.length>0){
         $('#chat_input .button').addClass('active');
         setTimeout(function(){$('#chat_input .button').removeClass('active');},500)
@@ -2978,14 +2980,13 @@ function chat_put(){
                     $('#chat_history_buffer').html('');
                     $('#chat_history_buffer').before(data.messages);
                     if(data.last_message){
-                        console.log('initated');
                         set_cookie('last_message', data.last_message);
                         last_message = data.last_message;
                     }
                 }
                 chat_hold = false;
             }, 'json').fail(
-            function(a,b,c){
+            function(a){
                 chat_hold = false;
                 report_xhr_error(a,'chat_put');
             }
@@ -3003,8 +3004,8 @@ function chat_watch_enter(e){
 }
 
 function check_input_title (e) {
-    e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
-    obj = $('#place-input-title');
+    // e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
+    var obj = $('#place-input-title');
     if(obj.val().length > 32){
         obj.val(obj.val().substr(0,32))
     }
@@ -3022,8 +3023,8 @@ function input_title_enter(e){
 
 function check_input_desc (e) {
     // Обрезает текст в textarea редактора мест и двигает прогрессбар
-    e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
-    obj = $('#place-input-desc');
+    // e = typeof(e) !== 'undefined' ? e : (typeof(window.event) !== 'undefined' ? window.event : null);
+    var obj = $('#place-input-desc');
     if(obj.val().length > 400){
         obj.val(obj.val().substr(0,400))
     }
@@ -3044,7 +3045,7 @@ function input_desc_ctrlenter(e){
 
 function place_check_input(){
     // Проверяет введёные данные в редакторе мест
-    obj = $('#place-input-title');
+    var obj = $('#place-input-title');
     if(obj.val().replace(/\s/,'').length >= 2){
         $('#place_error_container .place_error_title').hide();
         return true;
@@ -3062,13 +3063,13 @@ function select_place_type(e, type){
     // Если есть event, то продолжаем
     if(!e || !place_types[type]) return;
     // Объект, по которому кликнули
-    obj = $(e.target)
+    var obj = $(e.target)
     // Очищаем список выбранных мест
     place_types_selected.splice(0, place_types_selected.length);
     // Обновляем список выбранных мест
-    checkboxes = $('#places-view-checkboxes').find('input').get();
-    for( index=0; index < checkboxes.length; index++ ){
-        value = checkboxes[index];
+    var checkboxes = $('#places-view-checkboxes').find('input').get();
+    for( var index=0; index < checkboxes.length; index++ ){
+        var value = checkboxes[index];
         if( typeof(place_types[$(value).data('type')]) !== 'undefined' && $(value).prop("checked")){
             place_types_selected.push($(value).data('type'));
         }
@@ -3157,7 +3158,7 @@ function select_place_view(e){
     // Если есть event, то продолжаем
     if(!e) return;
     // Объект, по которому кликнули
-    obj = $(e.target);
+    var obj = $(e.target);
 
     // Меняем текущий режим отображения
     places_show[ obj.data('type') == 'editor' ? 1 : 0 ] = obj.prop("checked") ? 1 : 0;
@@ -3169,7 +3170,7 @@ function select_place_view(e){
 function place_comment_put(){
     token = get_token();
 
-    msg = $('#place_comment_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
+    var msg = $('#place_comment_input_box').val().replace(new RegExp('<', 'g'),"&lt;").replace(new RegExp('>', 'g'),"&gt;").replace(new RegExp(">", 'g'),"<br>");
     chat_hold = true; // она для чата, но пофиг
 
     if(msg.length>0){
