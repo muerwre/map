@@ -10,13 +10,20 @@
     "url": "ssh://derek@vault48.org:22522/opt/git/map"
   },
   "devDependencies": {
-    "grunt": "~0.4.5",
+    "@babel/core": "^7.0.0-rc.1",
+    "@babel/preset-env": "^7.0.0-rc.1",
+    "add": "^2.0.6",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "grunt": "^1.0.3",
+    "grunt-babel": "^8.0.0-beta.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-cssmin": "^2.2.1",
-    "grunt-contrib-jshint": "~0.10.0",
-    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-uglify": "^0.5.1",
-    "grunt-contrib-watch": "^1.0.0"
+    "grunt-contrib-watch": "^1.1.0",
+    "load-grunt-tasks": "^4.0.0"
   },
   "author": "",
   "license": "ISC",

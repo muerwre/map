@@ -224,8 +224,7 @@ function sticker_label_update(id){
         id = $(id.target).parent().parent().data('sticker');
     }
 
-    // Обновляет текст в баллуне стикера
-    let text = $('#sticker_' + id).find('.sticker_text'),
+    var text = $('#sticker_' + id).find('.sticker_text'),
         label = text.find('.sticker_label'),
         input = text.find('textarea');
 
@@ -1239,9 +1238,9 @@ function image_prefetcher(callback) {
   $('#shot_status_text').html('Подгружаем тайлы ('+tiles.loaded+'/'+tiles.raw.length+')');
 
   $('#shot_status_bar span').stop().animate({'width':(tiles.loaded/tiles.raw.length)*85+'%'},150)
-  let current_flows = 0;
+  var current_flows = 0;
 
-  for(let i = 0; i < tiles.raw.length; i++) {
+  for(var i = 0; i < tiles.raw.length; i++) {
     // Перебираем все тайлы
     b = tiles.raw[i];
     if (current_flows < tile_max_flows && b.loaded === false) {
@@ -1377,11 +1376,11 @@ function insert_vertex(e) {
     // если щелкнуть по кривой во время редактирования, editable не должно рисовать новую точку
     if (e.type === 'editable:drawing:click') e.cancel();
 
-    let latlngs = poly.getLatLngs(); // набор точек ломанной
-    let best = 10000;
-    let pos = []; // переменные для определения принадлежности точки отрезку на ломанной
+    var latlngs = poly.getLatLngs(); // набор точек ломанной
+    var best = 10000;
+    var pos = []; // переменные для определения принадлежности точки отрезку на ломанной
 
-    for(let i=0; i<latlngs.length-1; i++) {
+    for(var i=0; i<latlngs.length-1; i++) {
       // Дальше определяем, лежит ли точка на отрезке ломаной перебором этих отрезков
       const x = e.latlng['lat'];
       const x1 = latlngs[i]['lat'];
@@ -1406,11 +1405,11 @@ function insert_vertex(e) {
           )
         ) {
           // если да, то проверяем, далеко ли точка от самого отрезка между двумя точками
-          let dx1 = x2 - x1;
-          let dy1 = y2 - y1;
-          let dx = x - x1;
-          let dy = y - y1;
-          let result = Math.abs((dx1 * dy) - (dx * dy1));
+          var dx1 = x2 - x1;
+          var dy1 = y2 - y1;
+          var dx = x - x1;
+          var dy = y - y1;
+          var result = Math.abs((dx1 * dy) - (dx * dy1));
           if (result < best) {
             // это - не очень-то точная функция. Но по клику она определяет, по какому отрезку мы кликнули
             best = result;
@@ -1488,7 +1487,7 @@ function point_drop(e,pnt_id) {
     //console.log(e);
     //L.DomEvent.preventDefault(e);
     //e.preventDefault();
-    let obj = point_array.point_to_id[pnt_id];
+    var obj = point_array.point_to_id[pnt_id];
 
     if (typeof(obj)!=='undefined' && obj>0) {
         point_array.pairs[obj].remove();
@@ -1500,11 +1499,11 @@ function point_drop(e,pnt_id) {
 }
 
 function on_vertex_drag(e) {
-  let obj = e.layer;
+  var obj = e.layer;
   //console.log();
-  let m = point_array.pairs[obj._leaflet_id];
+  var m = point_array.pairs[obj._leaflet_id];
   if (typeof(m)!=='undefined') {
-    let latlngs = obj.getLatLngs();
+    var latlngs = obj.getLatLngs();
     m.setLatLng(latlngs[1]);
     //console.log(latlngs[0].lng-latlngs[1].lng);
     if(latlngs[0].lng<latlngs[1].lng){
@@ -2553,7 +2552,7 @@ function apply_route(){
 function local_recover_data(){
        if (store && can_i_load) {
         //console.log('local recover');
-        let storedRoute, storedPoints, storedStickers, routeLatLngs;
+        var storedRoute, storedPoints, storedStickers, routeLatLngs;
 
         try {
             storedRoute = JSON.parse(localStorage.getItem("route"));
