@@ -1,15 +1,28 @@
 <?
+// respond to preflights
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+  // return only the headers and not the content
+  // only allow CORS if we're doing a GET - i.e. no saving for now.
+  if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']) &&
+      $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] == 'GET') {
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Headers: X-Requested-With');
+  }
+  exit;
+}
+?>
+<?
 require 'settings.inc.php';
 /*
 ?php
-$im = new Imagick('sample.png'); 
+$im = new Imagick('sample.png');
 
-$args = array( 
+$args = array(
     0, // X-point
     300, // Y-point
     1,   // Scale
     -45, // Rotation
-); 
+);
 
 $im->distortImage(Imagick::DISTORTION_SCALEROTATETRANSLATE, $args, false);
 
@@ -126,7 +139,7 @@ if(isset($path['path']) && $path['path'] && sizeof($path['path'])>1 && $path['co
         $ang = rad2deg(atan2($y2 - $y1, $x2 - $x1));
         if($len>50){
             $wm = new Imagick();
-            $wm->setBackgroundColor(new ImagickPixel('transparent')); 
+            $wm->setBackgroundColor(new ImagickPixel('transparent'));
             $wm->readImage("../misc/arr.png");
             $wm->rotateImage(new ImagickPixel('transparent'),$ang);
             $im->compositeImage($wm, imagick::COMPOSITE_OVER,$x1+($x2-$x1)/2-13,$y1+($y2-$y1)/2-13);
@@ -143,7 +156,7 @@ if($points && sizeof($points) > 0){
         $dr->setStrokeColor('#333333');
         $dr->setFillColor('#ffffff00');
         $dr->setStrokeWidth(3);
-        $dr->polyline($point['latlngs']);  
+        $dr->polyline($point['latlngs']);
         $dr->setFont('RalewayBold.ttf');
         $dr->setFontSize(14);
         $dr->setStrokeColor('#ffffff00');
@@ -167,7 +180,7 @@ if($points && sizeof($points) > 0){
             $dr->setFillColor('#ffffffff');
             $dr->annotation($point['latlngs'][1]['x']-$metrics['textWidth']-10,$point['latlngs'][1]['y']+4, $point['text']);
         }
-        
+
         $im->drawImage($dr);
         $dr->destroy();
     }
@@ -179,7 +192,7 @@ if($stickers && sizeof($stickers) > 0){
     foreach ($stickers as $sticker) {
         $svg = '<?xml version="1.0"?><svg width="120" height="120"><polygon  fill="#ff4433" points="60,60 70,22 98,22 98,50"></polygon></svg>';
         $wm = new Imagick();
-        $wm->setBackgroundColor(new ImagickPixel('transparent')); 
+        $wm->setBackgroundColor(new ImagickPixel('transparent'));
         $wm->readImageBlob($svg);
         //$wm->setImageFormat('png');
         $wm->setImageVirtualPixelMethod(Imagick::VIRTUALPIXELMETHOD_TRANSPARENT);
@@ -217,13 +230,13 @@ if($stickers && sizeof($stickers) > 0){
                 $dr->setFillColor('#ffffffff');
                 $dr->annotation($sticker['latlng']['x']+$x-$metrics['textWidth']-46,$sticker['latlng']['y']-$metrics['textHeight']/2+$y+3+8, $sticker['text']);
             }
-            $im->drawImage($dr);  
+            $im->drawImage($dr);
             $dr->destroy();
         }
-        $wm = new Imagick(); 
-        $wm->setBackgroundColor(new ImagickPixel('transparent')); 
+        $wm = new Imagick();
+        $wm->setBackgroundColor(new ImagickPixel('transparent'));
         $wm->readImage("../misc/stickers/stickers.svg");
-        $wm->cropImage(72,72,$sticker['x'],0); 
+        $wm->cropImage(72,72,$sticker['x'],0);
         $im->compositeImage($wm, imagick::COMPOSITE_OVER,$sticker['latlng']['x']-36+$x,$sticker['latlng']['y']-36+$y);
         $wm->destroy();
         //$i++;
@@ -247,12 +260,12 @@ if($stickers && sizeof($stickers) > 0){
 
 			$op=substr($var,0,1);
 			$xy=explode(' ',substr($var,1));
-			
+
 			if($op=='M'){
 				if(sizeof($polylines[$cur_poly]['path'])>0){
 					array_push($polylines[$cur_poly]['path'][sizeof($polylines[$cur_poly]['path'])-1],array('x'=>$xy[0]-$x1,'y'=>$xy[1]-$y1));
 				}
-				
+
 				$polylines[$cur_poly]['path'][]=array(array('x'=>$xy[0]-$x1,'y'=>$xy[1]-$y1));
 			}elseif($op=='L'){
 				array_push($polylines[$cur_poly]['path'][sizeof($polylines[$cur_poly]['path'])-1],array('x'=>$xy[0]-$x1,'y'=>$xy[1]-$y1));
@@ -281,7 +294,7 @@ if($stickers && sizeof($stickers) > 0){
     //$dr->setStrokeAntialias(true);
 	//$dr->setTextAntialias(true);
     //$dr->circle($polylines[0][0]['x'],$polylines[0][0]['y'],$polylines[0][0]['x']+5,$polylines[0][0]['y']+5);
-    
+
     //$text='Hello, Smitty!';
     foreach($markers as $marker){
 	    $metrics = $im->queryFontMetrics($dr, $marker['text']);
@@ -301,12 +314,12 @@ if($stickers && sizeof($stickers) > 0){
 $raw=$im->getImageBlob();
 if(isset($_REQUEST['mode']) && $_REQUEST['mode']=='test'){
 	header('Content-type: image/png');
-	echo $raw;	
+	echo $raw;
 }else{
 	$rand_pattern=time()+rand(0,65535);
 	while(file_exists($result_prefix.urlencode($rand_pattern).".png")){
 		$rand_pattern=time()+rand(65535);
-	}	
+	}
 	if(!file_put_contents($result_prefix.urlencode($rand_pattern).".png", $raw)){
 		oops('Ошибка сохранения готового изображения');
 	}
