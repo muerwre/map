@@ -50,9 +50,9 @@ $im->setImageFormat('png');
 $tile_x = $tile_y = 0;
 
 // Рисуем карту
-for($x = $placement->min_x; $x < =$placement -> max_x; $x++){
+for($x = $placement->min_x; $x <= $placement->max_x; $x++){
     $tile_y = 0;
-    for($y = $placement -> max_y; $y >= $placement -> min_y; $y--){
+    for($y = $placement->max_y; $y >= $placement->min_y; $y--){
         $file=prefetch($x, $y, $placement->zoom, $placement->provider);
         $wm = new Imagick();
 	   $wm->readImage($file);
