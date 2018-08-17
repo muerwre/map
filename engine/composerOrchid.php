@@ -53,9 +53,9 @@ $tile_x = $tile_y = 0;
 for($x = $placement->min_x; $x <= $placement->max_x; $x++){
     $tile_y = 0;
     for($y = $placement->max_y; $y >= $placement->min_y; $y--){
-        $file=prefetch($x, $y, $placement->zoom, $placement->provider);
+        $file = prefetch($x, $y, $placement->zoom, $placement->provider);
         $wm = new Imagick();
-	   $wm->readImage($file);
+	      $wm->readImage($file);
         $im->compositeImage(
           $wm,
           imagick::COMPOSITE_OVER,
@@ -86,14 +86,14 @@ if(false && isset($path['path']) && $path['path'] && sizeof($path['path'])>1 && 
     $dr->circle($path['path'][0]['x'],$path['path'][0]['y'],$path['path'][0]['x']+4,$path['path'][0]['y']+4);
     $im->drawImage($dr);
     $dr->destroy();
-    for($i=1;$i<sizeof($path['path']);$i++){
+    for($i = 1; $i < sizeof($path['path']); $i++){
         $x1 = $path['path'][$i-1]['x'];
         $x2 = $path['path'][$i]['x'];
         $y1 = $path['path'][$i-1]['y'];
         $y2 = $path['path'][$i]['y'];
         $len = sqrt( pow(($x2-$x1),2) + pow(($y2-$y1),2) );
-        //$len = pow(($x2-$x1),2);
         $ang = rad2deg(atan2($y2 - $y1, $x2 - $x1));
+
         if($len>50){
             $wm = new Imagick();
             $wm->setBackgroundColor(new ImagickPixel('transparent'));
@@ -145,17 +145,20 @@ if(false && $stickers && sizeof($stickers) > 0){
     foreach ($stickers as $sticker) {
         $svg = '<?xml version="1.0"?><svg width="120" height="120"><polygon  fill="#ff4433" points="60,60 70,22 98,22 98,50"></polygon></svg>';
         $wm = new Imagick();
+
         $wm->setBackgroundColor(new ImagickPixel('transparent'));
         $wm->readImageBlob($svg);
-        //$wm->setImageFormat('png');
+
         $wm->setImageVirtualPixelMethod(Imagick::VIRTUALPIXELMETHOD_TRANSPARENT);
         $wm->distortImage(Imagick::DISTORTION_SCALEROTATETRANSLATE, array(60,60,1,rad2deg( (float) $sticker['ang'])+45), false);
-        //$wm->rotateImage(new ImagickPixel('transparent'),45);
+
         $im->compositeImage($wm, imagick::COMPOSITE_OVER,$sticker['latlng']['x']-36-30+6,$sticker['latlng']['y']-36-30+6);
         $wm->destroy();
+
         $rad = 50;
-        $x = cos((float) $sticker['ang'])*$rad-30+30;
-        $y = sin((float) $sticker['ang'])*$rad-30+30;
+        $x = cos((float)$sticker['ang']) * $rad;
+        $y = sin((float)$sticker['ang']) * $rad;
+
         if(mb_strlen($sticker['text'])>0){
             $dr = new ImagickDraw();
 
