@@ -21,13 +21,16 @@ if(
   !is_numeric($placement->max_y) ||
   !is_numeric($placement->sh_x) ||
   !is_numeric($placement->sh_y) ||
-  !is_numeric($placement->zoom)){
+  !is_numeric($placement->zoom) ||
+  !is_numeric($placement->height) ||
+  !is_numeric($placement->width)
+){
   oops('1199 Неверная область обзора');
 }
 
 //$tiles=$_REQUEST['tiles'];
-$size=$_REQUEST['size'];
-if(!$size || $size[0]<=0 || $size[1]<=0) oops('Неверный размер отрисовываемой области');
+$size = [$placement->width, $placement->height];
+if(!$size || $size[0] <= 0 || $size[1] <= 0) oops('Неверный размер отрисовываемой области');
 
 /*
 $x1=-1*$map_pan[0];
