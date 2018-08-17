@@ -8,18 +8,18 @@ if(!isset($_REQUEST['placement'])){
     oops('1198 Неверная область обзора');
 }
 
-$placement = $_REQUEST['placement'];
+$placement = json_encode($_REQUEST['placement']);
 
-if( !is_numeric($placement['min_x']) ||
-    !is_numeric($placement['min_y']) ||
-    !is_numeric($placement['max_x']) ||
-    !is_numeric($placement['max_y']) ||
-    !is_numeric($placement['sh_x']) ||
-    !is_numeric($placement['sh_y']) ||
-    !is_numeric($placement['zoom'])){
-    oops('1199 Неверная область обзора');
+if( !placement ||
+  !is_numeric($placement['min_x']) ||
+  !is_numeric($placement['min_y']) ||
+  !is_numeric($placement['max_x']) ||
+  !is_numeric($placement['max_y']) ||
+  !is_numeric($placement['sh_x']) ||
+  !is_numeric($placement['sh_y']) ||
+  !is_numeric($placement['zoom'])){
+  oops('1199 Неверная область обзора');
 }
-
 
 //$tiles=$_REQUEST['tiles'];
 $size=$_REQUEST['size'];
