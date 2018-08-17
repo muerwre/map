@@ -15,8 +15,8 @@ if(!isset($_REQUEST['placement'])){
 $placement = json_decode($_REQUEST['placement']);
 
 if( !$placement ||
-  !is_numeric($placement['min_x']) ||
-  !is_numeric($placement['min_y']) ||
+  !is_numeric($placement->min_x) ||
+  !is_numeric($placement->min_y) ||
   !is_numeric($placement['max_x']) ||
   !is_numeric($placement['max_y']) ||
   !is_numeric($placement['sh_x']) ||
