@@ -10,8 +10,6 @@ if(!isset($_REQUEST['placement'])){
 
 $placement = json_decode($_REQUEST['placement']);
 
-print_r($placement);
-exit;
 if( !$placement ||
   !is_numeric($placement['min_x']) ||
   !is_numeric($placement['min_y']) ||
