@@ -8,7 +8,7 @@ if(!isset($_REQUEST['placement'])){
     oops('1198 Неверная область обзора');
 }
 
-$placement = json_encode($_REQUEST['placement']);
+$placement = json_decode($_REQUEST['placement']);
 
 print_r($placement);
 exit;
