@@ -4,6 +4,9 @@ require 'settings.inc.php';
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: Content-Type, origin");
 
+print_r($_REQUEST);
+exit;
+
 if(!isset($_REQUEST['placement'])){
     oops('1198 Неверная область обзора');
 }
