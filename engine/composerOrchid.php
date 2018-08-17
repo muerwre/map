@@ -1,47 +1,15 @@
 <?
-// respond to preflights
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    // echo 'BABABABABA';
-  // return only the headers and not the content
-  // only allow CORS if we're doing a GET - i.e. no saving for now.
-  if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD']) &&
-      $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_METHOD'] == 'GET') {
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: X-Requested-With');
-  }
-  exit;
-}
-?>
-<?
 require 'settings.inc.php';
-/*
-?php
-$im = new Imagick('sample.png');
 
-$args = array(
-    0, // X-point
-    300, // Y-point
-    1,   // Scale
-    -45, // Rotation
-);
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: Content-Type, origin");
 
-$im->distortImage(Imagick::DISTORTION_SCALEROTATETRANSLATE, $args, false);
-
-$im->setImageFormat('png');
-file_put_contents('rotated.png', (string) $im);
-*/
-//error_reporting(0);
-//function oops($text){echo json_encode(array('success'=>false,'error'=>$text?$text:'Неизвестная ошибка'));exit;}
-/*
-preg_match_all('/(\-?\d+)/',$_REQUEST['map_pan'],$matches);
-$map_pan=array($matches[1][4],$matches[1][5]);
-preg_match_all('/(\-?\d+)/',$_REQUEST['tile_pan'],$matches);
-$tile_pan=array($matches[1][4],$matches[1][5]);
-*/
 if(!isset($_REQUEST['placement'])){
     oops('1198 Неверная область обзора');
 }
+
 $placement = $_REQUEST['placement'];
+
 if( !is_numeric($placement['min_x']) ||
     !is_numeric($placement['min_y']) ||
     !is_numeric($placement['max_x']) ||
