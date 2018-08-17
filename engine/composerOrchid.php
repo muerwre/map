@@ -17,11 +17,11 @@ $placement = json_decode($_REQUEST['placement']);
 if(
   !is_numeric($placement->min_x) ||
   !is_numeric($placement->min_y) ||
-  !is_numeric($placement['max_x']) ||
-  !is_numeric($placement['max_y']) ||
-  !is_numeric($placement['sh_x']) ||
-  !is_numeric($placement['sh_y']) ||
-  !is_numeric($placement['zoom'])){
+  !is_numeric($placement->max_x) ||
+  !is_numeric($placement->max_y) ||
+  !is_numeric($placement->sh_x) ||
+  !is_numeric($placement->sh_y) ||
+  !is_numeric($placement->zoom)){
   oops('1199 Неверная область обзора');
 }
 
